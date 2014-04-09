@@ -25,6 +25,7 @@ include 'exceptions.inc';
  * TODO ChatHandler: WebChat oder Newsticker-Funktion
  */
 class framework{
+     public $currentPage='index';
     /**
      *
      */
@@ -33,5 +34,11 @@ class framework{
         $this->files = new files();
         $this->users = new users();
         $this->template = new template();
+    }
+    public function getCurrentPage(){
+        return $this->currentPage;
+    }
+    public function setCurrentPage($site){
+        $this->currentPage=$site;
     }
 }
