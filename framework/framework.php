@@ -32,7 +32,6 @@ class framework{
     public function __construct(){
         $this->images = new images();
         $this->files = new files();
-        $this->documents = new document();
         $this->users = new users();
         $this->template = new template();
         $this->mobileDetect = new Mobile_Detect();

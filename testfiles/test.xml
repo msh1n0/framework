@@ -1,0 +1,15 @@
+<?xml version='1.0'?>
+<music>
+    <interpret id='123'>
+        <name>Elvis</name>
+        <song>Kentucky Rain</song>
+    </interpret>
+    <interpret id='124'>
+        <name>Beatles</name>
+        <song>Yesterday</song>
+    </interpret>
+    <interpret id='125'>
+        <name>Jimi Hendrix</name>
+        <song>Foxy Lady</song>
+    </interpret>
+</music>

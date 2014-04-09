@@ -9,6 +9,9 @@ include 'ext/mpdf/mpdf.php';
 class document{
     private $file;
 
+    /**
+     *
+     */
     public function createPDF(){
         $mpdf=new mPDF('c','A4','','' , 0 , 0 , 0 , 0 , 0 , 0);
         $mpdf->SetDisplayMode('fullpage');
@@ -17,6 +20,9 @@ class document{
         $mpdf->Output();
     }
 
+    /**
+     * @param $file
+     */
     public function setDocument($file){
         $this->file=$file;
     }
@@ -30,7 +36,7 @@ class document{
     /**
      * @return string
      */
-    public function getCSVAsString(){
+    public function getFileAsString(){
         $content = file($this->file);
         $text='';
         foreach($content as $element){
@@ -66,7 +72,7 @@ class document{
      */
     public function writeCSV($content,$expand=false){
         if(!is_array($content))$content = array($content);
-        if($expand==true) $text = $this->getCSVAsString($this->file)."\n";
+        if($expand==true) $text = $this->getFileAsString($this->file)."\n";
         else $text='';
         foreach($content as $element){
             $text.=$element;
@@ -74,6 +80,18 @@ class document{
         $filehandle = fopen($this->file, 'w');
         fwrite($filehandle,$text);
         fclose($filehandle);
+    }
+
+    /**
+     *
+     */
+    public function getXMLAsArray($filterObject){
+        $xml = simplexml_load_string($this->getFileAsString());
+        $contents=array();
+        foreach ($xml->$filterObject as $element ){
+            $contents[]=array($element);
+        }
+        return $contents;
     }
 
 }

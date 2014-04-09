@@ -73,6 +73,9 @@ class template {
         $this->templateFile=$newFile;
     }
 
+    /**
+     * @param $scriptname
+     */
     public function setupScript($scriptname){
         $values=array();
         $input=array();
@@ -91,6 +94,10 @@ class template {
         $this->smarty->assign($scriptname.'_js',$values[1]);
         $this->jqueryNeeded=true;
     }
+
+    /**
+     * Letzter Check vor der Initialisierung
+     */
     public function lastCheck(){
         if($this->jqueryNeeded===true){
             $this->smarty->assign('jquery','<script src="framework/ext/jquery/jquery.js"></script>');

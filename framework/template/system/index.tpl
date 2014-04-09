@@ -4,7 +4,7 @@
     <meta charset="{$metaCharset}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Namenloses Framework</title>
+    <title>Testumgebung</title>
     {$bootstrap_css}
 </head>
 <body>
