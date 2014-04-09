@@ -3,6 +3,7 @@
  * Class imageController Bildverarbeitungfunktionen
  * @author  Marco Soschniok
  * @function resampleImage Bildgröße ändern
+ * TODO: Wasserzeichen, Rahmen, Texte
  */
 class images{
     /**

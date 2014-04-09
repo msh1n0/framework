@@ -9,6 +9,13 @@ class template {
     private $templateFile='index';
     private $template;
     private $systemTemplate='system';
+    private $bootstrap=array(
+        array('framework/ext/bootstrap/bootstrap.min.css',
+            'framework/ext/bootstrap/bootstrap-theme.min.css',
+            'framework/ext/bootstrap/bootstrap.custom.css'),
+        array('framework/ext/bootstrap/bootstrap.min.js')
+    );
+    private $jqueryNeeded;
 
     /**
      *
@@ -19,12 +26,14 @@ class template {
         $this->smarty->setCompileDir('framework/cache/smarty/compile');
         $this->smarty->caching = true;
         $this->smarty->cache_lifetime = 120;
+        $this->smarty->assign('metaCharset','utf-8');
     }
 
     /**
      * Anzeigen der Seite mit dem eingestellten Template
      */
     public function display(){
+        $this->lastCheck();
         if(is_file($this->templatePath.'/'.$this->template.'/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->template.'/'.$this->templateFile.'.tpl');
         elseif(is_file($this->templatePath.'/system/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->systemTemplate.'/'.$this->templateFile.'.tpl');
     }
@@ -33,7 +42,7 @@ class template {
      * Setzen der Templatevariablen in Arrayform
      * @param array $variables entweder Array eines Wertes oder Array aus mehreren Werte-Arrays
      */
-    public function setTemplateVaiables($variables){
+    public function setTemplateVariables($variables){
         if(is_array($variables[0])){
             foreach($variables as $element){
                 $this->smarty->assign($element[0],$element[1]);
@@ -64,5 +73,28 @@ class template {
         $this->templateFile=$newFile;
     }
 
-
+    public function setupScript($scriptname){
+        $values=array();
+        $input=array();
+        $output='';
+        switch($scriptname){
+            case 'bootstrap';
+                $input=$this->bootstrap;
+                break;
+        }
+        for($i=0;$i<=1;$i++){
+            foreach($input[$i] as $element){
+                if($i=='0') $values[$i].='<link href="'.$element.'" rel="stylesheet">';
+                if($i=='1') $values[$i].='<script src="'.$element.'"></script>';
+            }
+        }
+        $this->smarty->assign($scriptname.'_css',$values[0]);
+        $this->smarty->assign($scriptname.'_js',$values[1]);
+        $this->jqueryNeeded=true;
+    }
+    public function lastCheck(){
+        if($this->jqueryNeeded===true){
+            $this->smarty->assign('jquery','<script src="framework/ext/jquery/jquery.js"></script>');
+        }
+    }
 } 

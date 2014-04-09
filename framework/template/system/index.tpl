@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="utf-8">
+    <meta charset="{$metaCharset}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hannover 96 vereint</title>
-
+    <title>Namenloses Framework</title>
+    {$bootstrap_css}
 </head>
 <body>
 <div class="container">
@@ -28,6 +28,8 @@
         </div>
     </div>
 </div>
+{$jquery}
+{$bootstrap_js}
 </body>
 </html>
 

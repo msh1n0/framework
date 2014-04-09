@@ -7,9 +7,10 @@ $framework = new framework();
 //$framework->users->createUser('User_neu','neues Password','99');
 #LOGIN, LOGOUT
 
-echo'####';
 
+$content='';
 $framework->template->setTemplate('custom');
+$framework->template->setTemplateVariables(array('content',$content));
+$framework->template->setupScript('bootstrap');
 $framework->template->disableCaching();
 $framework->template->display();
-echo'####';

@@ -6,19 +6,21 @@
 class users{
     private $users = array();
     private $storagePath;
+    private $document;
 
     /**
      *
      */
     function __construct(){
-        $this->csv = new csv();
+        $this->document = new document();
+        $this->document->setDocument('framework/data/users.db');
     }
 
     /**
      * @param $file
      */
     public function loadFromFile($file){
-        $data=$this->csv->getFileAsArray($file);
+        $data=$this->document->getCSVAsArray($file);
         foreach($data as $element){
             $split=explode(';',$element);
             $this->users[]=array('username'=>$split[0],'password'=>$split[1], 'userlevel'=>$split[2]);
@@ -50,8 +52,29 @@ class users{
      */
     public function createUser($username,$password,$level){
         if(strpos($username,' ')!=='') throw new InputErrorException('Benutzernamen dürfen keine Leereichen enthalten');
-        elseif(!$this->checkForDupe($username)) $this->csv->writeFile($this->storagePath,$username.';'.md5($password).';'.$level,true);
+        elseif(!$this->checkForDupe($username)) $this->document->writeCSV($this->storagePath,$username.';'.md5($password).';'.$level,true);
         else throw new UserDupeException("Der Nutzer existiert bereits");
+    }
+
+    public function logIn($username,$pass){
+        $this->logOut();
+        $filteredUsers=$this->document->getCSVAsArray();
+        foreach($filteredUsers as $user){
+            $split=explode(';',$user);
+            if($split[0]===$username){
+                if($split[1]===md5($pass)){
+                    session_start();
+                    $_SESSION['username']=$split[0];
+                    $_SESSION['userlevel']=$split[2];
+                    return 0;
+                }
+                else return 1;
+            }
+        }
+        return 2;
+    }
+    public function logOut(){
+        session_destroy();
     }
 
     /**
@@ -81,4 +104,5 @@ class users{
         }
         return $dupe;
     }
+
 }
