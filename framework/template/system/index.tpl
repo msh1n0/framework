@@ -12,7 +12,9 @@
     <div class="row">
         <div class="col-lg-9">
             {block name=headline}
-                STANDARDHEADLINE
+                <div class="alert alert-info">
+                    <h1>Willkommen</h1>
+                </div>
             {/block}
         </div>
         <div class="col-lg-3 text-right">
@@ -21,7 +23,9 @@
     <div class="row">
         <div class="col-lg-9">
             {block name=content}
-                STANDARDINHALT
+                <div class="alert alert-danger">
+                    Standardtemplate geladen
+                </div>
             {/block}
         </div>
         <div class="col-lg-3 text-right">

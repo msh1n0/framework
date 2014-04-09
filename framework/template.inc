@@ -76,7 +76,6 @@ class template {
     public function setupScript($scriptname){
         $values=array();
         $input=array();
-        $output='';
         switch($scriptname){
             case 'bootstrap';
                 $input=$this->bootstrap;
