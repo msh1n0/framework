@@ -1,5 +1,7 @@
 <?php
 
+include 'ext/mpdf/mpdf.php';
+
 /**
  * Class documents
  * Für Vereinfachtes Abfrage und Anlegen von Dateien
@@ -7,6 +9,13 @@
 class document{
     private $file;
 
+    public function createPDF(){
+        $mpdf=new mPDF('c','A4','','' , 0 , 0 , 0 , 0 , 0 , 0);
+        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->list_indent_first_level = 0;
+        $mpdf->WriteHTML(file_get_contents($this->file));
+        $mpdf->Output();
+    }
 
     public function setDocument($file){
         $this->file=$file;

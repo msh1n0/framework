@@ -19,7 +19,7 @@ include 'exceptions.inc';
  * TODO EmailHandler: senden von Emails
  * TODO UserHandler: Anmeldemöglichkeiten mit Berechtigungsstufen
  * TODO Framework: Vererbungsmöglichkeit, um Funktionen zu überschreiben
- * TODO DocumentHandler: Erstellung von PDF, RSS, etc.
+ * TODO DocumentHandler: Erstellung von RSS, etc.
  * TODO ImportHandler: Import und Export der Datenbank bzw. der Dateien
  * TODO NewsHandler: News/Blog schreiben
  * TODO ChatHandler: WebChat oder Newsticker-Funktion
