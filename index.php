@@ -9,5 +9,7 @@ $framework = new framework();
 
 echo'####';
 
+$framework->template->setTemplate('custom');
+$framework->template->disableCaching();
 $framework->template->display();
 echo'####';

@@ -1,4 +1,4 @@
 {extends file="framework/template/system/index.tpl"}
     {block name=content}
-        DETAILINHALT
+        Herzlich Willkommen {$user} {if isset($satz)} und {$satz} {/if}
     {/block}
