@@ -3,9 +3,8 @@ include 'framework/framework.php';
 
 $framework = new framework();
 
-$framework->contents->setSourceType('html');
-$content=$framework->contents->getPage($_GET['site']);
-
+$framework->contentpool->setDataDirectory('contents');
+$content=$framework->contentpool->getContent('neu');
 
 
 
@@ -13,6 +12,7 @@ $content=$framework->contents->getPage($_GET['site']);
 
 $framework->template->setTemplate('custom');
 $framework->template->setTemplateVariables(array('content',$content));
+$framework->template->setTemplateVariables(array('info','---INFO---'));
 $framework->template->setupScript('bootstrap');
 $framework->template->disableCaching();
 $framework->template->display();

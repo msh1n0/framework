@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'contents.inc';
+include 'contentpool.inc';
 include 'document.inc';
 include 'exceptions.inc';
 include 'ext/mobile-detect/mobile_detect.php';
@@ -34,7 +34,7 @@ class framework{
         $this->images = new images();
         $this->files = new files();
         $this->users = new users();
-        $this->contents = new contents();
+        $this->contentpool = new contentpool();
         $this->template = new template();
         $this->mobileDetect = new Mobile_Detect();
     }

@@ -1,7 +1,7 @@
 <?php
 
-class contents{
-    private $sourceType;
+class contentpool{
+    private $sourceType='tpl';
     private $document;
     private $dataDirectory;
 
@@ -21,9 +21,10 @@ class contents{
                 $this->sourceType='tpl';
         }
     }
-    public function getContent(){
+    public function getContent($element){
         switch($this->sourceType){
-            case 'html':
+            case 'tpl':
+                $this->document->setDocument($this->dataDirectory.'/'.$element.'.'.$this->sourceType);
                 return $this->document->getFileAsString();
                 break;
             default:
