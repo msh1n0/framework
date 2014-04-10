@@ -3,6 +3,7 @@
 /**
  * Class files
  * Verwaltungsklasse für Ordner und Dateien
+ * TODO Zip-Handling
  */
 class files{
     /**

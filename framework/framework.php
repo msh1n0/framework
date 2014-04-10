@@ -13,14 +13,18 @@ include 'users.inc';
 /**
  * Class framework Sammlung Funktionen
  *
- * TODO Datenbankhandler(einsetzen in document): Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
- * TODO ContentHandler: mit oder ohne Datenbank inklusive Caching-System, auslesen von Typo3-Seiten, Erkennung der Sitemap, etc.
- * TODO FormHandler: erstellen von Formularen und annehmen der Daten
- * TODO EmailHandler: senden von Emails
+ * TODO Datenbank (einsetzen in document): Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
+ * TODO Contents: mit oder ohne Datenbank, auslesen von Typo3-Seiten, Erkennung der Sitemap, etc.
+ * TODO Formulare: erstellen von Formularen und annehmen der Daten
+ * TODO Email: senden von Emails
  * TODO Framework: Vererbungsmöglichkeit, um Funktionen zu überschreiben
- * TODO DocumentHandler: Erstellung von RSS, etc.
- * TODO NewsHandler: News/Blog schreiben
- * TODO ChatHandler: WebChat oder Newsticker-Funktion
+ * TODO Document: Erstellung von RSS, etc.
+ * TODO News: News/Blog schreiben
+ * TODO Chat: WebChat oder Newsticker-Funktion
+ * TODO Media: Musik, Video, Streaming und so
+ * TODO Kalender: Allgemeiner Kalender mit Terminen, Erinerungen per Mail
+ * TODO Cronjob: bezug auf eine Datei im Framework, damit er leicht erweiterbar ist
+ * TODO Einfaches Newsletter-System mit eigener User-Datenbank,
  */
 class framework{
     /**
@@ -31,7 +35,6 @@ class framework{
      */
     public function __construct(){
         $this->images = new images();
-        $this->files = new files();
         $this->users = new users();
         $this->contentpool = new contentpool();
         $this->template = new template();
