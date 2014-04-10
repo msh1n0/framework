@@ -3,7 +3,7 @@ include 'framework/framework.php';
 
 $framework = new framework();
 $framework->contentpool->setDataDirectory('contents');
-$content=$framework->contentpool->getContent('neu2');
+$content=$framework->contentpool->getContent('neu');
 
 
 $framework->template->setTemplate('custom');
