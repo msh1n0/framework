@@ -4,6 +4,7 @@ include 'contentpool.inc';
 include 'document.inc';
 include 'exceptions.inc';
 include 'ext/mobile-detect/mobile_detect.php';
+include 'externalhtml.inc';
 include 'files.inc';
 include 'images.inc';
 include 'template.inc';
@@ -23,18 +24,16 @@ include 'users.inc';
  * TODO Chat: WebChat oder Newsticker-Funktion
  * TODO Media: Musik, Video, Streaming und so
  * TODO Kalender: Allgemeiner Kalender mit Terminen, Erinerungen per Mail
- * TODO Cronjob: bezug auf eine Datei im Framework, damit er leicht erweiterbar ist
+ * TODO Cronjob: Bezug auf eine Datei im Framework, damit er leicht erweiterbar ist
  * TODO Einfaches Newsletter-System mit eigener User-Datenbank,
  */
 class framework{
-    /**
-     * @var string
-     */
     /**
      *
      */
     public function __construct(){
         $this->images = new images();
+        $this->externalcontent = new externalHTML();
         $this->users = new users();
         $this->contentpool = new contentpool();
         $this->template = new template();
