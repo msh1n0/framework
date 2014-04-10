@@ -36,7 +36,26 @@ class DirectoryNotFoundException extends Exception{
      * @return string
      */
     public function __tostring(){
-        return '## UserDupeException:'.$this->message.'##';
+        return '## DirectoryNotFoundException:'.$this->message.'##';
+    }
+}
+/**
+ * Class TemplateNotFoundException
+ */
+class TemplateNotFoundException extends Exception{
+    /**
+     * @param string $message
+     * @param int $code
+     */
+    public function __construct($message, $code = 0) {
+        parent::__construct($message, $code);
+    }
+
+    /**
+     * @return string
+     */
+    public function __tostring(){
+        return '## TemplateNotFoundException:'.$this->message.'##';
     }
 }
 /**
@@ -55,7 +74,7 @@ class ConfigurationException extends Exception{
      * @return string
      */
     public function __tostring(){
-        return '## UserDupeException:'.$this->message.'##';
+        return '## ConfigurationException:'.$this->message.'##';
     }
 }
 
@@ -75,6 +94,6 @@ class InputErrorException extends Exception{
      * @return string
      */
     public function __tostring(){
-        return '## UserDupeException:'.$this->message.'##';
+        return '## InputErrorException:'.$this->message.'##';
     }
 }

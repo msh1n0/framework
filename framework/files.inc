@@ -2,7 +2,7 @@
 
 /**
  * Class files
- * Verwaltungsklasse für Ordner und Dateien
+ * Verwaltungsklasse fÃ¼r Ordner und Dateien
  */
 class files{
     /**
@@ -22,7 +22,7 @@ class files{
 
     /**
      * @param string $directory Pfad
-     * @param bool $recursive bei true werden alle benötigten Ordner automatisch angelegt
+     * @param bool $recursive bei true werden alle benï¿½tigten Ordner automatisch angelegt
      */
     public function createDirectory($directory, $recursive=true){
         if(!$recursive)mkdir($directory);
