@@ -4,8 +4,17 @@
  * Class users
  */
 class users{
+    /**
+     * @var array
+     */
     private $users = array();
+    /**
+     * @var
+     */
     private $storagePath;
+    /**
+     * @var document
+     */
     private $document;
 
     /**
@@ -56,6 +65,11 @@ class users{
         else throw new UserDupeException("Der Nutzer existiert bereits");
     }
 
+    /**
+     * @param $username
+     * @param $pass
+     * @return int
+     */
     public function logIn($username,$pass){
         $this->logOut();
         $filteredUsers=$this->document->getCSVAsArray();
@@ -73,14 +87,25 @@ class users{
         }
         return 2;
     }
+
+    /**
+     *
+     */
     public function logOut(){
         session_destroy();
     }
+
+    /**
+     *
+     */
     public function getUserlevel(){
         $this->verifyLogin();
         $_SESSION['userlevel'];
     }
 
+    /**
+     * @return bool
+     */
     public function isLoggedIn(){
         if(empty($_SESSION['username'])) return false;
         else {

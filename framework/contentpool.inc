@@ -1,16 +1,43 @@
 <?php
 
+/**
+ * Class contentpool Verwaltung der Inhalte
+ */
 class contentpool{
+    /**
+     * @var string Dateityp der Inhalte (Standard .tpl)
+     */
     private $sourceType='tpl';
+    /**
+     * @var document internes document-Objekt für Dateibasierte Zugriffe
+     */
     private $document;
+    /**
+     * @var string Basis-Arbeitsverzeichnis
+     */
     private $dataDirectory;
+    /**
+     * @var array alle gefundenen Seiten
+     */
     private $pages = array();
+    /**
+     * @var files
+     */
     private $files;
 
+    /**
+     *
+     */
     function __construct(){
         $this->document=new document();
         $this->files= new files();
     }
+
+    /**
+     * @param $directory
+     * @throws DirectoryNotFoundException
+     * @throws ConfigurationException
+     */
     public function setDataDirectory($directory){
         if($this->sourceType==='mySQL') throw new ConfigurationException("Einrichtung eines Verzeichnisses nicht notwendig");
         if(!isset($directory) || !empty($directory)){
@@ -18,12 +45,22 @@ class contentpool{
             $this->dataDirectory=$directory;
         }
     }
+
+    /**
+     * @param $sourceType
+     */
     public function setSourceType($sourceType){
         switch($sourceType){
             default:
                 $this->sourceType='tpl';
         }
     }
+
+    /**
+     * @param $element
+     * @return string
+     * @throws TemplateNotFoundException
+     */
     public function getContent($element){
         switch($this->sourceType){
             case 'tpl':
@@ -36,6 +73,10 @@ class contentpool{
                 return '';
         }
     }
+
+    /**
+     * Einlesen des Arrays für die interne Seitenübersicht
+     */
     private function getPages(){
         switch($this->sourceType){
             default:

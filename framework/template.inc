@@ -3,18 +3,42 @@
 include 'ext/smarty/Smarty.class.php';
 
 
+/**
+ * Class template
+ */
 class template {
+    /**
+     * @var Smarty
+     */
     private $smarty;
+    /**
+     * @var string
+     */
     private $templatePath='framework/template';
+    /**
+     * @var string
+     */
     private $templateFile='index';
+    /**
+     * @var
+     */
     private $template;
+    /**
+     * @var string
+     */
     private $systemTemplate='system';
+    /**
+     * @var array
+     */
     private $bootstrap=array(
         array('framework/ext/bootstrap/bootstrap.min.css',
             'framework/ext/bootstrap/bootstrap-theme.min.css',
             'framework/ext/bootstrap/bootstrap.custom.css'),
         array('framework/ext/bootstrap/bootstrap.min.js')
     );
+    /**
+     * @var
+     */
     private $jqueryNeeded;
 
     /**

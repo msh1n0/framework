@@ -7,6 +7,9 @@ include 'ext/mpdf/mpdf.php';
  * Für Vereinfachtes Abfrage und Anlegen von Dateien
  */
 class document{
+    /**
+     * @var
+     */
     private $file;
 
     /**
