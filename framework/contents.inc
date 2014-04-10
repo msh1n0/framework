@@ -3,22 +3,26 @@
 class contents{
     private $sourceType;
     private $document;
+    private $dataDirectory;
 
     function __construct(){
         $this->document=new document();
     }
-    function setSourceType($sourceType){
-        switch($sourceType){
-            case 'html':
-                $this->sourceType=$sourceType;
-                break;
-            default:
-                $this->sourceType='html';
+    public function setDataDirectory($directory){
+        if($this->sourceType==='mySQL') throw new ConfigurationException("Einrichtung eines Verzeichnisses nicht notwendig");
+        if(!isset($directory) || !empty($directory)){
+            if(!is_dir($directory)) throw new DirectoryNotFoundException("das Verzeichnis konnte nicht geladen werden");
+            $this->dataDirectory=$directory;
         }
-
     }
-    function getPage($site){
-        switch($site){
+    public function setSourceType($sourceType){
+        switch($sourceType){
+            default:
+                $this->sourceType='tpl';
+        }
+    }
+    public function getContent(){
+        switch($this->sourceType){
             case 'html':
                 return $this->document->getFileAsString();
                 break;

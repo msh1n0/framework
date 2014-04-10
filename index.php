@@ -3,7 +3,7 @@ include 'framework/framework.php';
 
 $framework = new framework();
 
-
+$framework->contents->setSourceType('html');
 $content=$framework->contents->getPage($_GET['site']);
 
 

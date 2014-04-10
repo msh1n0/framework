@@ -21,6 +21,45 @@ class UserDupeException extends Exception{
 }
 
 /**
+ * Class DirectoryNotFoundException
+ */
+class DirectoryNotFoundException extends Exception{
+    /**
+     * @param string $message
+     * @param int $code
+     */
+    public function __construct($message, $code = 0) {
+        parent::__construct($message, $code);
+    }
+
+    /**
+     * @return string
+     */
+    public function __tostring(){
+        return '## UserDupeException:'.$this->message.'##';
+    }
+}
+/**
+ * Class ConfigurationException
+ */
+class ConfigurationException extends Exception{
+    /**
+     * @param string $message
+     * @param int $code
+     */
+    public function __construct($message, $code = 0) {
+        parent::__construct($message, $code);
+    }
+
+    /**
+     * @return string
+     */
+    public function __tostring(){
+        return '## UserDupeException:'.$this->message.'##';
+    }
+}
+
+/**
  * Class InputErrorException
  */
 class InputErrorException extends Exception{
