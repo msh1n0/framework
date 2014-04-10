@@ -76,6 +76,18 @@ class users{
     public function logOut(){
         session_destroy();
     }
+    public function getUserlevel(){
+        $this->verifyLogin();
+        $_SESSION['userlevel'];
+    }
+
+    public function isLoggedIn(){
+        if(empty($_SESSION['username'])) return false;
+        else {
+            $this->verifyLogin();
+            return true;
+        }
+    }
 
     /**
      * @return array
@@ -104,5 +116,16 @@ class users{
         }
         return $dupe;
     }
-
+    /**
+     * Prüft, ob der Userlevel noch stimmt
+     */
+    private function verifyLogin(){
+        $filteredUsers=$this->document->getCSVAsArray();
+        foreach($filteredUsers as $user){
+            $split=explode(';',$user);
+            if($split[0]===$_SESSION['username']){
+                $_SESSION['userlevel']=$split[2];
+            }
+        }
+    }
 }

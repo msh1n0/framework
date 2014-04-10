@@ -8,32 +8,30 @@
     {$bootstrap_css}
 </head>
 <body>
+{block name=navigation_top}
+    {include "framework/template/system/elements/navigation_top.tpl"}
+{/block}
+
 <div class="container">
-    <div class="row">
-        <div class="col-lg-9">
-            {block name=headline}
-                <div class="alert alert-info">
-                    <h1>Willkommen</h1>
-                </div>
-            {/block}
+    {block name=headline}
+        <div class="alert alert-info">
+            <h1>Willkommen</h1>
         </div>
-        <div class="col-lg-3 text-right">
+    {/block}
+    {block name=content}
+        <div class="alert alert-danger">
+            Standardtemplate geladen
         </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-9">
-            {block name=content}
-                <div class="alert alert-danger">
-                    Standardtemplate geladen
-                </div>
-            {/block}
-        </div>
-        <div class="col-lg-3 text-right">
-        </div>
-    </div>
+    {/block}
 </div>
+
+
+{block name=navigation_bottom}
+    {include "framework/template/system/elements/navigation_bottom.tpl"}
+{/block}
+
+
 {$jquery}
 {$bootstrap_js}
 </body>
 </html>
-
