@@ -5,7 +5,7 @@ include 'contentpool.inc';
 include 'document.inc';
 include 'exceptions.inc';
 include 'ext/mobile-detect/mobile_detect.php';
-include 'externalhtml.inc';
+include 'externalcontent.inc';
 include 'files.inc';
 include 'images.inc';
 include 'template.inc';
@@ -37,11 +37,11 @@ class framework{
      */
     public function __construct(){
         $this->config=configuration::loadConfig('framework');
-        $this->images = new images();
-        $this->users = new users();
-        $this->contentpool = new contentpool();
-        $this->externalcontent = new externalHTML();
-        $this->template = new template();
-        $this->mobileDetect = new Mobile_Detect();
+        if($this->config['enable_images']==1) $this->images = new images();
+        if($this->config['enable_users']==1) $this->users = new users();
+        if($this->config['enable_contentpool']==1) $this->contentpool = new contentpool();
+        if($this->config['enable_externalhtml']==1) $this->externalcontent = new externalContent();
+        if($this->config['enable_template']==1) $this->template = new template();
+        if($this->config['enable_mobiledetect']==1) $this->mobileDetect = new Mobile_Detect();
     }
 }
