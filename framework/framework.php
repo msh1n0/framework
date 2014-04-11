@@ -33,9 +33,9 @@ class framework{
      */
     public function __construct(){
         $this->images = new images();
-        $this->externalcontent = new externalHTML();
         $this->users = new users();
         $this->contentpool = new contentpool();
+        $this->externalcontent = new externalHTML();
         $this->template = new template();
         $this->mobileDetect = new Mobile_Detect();
     }
