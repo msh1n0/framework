@@ -6,7 +6,7 @@ include 'ext/smarty/Smarty.class.php';
 /**
  * Class template
  */
-class template {
+class template{
     /**
      * @var Smarty
      */
@@ -40,11 +40,14 @@ class template {
      * @var
      */
     private $jqueryNeeded;
+    public $config;
 
     /**
      *
      */
     function __construct(){
+        $this->config=configuration::loadConfig('template');
+        $this->setTemplate($this->config['template']);
         $this->smarty = new Smarty();
         $this->smarty->setCacheDir('framework/cache/smarty');
         $this->smarty->setCompileDir('framework/cache/smarty/compile');

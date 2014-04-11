@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class imageController Bildverarbeitungfunktionen
  * @author  Marco Soschniok

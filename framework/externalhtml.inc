@@ -1,10 +1,11 @@
 <?php
 
+
 /**
  * Class externalHTML
  * Funktionsweise: Seite eintragen (setURL), je nach bedarf zuschneiden (cropContent), Linkadressen korrigieren, Inhalt ausgeben (getContent)
  */
-class externalHTML {
+class externalHTML{
     /**
      * @var string Inhalt der externen Datei
      */

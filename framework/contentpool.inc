@@ -7,7 +7,7 @@ class contentpool{
     /**
      * @var string Dateityp der Inhalte (Standard .tpl)
      */
-    private $sourceType='tpl';
+    private $sourceType;
     /**
      * @var document internes document-Objekt für Dateibasierte Zugriffe
      */
@@ -24,11 +24,14 @@ class contentpool{
      * @var files
      */
     private $files;
+    public $config;
 
     /**
      *
      */
     function __construct(){
+        $this->config=configuration::loadConfig('contentpool');
+        $this->sourceType=$this->config['sourcetype'];
         $this->document=new document();
         $this->files= new files();
     }
