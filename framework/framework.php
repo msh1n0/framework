@@ -31,6 +31,9 @@ global $CONFIG;
  * TODO Einfaches Newsletter-System mit eigener User-Datenbank,
  */
 class framework{
+    /**
+     * @var
+     */
     public $config;
     /**
      *
