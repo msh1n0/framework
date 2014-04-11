@@ -40,7 +40,7 @@ class template{
      * @var
      */
     private $jqueryNeeded;
-    public $config;
+    private $config;
 
     /**
      *

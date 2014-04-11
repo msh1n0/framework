@@ -16,13 +16,20 @@ class users{
      * @var document
      */
     private $document;
+    private $db_table;
+    private $config;
 
     /**
      *
      */
     function __construct(){
-        $this->document = new document();
-        $this->document->setDocument('framework/data/users.db');
+        $this->config=configuration::loadConfig('users');
+        if(!$this->config['db_mode']){ //Datei-Modus
+            $this->document = new document();
+            $this->document->setDocument($this->config['userfile']);
+        }else{ //Datenbankodus
+            echo 'DATABASEMODE';
+        }
     }
 
     /**

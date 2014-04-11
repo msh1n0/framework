@@ -11,9 +11,6 @@ include 'images.inc';
 include 'template.inc';
 include 'users.inc';
 
-
-global $CONFIG;
-
 /**
  * Class framework Sammlung Funktionen
  *
@@ -34,7 +31,7 @@ class framework{
     /**
      * @var
      */
-    public $config;
+    private $config;
     /**
      *
      */

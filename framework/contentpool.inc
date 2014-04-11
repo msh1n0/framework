@@ -24,7 +24,7 @@ class contentpool{
      * @var files
      */
     private $files;
-    public $config;
+    private $config;
 
     /**
      *
