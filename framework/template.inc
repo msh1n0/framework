@@ -30,11 +30,28 @@ class template{
     /**
      * @var array
      */
+    private $document;
+    /**
+     * @var array
+     */
+    private $files;
+    /**
+     * @var array
+     */
+    private $swipeDirectory;
+    /**
+     * @var array
+     */
     private $bootstrap=array(
         array('framework/ext/bootstrap/bootstrap.min.css',
             'framework/ext/bootstrap/bootstrap-theme.min.css',
             'framework/ext/bootstrap/bootstrap.custom.css'),
         array('framework/ext/bootstrap/bootstrap.min.js')
+    );
+    private $swipe=array(
+        array('framework/ext/swipe/swipe.css'),
+        array('framework/ext/swipe/swipe.js',
+            'framework/ext/swipe/swipe-start.js')
     );
     /**
      * @var
@@ -46,6 +63,8 @@ class template{
      *
      */
     function __construct(){
+        $this->document= new document();
+        $this->files= new files();
         $this->config=configuration::loadConfig('template');
         $this->setTemplate($this->config['template']);
         $this->smarty = new Smarty();
@@ -109,6 +128,19 @@ class template{
         switch($scriptname){
             case 'bootstrap';
                 $input=$this->bootstrap;
+                $this->jqueryNeeded=true;
+                break;
+            case 'swipe';
+                $input=$this->swipe;
+                $this->jqueryNeeded=true;
+                if(is_file($this->templatePath.'/'.$this->template.'/elements/swipe_nav.tpl')){
+                    $this->document->setDocument($this->templatePath.'/'.$this->template.'/elements/swipe_nav.tpl');
+                    $this->smarty->assign('swipe_nav',$this->document->getFileAsString());
+                }
+                else{
+                    $this->document->setDocument($this->templatePath.'/system/elements/swipe_nav.tpl');
+                    $this->smarty->assign('swipe_nav',$this->document->getFileAsString());
+                }
                 break;
         }
         for($i=0;$i<=1;$i++){
@@ -119,15 +151,30 @@ class template{
         }
         $this->smarty->assign($scriptname.'_css',$values[0]);
         $this->smarty->assign($scriptname.'_js',$values[1]);
-        $this->jqueryNeeded=true;
+    }
+
+    public function setSwipeDirectory($swipeDirectory){
+        $this->swipeDirectory=$swipeDirectory;
+        $this->generateSwipe();
     }
 
     /**
      * Letzter Check vor der Initialisierung
      */
-    public function lastCheck(){
+    private function lastCheck(){
         if($this->jqueryNeeded===true){
             $this->smarty->assign('jquery','<script src="framework/ext/jquery/jquery.js"></script>');
         }
+    }
+    private function generateSwipe(){
+        if(empty($this->swipeDirectory))throw new ConfigurationException('Das SwipeDirectory ist nicht eingerichtet');
+        $galleryElements=$this->files->DirectoryContents($this->swipeDirectory);
+        $output='<div id="slider"><ul>';
+
+        foreach($galleryElements as $element){
+            $output.='<li style="display:none"><img src="'.$this->swipeDirectory.'/'.$element.'"></a></li>';
+        }
+        $output.='</ul></div>';
+        $this->smarty->assign('swipe',$output);
     }
 } 

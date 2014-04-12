@@ -3,9 +3,10 @@
 <head>
     <meta charset="{$metaCharset}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
     <title>Testumgebung</title>
     {$bootstrap_css}
+    {$swipe_css}
 </head>
 <body>
 {block name=navigation_top}
@@ -33,5 +34,6 @@
 
 {$jquery}
 {$bootstrap_js}
+{$swipe_js}
 </body>
 </html>
