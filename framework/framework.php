@@ -13,6 +13,7 @@ include 'users.inc';
 
 /**
  * Class framework Sammlung Funktionen
+ * TODO User: Benutzer bearbeiten, löschen noch checken, Freie Attribute über Array
  * TODO Template: CSS-Anmeldung bei Smarty
  * TODO Datenbank (einsetzen in document): Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
  * TODO Contents: mit oder ohne Datenbank
