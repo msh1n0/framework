@@ -68,7 +68,7 @@ class users{
      */
     public function createUser($username,$password,$level){
         if(strpos($username,' ')!=='') throw new InputErrorException('Benutzernamen dürfen keine Leereichen enthalten');
-        elseif(!$this->checkForDupe($username)) $this->document->writeCSV($this->storagePath,$username.';'.md5($password).';'.$level,true);
+        elseif(!$this->checkForDupe($username)) $this->document->writeCSV($username.';'.md5($password).';'.$level,true);
         else throw new UserDupeException("Der Nutzer existiert bereits");
     }
 
