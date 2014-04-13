@@ -27,6 +27,7 @@ class users{
         if(!$this->config['db_mode']){ //Datei-Modus
             $this->document = new document();
             $this->document->setDocument($this->config['userfile']);
+            $this->users=$this->document->getCSVAsArray();
         }else{ //Datenbankodus
             echo 'DATABASEMODE';
         }
@@ -67,9 +68,10 @@ class users{
      * @throws InputErrorException
      */
     public function createUser($username,$password,$level){
-        if(strpos($username,' ')!=='') throw new InputErrorException('Benutzernamen dürfen keine Leereichen enthalten');
+        if(empty($username)) throw new InputErrorException('Der Benutzername darf nicht leer sein');
         elseif(!$this->checkForDupe($username)) $this->document->writeCSV($username.';'.md5($password).';'.$level,true);
         else throw new UserDupeException("Der Nutzer existiert bereits");
+        $this->users=$this->document->getCSVAsArray();
     }
 
     /**
@@ -122,26 +124,14 @@ class users{
     }
 
     /**
-     * @return array
-     */
-    private function getAllUsers(){
-        $output=array();
-        foreach($this->users as $user){
-            $output[]=$user['username'];
-        }
-        return $output;
-
-    }
-
-    /**
      * @param $username
      * @return bool
      */
     private function checkForDupe($username){
         $dupe=false;
-        $allUsers=$this->getAllUsers();
-        foreach($allUsers as $user){
-            if($user===$username){
+        foreach($this->users as $user){
+            $plit=explode(';',$user);
+            if($plit[0]==$username){
                 $dupe=true;
                 break;
             }
