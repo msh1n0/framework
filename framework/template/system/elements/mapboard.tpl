@@ -1,4 +1,4 @@
     {$mapboard_css}
-<div class="alert alert-info">
+<div class="alert alert-success">
     {$mapboard}
 </div>
