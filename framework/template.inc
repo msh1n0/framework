@@ -43,9 +43,7 @@ class template{
      * @var array
      */
     private $bootstrap=array(
-        array('framework/ext/bootstrap/bootstrap.min.css',
-            'framework/ext/bootstrap/bootstrap-theme.min.css',
-            'framework/ext/bootstrap/bootstrap.custom.css'),
+        array('framework/ext/bootstrap/bootstrap.min.css'),
         array('framework/ext/bootstrap/bootstrap.min.js')
     );
     private $swipe=array(
@@ -73,6 +71,7 @@ class template{
         $this->smarty->caching = true;
         $this->smarty->cache_lifetime = 120;
         $this->smarty->assign('metaCharset','utf-8');
+        $this->bootstrap[0][]='framework/ext/bootstrap/themes/'.$this->config['bootstrap_theme'].'.css';
     }
 
     /**
