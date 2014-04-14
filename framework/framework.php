@@ -13,6 +13,7 @@ include 'users.inc';
 
 /**
  * Class framework Sammlung Funktionen
+ * TODO Mapgrid braucht noch erkennung für die Bildgröße, damit es keine Fehlkonfiguration gibt
  * TODO Template: CSS-Anmeldung bei Smarty
  * TODO Datenbank (einsetzen in document): Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
  * TODO Contents: mit oder ohne Datenbank

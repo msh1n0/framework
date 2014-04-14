@@ -14,14 +14,9 @@
 {/block}
 
 <div class="container">
-    {block name=headline}
+    {block name=content}
         <div class="alert alert-info">
             <h1>Willkommen</h1>
-        </div>
-    {/block}
-    {block name=content}
-        <div class="alert alert-danger">
-            Standardtemplate geladen
         </div>
     {/block}
 </div>

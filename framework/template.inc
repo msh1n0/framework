@@ -72,6 +72,7 @@ class template{
         $this->smarty->cache_lifetime = 120;
         $this->smarty->assign('metaCharset','utf-8');
         $this->bootstrap[0][]='framework/ext/bootstrap/themes/'.$this->config['bootstrap_theme'].'.css';
+        $this->smarty->assign('templateDirectory',$this->templatePath.'/');
     }
 
     /**
@@ -157,6 +158,31 @@ class template{
         $this->generateSwipe();
     }
 
+    public function setupMapGrip($image,$width,$height,$cols,$rows){
+        $this->generateMapGrid($cols, $rows);
+        $this->generateMapGridCSS($image,$width,$height);
+    }
+
+    public function generateMapGrid($cols, $rows){
+        $output='<table class="mapboard" cellpadding="0" cellspacing="0">';
+        for($row=1;$row<=$rows;$row++){
+            $output.='<tr>';
+            for($col=1;$col<=$cols;$col++){
+                $output.='<td id="'.$row.'_1" class=""></td>';
+            }
+            $output.='</tr>';
+        }
+        $output.='</table>';
+        $this->smarty->assign('mapboard',$output);
+    }
+
+    public function generateMapGridCSS($image,$width,$height){
+
+        $css='<style>.container{min-width:'.($width+60).'px;max-width:'.($width+60).'px;width:'.($width+60).'px;}
+        .mapboard{min-width:'.$width.'px;width:'.($width+60).'px;min-height:'.$height.'px;height:'.$height.'px;background:url('.$image.') no-repeat;background-size:contain}
+        .mapboard td:hover{box-shadow:inset 0 0 3px #000;}</style>';
+        $this->smarty->assign('mapboard_css',$css);
+    }
     /**
      * Letzter Check vor der Initialisierung
      */
