@@ -85,6 +85,11 @@ class document{
         fwrite($filehandle,$text);
         fclose($filehandle);
     }
+    public function writeDB($content){
+        $filehandle = fopen($this->file, 'w');
+        fwrite($filehandle,$content);
+        fclose($filehandle);
+    }
 
     /**
      *
