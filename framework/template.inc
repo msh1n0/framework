@@ -158,9 +158,10 @@ class template{
         $this->generateSwipe();
     }
 
-    public function setupMapGrip($image,$width,$height,$cols,$rows){
+    public function setupMapGrip($image,$cols,$rows){
+        $image=new image();
         $this->generateMapGrid($cols, $rows);
-        $this->generateMapGridCSS($image,$width,$height);
+        $this->generateMapGridCSS($image,$imageSize[0],$imageSize[1]);
     }
 
     public function generateMapGrid($cols, $rows){
