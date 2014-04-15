@@ -1,6 +1,8 @@
 <?php
 include 'framework/framework.php';
 
+
+
 /*
  * Basis-Definitionen
  * */
