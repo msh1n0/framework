@@ -158,10 +158,19 @@ class template{
         $this->generateSwipe();
     }
 
-    public function setupMapGrip($image,$cols,$rows){
+    public function setupMapGrip($imagePath,$cols,$rows){
         $image=new image();
+        $image->setFile($imagePath);
+        if($cols==''){
+            if($rows=='') throw new InputErrorException('Bitte Gridgröße angeben');
+            $cols=round($image->getWidth()/($image->getHeight()/$rows));
+        }
+        else if($rows==''){
+            if($cols=='') throw new InputErrorException('Bitte Gridgröße angeben');
+            $rows=round($image->getHeight()/($image->getWidth()/$cols));
+        }
         $this->generateMapGrid($cols, $rows);
-        $this->generateMapGridCSS($image,$imageSize[0],$imageSize[1]);
+        $this->generateMapGridCSS($image->getFilename(),$image->getWidth(),$image->getHeight());
     }
 
     public function generateMapGrid($cols, $rows){
@@ -177,10 +186,11 @@ class template{
         $this->smarty->assign('mapboard',$output);
     }
 
-    public function generateMapGridCSS($image,$width,$height){
+    public function generateMapGridCSS($imagePath,$width,$height){
 
         $css='<style>.container{min-width:'.($width+60).'px;max-width:'.($width+60).'px;width:'.($width+60).'px;}
-        .mapboard{min-width:'.$width.'px;width:'.($width+60).'px;min-height:'.$height.'px;height:'.$height.'px;background:url('.$image.') no-repeat;background-size:contain}
+        .mapboard{min-width:'.$width.'px;width:'.($width+60).'px;min-height:'.$height.'px;height:'.$height.'px;background:url('.$imagePath.') no-repeat;background-size:contain}
+        .mapboard td{cursor:pointer}
         .mapboard td:hover{box-shadow:inset 0 0 3px #000;}</style>';
         $this->smarty->assign('mapboard_css',$css);
     }

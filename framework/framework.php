@@ -38,7 +38,6 @@ class framework{
      */
     public function __construct(){
         $this->config=configuration::loadConfig('framework');
-        if($this->config['enable_images']==1) $this->images = new image();
         if($this->config['enable_users']==1) $this->users = new users();
         if($this->config['enable_contentpool']==1) $this->contentpool = new contentpool();
         if($this->config['enable_externalhtml']==1) $this->externalcontent = new externalContent();
