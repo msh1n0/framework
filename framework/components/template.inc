@@ -43,13 +43,13 @@ class template{
      * @var array
      */
     private $bootstrap=array(
-        array('framework/ext/bootstrap/bootstrap.min.css'),
-        array('framework/ext/bootstrap/bootstrap.min.js')
+        '',
+        array('framework/components/ext/bootstrap/bootstrap.min.js')
     );
     private $swipe=array(
-        array('framework/ext/swipe/swipe.css'),
-        array('framework/ext/swipe/swipe.js',
-            'framework/ext/swipe/swipe-start.js')
+        array('framework/components/ext/swipe/swipe.css'),
+        array('framework/components/ext/swipe/swipe.js',
+            'framework/components/ext/swipe/swipe-start.js')
     );
     /**
      * @var
@@ -71,7 +71,7 @@ class template{
         $this->smarty->caching = true;
         $this->smarty->cache_lifetime = 120;
         $this->smarty->assign('metaCharset','utf-8');
-        $this->bootstrap[0][]='framework/ext/bootstrap/themes/'.$this->config['bootstrap_theme'].'.css';
+        $this->bootstrap[0][]='framework/components/ext/bootstrap/themes/'.$this->config['bootstrap_theme'].'.css';
         $this->smarty->assign('templateDirectory',$this->templatePath.'/');
     }
 
@@ -162,7 +162,7 @@ class template{
      */
     private function lastCheck(){
         if($this->jqueryNeeded===true){
-            $this->smarty->assign('jquery','<script src="framework/ext/jquery/jquery.js"></script>');
+            $this->smarty->assign('jquery','<script src="framework/components/ext/jquery/jquery.js"></script>');
         }
     }
     private function generateSwipe(){

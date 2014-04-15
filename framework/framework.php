@@ -1,16 +1,16 @@
 <?php
 session_start();
-include 'configuration.inc';
-include 'contentpool.inc';
-include 'document.inc';
-include 'exceptions.inc';
-include 'ext/mobile-detect/mobile_detect.php';
-include 'externalcontent.inc';
-include 'files.inc';
-include 'image.inc';
-include 'template.inc';
-include 'users.inc';
-include 'map.inc';
+include 'components/configuration.inc';
+include 'components/contentpool.inc';
+include 'components/document.inc';
+include 'components/exceptions.inc';
+include 'components/ext/mobile-detect/mobile_detect.php';
+include 'components/externalcontent.inc';
+include 'components/files.inc';
+include 'components/image.inc';
+include 'components/template.inc';
+include 'components/users.inc';
+include 'components/map.inc';
 
 /**
  * Class framework Sammlung Funktionen
