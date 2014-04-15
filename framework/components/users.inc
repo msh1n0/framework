@@ -12,8 +12,9 @@ class users{
      * @var document
      */
     private $document;
-    private $db_table;
     private $config;
+    private $database;
+    private $attributes;
 
     /**
      *
@@ -24,8 +25,12 @@ class users{
             $this->document = new document();
             $this->document->setDocument($this->config['userfile']);
             $this->importUserData();
-        }else{ //Datenbankodus
-            echo 'DATABASEMODE';
+        }else{
+            $this->database = new database();
+            $this->setAttributes($this->config['attributes']);
+            $this->database->setAttributes($this->attributes);
+            $this->database->setTable($this->config['db_table']);
+            $this->importUserData();
         }
     }
 
@@ -37,10 +42,18 @@ class users{
         elseif($this->checkForDupe($input['username']))throw new UserDupeException("Der Nutzer existiert bereits");
         else{
             $input['password']=md5($input['password']);
-            $this->users[]=$input;
-            $this->saveDB();
+            if(!$this->config['db_mode']){
+                $this->users[]=$input;
+                $this->saveDB();
+            }
+            else{
+                try{
+                    $this->database->save($input);
+                }catch (mysqli_sql_exception $e){
+                    $_SESSION['error']=$e->getMessage();
+                }
+            }
         }
-
     }
 
     public function logIn($username,$password){
@@ -100,8 +113,19 @@ class users{
         return $this->users;
     }
 
+    private function setAttributes($attributes){
+        $output=array('username','password');
+        $split= explode(',',$attributes);
+        foreach($split as $element){
+            $output[]=$element;
+        }
+        $this->attributes=$output;
+    }
     private function importUserData(){
-        $this->users=unserialize($this->document->getFileAsString());
+        if(!$this->config['db_mode'])$this->users=unserialize($this->document->getFileAsString());
+        else{
+           $this->users=$this->database->getAll();
+        }
     }
 
     private function saveDB(){

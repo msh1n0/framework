@@ -2,15 +2,16 @@
 session_start();
 include 'components/configuration.inc';
 include 'components/contentpool.inc';
+include 'components/database.inc';
 include 'components/document.inc';
 include 'components/exceptions.inc';
 include 'components/ext/mobile-detect/mobile_detect.php';
 include 'components/externalcontent.inc';
 include 'components/files.inc';
 include 'components/image.inc';
+include 'components/map.inc';
 include 'components/template.inc';
 include 'components/users.inc';
-include 'components/map.inc';
 
 /**
  * Class framework Sammlung Funktionen

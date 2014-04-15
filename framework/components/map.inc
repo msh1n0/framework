@@ -30,7 +30,7 @@ class map{
         for($row=1;$row<=$rows;$row++){
             $output.='<tr>';
             for($col=1;$col<=$cols;$col++){
-                $output.='<td id="'.$row.'_1" class=""></td>';
+                $output.='<td id="'.$row.'_'.$col.'" class=""></td>';
             }
             $output.='</tr>';
         }
