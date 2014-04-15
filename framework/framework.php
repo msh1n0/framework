@@ -10,6 +10,7 @@ include 'files.inc';
 include 'image.inc';
 include 'template.inc';
 include 'users.inc';
+include 'map.inc';
 
 /**
  * Class framework Sammlung Funktionen
