@@ -58,13 +58,11 @@ class users{
 
     public function logIn($username,$password){
         $this->importUserData();
-
         foreach($this->users as $user){
-            if($user['username']===$username){
-                if($user['password']===md5($password)){
+            if($user['username']==$username){
+                if($user['password']==md5($password)){
                     session_start();
                     $_SESSION['username']=$user['username'];
-                    $_SESSION['userlevel']=$user['password'];
                     return true;
                 }
             }
@@ -80,10 +78,16 @@ class users{
     }
 
     /**
+     *
+     */
+    public function getAttributes(){
+        return $this->attributes;
+    }
+
+    /**
      * @return bool
      */
     public function isLoggedIn(){
-        $this->verifyLogin();
         if(empty($_SESSION['username'])){
             return false;
         }
@@ -112,6 +116,14 @@ class users{
     public function getAllUsers(){
         return $this->users;
     }
+    public function currentUser($attribute){
+        foreach($this->users as $user){
+            if($user['username']==$_SESSION['username']){
+                return $user[$attribute];
+            }
+        }
+        return false;
+    }
 
     private function setAttributes($attributes){
         $output=array('username','password');
@@ -139,16 +151,6 @@ class users{
         $this->importUserData();
         foreach($this->users as $user){
             if($username===$user['username']) return true;
-        }
-        return false;
-    }
-    /**
-     * Prüft, ob der Userlevel noch stimmt
-     */
-    private function verifyLogin(){
-        $this->importUserData();
-        foreach($this->users as $user){
-            if($_SESSION['username']===$user['username']) return true;
         }
         return false;
     }

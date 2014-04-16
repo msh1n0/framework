@@ -14,6 +14,7 @@
 
 <div class="container">
     {$error}
+    {$message}
     {block name=content}
     {/block}
 </div>

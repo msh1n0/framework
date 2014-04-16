@@ -28,17 +28,24 @@ class database {
         $this->insert($data);
         $this->disconnect();
     }
+    public function get($identifier,$value,$returnvalue){
+        $this->connect();
+        $result=$this->select($identifier.'='.$value);
+        $this->disconnect();
+        return $result[0][$returnvalue];
+    }
     public function getAll(){
         $this->connect();
-        $result=$this->select();
+        $result=$this->select('');
         $this->disconnect();
         return $result;
     }
     private function connect(){
         $this->sqlLink = mysqli_connect($this->db_server, $this->db_login, $this->db_password,$this->db_name);
     }
-    private function select(){
-        $sql = "SELECT * FROM ".$this->db_table.";";
+    private function select($where){
+        if($where!='')$where=' WHERE '.$where;
+        $sql = "SELECT * FROM ".$this->db_table.$where.";";
 
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
@@ -48,12 +55,7 @@ class database {
         $output=array();
         while ($zeile = mysqli_fetch_array( $db_erg, MYSQL_ASSOC))
         {
-            $element[]=array();
-            foreach($this->attributes as $attribute){
-                $element[]=array($attribute=>$zeile[$attribute]);
-            }
-            $output[]=$element;
-            unset($element);
+           $output[]=$zeile;
         }
         return $output;
     }

@@ -43,7 +43,7 @@ class template{
      * @var array
      */
     private $bootstrap=array(
-        '',
+        array('framework/components/ext/bootstrap/glyphicons.css'),
         array('framework/components/ext/bootstrap/bootstrap.min.js')
     );
     private $swipe=array(

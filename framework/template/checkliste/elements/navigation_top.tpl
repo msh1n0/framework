@@ -7,7 +7,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            {if $loggedIn}
+            {if $isLoggedIn}
                 <a class="navbar-brand" href="index.php?site=statistics">Startseite</a>
             {else}
                 <a class="navbar-brand" href="index.php?site=login">Einloggen</a>
@@ -15,7 +15,7 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                {if $loggedIn}
+                {if $isLoggedIn}
                     <li><a href="index.php?site=statistics">Übersicht</a></li>
                     <li><a href="index.php?site=checklist">Meine Checkliste</a></li>
                     <li><a data-toggle="dropdown" href="#">Aufgaben</a>
@@ -28,7 +28,7 @@
                     <li><a data-toggle="dropdown" href="#">Mein Status</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li><a href="index.php">beschäftigt</a></li>
-                            <li><a href="index.php"></a></li>
+                            <li><a href="index.php">suche Aufgabe</a></li>
                             <li><a href="index.php">Pause</a></li>
                             <li><a href="index.php">ABMELDEN</a></li>
                         </ul>
@@ -37,8 +37,7 @@
                 {if $isAdmin}
                     <li><a data-toggle="dropdown" href="#">Benutzeradministration</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a href="index.php?site=useradmin_summary">Benutzerübersicht</a></li>
-                            <li><a href="index.php?site=useradmin_users">Benutzer verwalten</a></li>
+                            <li><a href="index.php?site=useradmin_summary">Benutzer verwalten</a></li>
                             <li><a href="index.php?site=useradmin_usergroups">Benutzergruppen verwalten</a></li>
                         </ul>
                     </li>
