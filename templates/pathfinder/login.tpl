@@ -1,4 +1,4 @@
-{extends "framework/template/pathfinder/index.tpl"}
+{extends "templates/pathfinder/index.tpl"}
 {block name=content}
     <div class="alert alert-info">
         <h1>Login</h1>
