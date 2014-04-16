@@ -119,6 +119,7 @@ class users{
     public function currentUser($attribute){
         foreach($this->users as $user){
             if($user['username']==$_SESSION['username']){
+                var_dump($user);
                 return $user[$attribute];
             }
         }

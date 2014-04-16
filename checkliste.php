@@ -5,7 +5,7 @@ include 'framework/framework.php';
 /*
  * Basis-Definitionen
  * */
-$framework = new framework();
+$framework = new framework('checkliste');
 $framework->template->setTemplate('checkliste');
 if(!empty($_SESSION['error'])){
     $framework->template->setTemplateVariables(array('error','<div class="alert alert-danger">'.$_SESSION['error']));
@@ -20,9 +20,15 @@ if($framework->users->isLoggedIn()){
     $framework->template->setTemplateVariables(array('isLoggedIn',true));
     if($framework->users->currentUser('group'))$framework->template->setTemplateVariables(array('isAdmin',true));
 }
+
+
+#$framework->users->createUser(array('username'=>'marco', 'password'=>md5('pass'), 'firstname'=>'Vorname', 'surname'=>'Nachname', 'email'=>'e@mail.de', 'phone'=>'132456', 'status'=>'0', 'position'=>'132,456', 'group'=>'0'));
+
 /*
  * Basis-Definitionen Ende
  * */
+
+
 
 $content='';
 

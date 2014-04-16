@@ -38,7 +38,8 @@ class framework{
     /**
      *
      */
-    public function __construct(){
+    public function __construct($name){
+        $_SESSION['project']=$name;
         $this->config=configuration::loadConfig('framework');
         if($this->config['enable_users']==1) $this->users = new users();
         if($this->config['enable_contentpool']==1) $this->contentpool = new contentpool();

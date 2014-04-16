@@ -79,6 +79,27 @@ class externalContent{
         return $this->content;
     }
 
+    public function danbooru($site){
+        switch($site){
+            case 'yande.re':
+                $images=array();
+                $position=0;
+                $count=0;
+                while(true){
+                    $position=(strpos($this->content,'directlink',$position));
+                    if($position=='') break;
+
+                    $position=(strpos($this->content,'http',$position+10));
+                    $to=strpos($this->content,'"',$position+10);
+                    $images[$count]=substr($this->content,$position, ($to-$position));
+                    $position=$to;
+                    $count++;
+                }
+                return $images;
+                break;
+        }
+    }
+
     /**
      * Kernfunktion, um die Links aufrufbar machen
      * @param $link
@@ -87,12 +108,10 @@ class externalContent{
     private function repairLink($link){
         if($link=='' || $link=='#')return $link;
         else{
-                #return $link;
-
-                if(strpos($link,'http')===0) return $link;
-                if(strpos($link,'./')===0) return $this->getURLDirectory().substr($link,2);
-                if(strpos($link,'/')===0) return $this->getURLDirectory().substr($link,1);
-                else return $this->getURLDirectory().$link;
+            if(strpos($link,'http')===0) return $link;
+            if(strpos($link,'./')===0) return $this->getURLDirectory().substr($link,2);
+            if(strpos($link,'/')===0) return $this->getURLDirectory().substr($link,1);
+            else return $this->getURLDirectory().$link;
         }
     }
 
