@@ -10,7 +10,7 @@
 </head>
 <body>
 {block name=navigation_top}
-    {include "framework/template/system/elements/navigation_top.tpl"}
+    {include "templates/system/elements/navigation_top.tpl"}
 {/block}
 
 <div class="container">
@@ -23,7 +23,7 @@
 
 
 {block name=navigation_bottom}
-    {include "framework/template/system/elements/navigation_bottom.tpl"}
+    {include "templates/system/elements/navigation_bottom.tpl"}
 {/block}
 
 

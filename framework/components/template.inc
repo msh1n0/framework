@@ -14,7 +14,7 @@ class template{
     /**
      * @var string
      */
-    private $templatePath='framework/template';
+    private $templatePath='templates';
     /**
      * @var string
      */

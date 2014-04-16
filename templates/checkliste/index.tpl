@@ -9,7 +9,7 @@
 </head>
 <body>
 {block name=navigation_top}
-    {include "framework/template/checkliste/elements/navigation_top.tpl"}
+    {include "templates/checkliste/elements/navigation_top.tpl"}
 {/block}
 
 <div class="container">

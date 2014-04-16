@@ -1,9 +1,9 @@
-{extends "framework/template/checkliste/index.tpl"}
+{extends "templates/checkliste/index.tpl"}
 {block name=content}
     <div class="alert">
         <form action="index.php?site=login" method="post">
             <div class="row">
-                <div class="form-group {$error}">
+                <div class="form-group {$has-error}">
                     <div class="col-md-2">
                         <label for="username" class="form-control">Benutzername:</label>
                     </div>
@@ -13,9 +13,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group {$error}">
+                <div class="form-group {$has-error}">
                     <div class="col-md-2">
-                        <label for="username" class="form-control">Password:</label>
+                        <label for="password" class="form-control">Password:</label>
                     </div>
                     <div class="col-md-10">
                         <input type="password" name="password" id="password" class="form-control">

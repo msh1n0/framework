@@ -1,0 +1,67 @@
+
+.fullscreenEffect{
+    position:fixed;width:100%;height:100%;z-index: -1;
+}
+@-moz-keyframes effectDanger {
+    0% {box-shadow:inset 0 0 50px #f00;}
+    100% {box-shadow:inset 0 0 150px #f00;}
+;}
+
+@-webkit-keyframes effectDanger {
+    0% {box-shadow:inset 0 0 50px #f00;}
+    100% {box-shadow:inset 0 0 150px #f00;}
+;}
+
+#effectDanger{
+    box-shadow:inset 0 0 150px #f00;
+    -moz-animation: effectDanger 10s infinite ease-in alternate backwards ;
+    -webkit-animation: effectDanger 10s infinite linear;
+}
+
+@-moz-keyframes effectWarning {
+    0% {box-shadow:inset 0 0 50px #f60;}
+    100% {box-shadow:inset 0 0 150px #f60;}
+;}
+
+@-webkit-keyframes effectWarning {
+    0% {box-shadow:inset 0 0 50px #f60;}
+    100% {box-shadow:inset 0 0 150px #f60;}
+;}
+
+#effectWarning{
+    box-shadow:inset 0 0 150px #f60;
+    -moz-animation: effectWarning 10s infinite ease-in alternate backwards ;
+    -webkit-animation: effectWarning 10s infinite linear;
+}
+
+@-moz-keyframes effectAttention {
+    0% {box-shadow:inset 0 0 50px #ff0;}
+    100% {box-shadow:inset 0 0 150px #ff0;}
+;}
+
+@-webkit-keyframes effectAttention {
+    0% {box-shadow:inset 0 0 50px #ff0;}
+    100% {box-shadow:inset 0 0 150px #ff0;}
+;}
+
+#effectAttention{
+    box-shadow:inset 0 0 150px #ff0;
+    -moz-animation: effectAttention 10s infinite ease-in alternate backwards ;
+    -webkit-animation: effectAttention 10s infinite linear;
+}
+
+@-moz-keyframes effectInfo {
+    0% {box-shadow:inset 0 0 50px #00f;}
+    100% {box-shadow:inset 0 0 150px #00f;}
+;}
+
+@-webkit-keyframes effectInfo {
+    0% {box-shadow:inset 0 0 50px #00f;}
+    100% {box-shadow:inset 0 0 150px #00f;}
+;}
+
+#effectInfo{
+    box-shadow:inset 0 0 150px #00f;
+    -moz-animation: effectInfo 10s infinite ease-in alternate backwards ;
+    -webkit-animation: effectInfo 10s infinite linear;
+}
