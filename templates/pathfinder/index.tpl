@@ -18,14 +18,27 @@
 {/block}
 
 <div class="container">
+    {if isset($message)}
+        <div class="alert alert-success">
+            {$message}
+        </div>
+    {/if}
+    {if isset($warning)}
+        <div class="alert alert-danger">
+            {$warning}
+        </div>
+    {/if}
     {block name=content}
         <div class="alert alert-info">
             <h1>Pathfinder-WebApp von Old Division</h1>
         </div>
-        <div class="alert alert-info">
-            {$welcome}
-        </div>
+
     {/block}
+    {if !isset($username)}
+        <div class="alert alert-info">
+            Zum Mitspielen bitte <a href="{$index}?site=login">anmelden</a>
+        </div>
+    {/if}
 </div>
 
 <script src="templates/pathfinder/scripts/custom.js"></script>

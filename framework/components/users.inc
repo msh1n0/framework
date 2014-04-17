@@ -104,8 +104,11 @@ class users{
         $this->saveDB();
     }
     public function editUser($new=array()){
+        var_dump($new);
         $output=array();
-        $new['password']=md5($new['password']);
+        foreach($this->users as $user){
+            if($new['username']===$user['username']) $new['password']=$user['password'];
+        }
         foreach($this->users as $user){
             if($new['username']===$user['username']) $output[]=$new;
             else $output[]=$user;
@@ -119,11 +122,18 @@ class users{
     public function currentUser($attribute){
         foreach($this->users as $user){
             if($user['username']==$_SESSION['username']){
-                var_dump($user);
                 return $user[$attribute];
             }
         }
         return false;
+    }
+    public function getUser($username){
+        foreach($this->users as $user){
+            if($user['username']==$username){
+                return $user;
+            }
+        }
+        return '';
     }
 
     private function setAttributes($attributes){

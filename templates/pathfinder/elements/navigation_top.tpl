@@ -7,23 +7,23 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.php">{$username}</a>
+            <a class="navbar-brand" href="{$index}">{$username}</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                {if !isset($userlevel)}
-                    <li><a href="index.php?site=login">Anmelden</a></li>
+                {if !isset($username)}
+                    <li><a href="{$index}?site=login">Anmelden</a></li>
                 {/if}
                 {if $player}
-                    <li><a href="index.php?site=wuerfel">Würfeln</a></li>
-                    <li><a href="index.php?site=karte">Karte</a></li>
+                    <li><a href="{$index}?site=wuerfel">Würfeln</a></li>
+                    <li><a href="{$index}?site=karte">Karte</a></li>
                 {/if}
                 {if $admin}
-                    <li><a href="index.php?site=useradmin">User-Admin</a></li>
-                    <li><a href="index.php?site=mapadmin">Karte setzen</a></li>
+                    <li><a href="{$index}?site=mapadmin">Karte setzen</a></li>
+                    <li><a href="{$index}?site=useradmin">User-Admin</a></li>
                 {/if}
-                {if isset($userlevel)}
-                    <li><a href="index.php?site=logout">Abmelden</a></li>
+                {if isset($username)}
+                    <li><a href="{$index}?site=logout">Abmelden</a></li>
                 {/if}
             </ul>
         </div>

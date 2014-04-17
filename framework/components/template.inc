@@ -73,6 +73,7 @@ class template{
         $this->smarty->assign('metaCharset','utf-8');
         $this->bootstrap[0][]='framework/components/ext/bootstrap/themes/'.$this->config['bootstrap_theme'].'.css';
         $this->smarty->assign('templateDirectory',$this->templatePath.'/');
+        $this->smarty->assign('index',$this->getIndex());
     }
 
     /**
@@ -175,5 +176,10 @@ class template{
         }
         $output.='</ul></div>';
         $this->smarty->assign('swipe',$output);
+    }
+    private function getIndex(){
+        $index=$_SERVER['PHP_SELF'];
+        $index=substr($index,(strrpos($index,'/')+1));
+        return $index;
     }
 } 

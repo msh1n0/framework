@@ -2,7 +2,7 @@
 {block name=content}
     <div class="alert alert-info">
         <h1>Login</h1>
-        <form action="index.php?site=login" method="post">
+        <form action="{$index}?site=login" method="post">
             <div class="row">
                 <div class="col-xs-3">
                     <label for="pass" class="control-label">Benutzername</label>
