@@ -20,7 +20,7 @@ if(!empty($_SESSION['message'])){
  * */
 
 $source=new externalContent();
-$source->setURL('https://yande.re/post?tags=range_murata');
+$source->setURL('');
 $images=$source->danbooru('yande.re');
 var_dump($images);
 foreach($images as $image){
