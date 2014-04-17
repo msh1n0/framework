@@ -70,6 +70,10 @@ switch($_GET['site']){
             elseif($_GET['action']=='createuser'){
                 $framework->template->setTemplateFile('useradmin_createuser');
             }
+            elseif($_GET['action']=='deleteuser'){
+                $framework->users->deleteUser($_GET['user']);
+                header('Location:'.$page.'?site=useradmin');
+            }
         }
         else{
             $allUsers=$framework->users->getAllUsers();
