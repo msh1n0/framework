@@ -18,7 +18,7 @@ if(!empty($_SESSION['message'])){
 /*
  * Basis-Definitionen Ende
  * */
-
+/*
 $source=new externalContent();
 $source->setURL('');
 $images=$source->danbooru('yande.re');
@@ -27,6 +27,11 @@ foreach($images as $image){
     str_replace('%20',' ',$image);
     echo '<img src="'.$image.'">';
 }
+*/
+$map=new map('content/pathfinder/images/maps/Diestel.jpg');
+
+;
+$framework->template->setTemplateVariables($map->prepareMap(80,''));
 
 
 /*

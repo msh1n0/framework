@@ -11,6 +11,11 @@
 <body>
 <div class="container">
     {$content}
+    <div class="alert alert-info">
+        {$mapboard}
+        {$mapboard_css}
+    </div>
+
 </div>
 {$jquery}
 {$bootstrap_js}
