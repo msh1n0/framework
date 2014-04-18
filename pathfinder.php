@@ -66,6 +66,13 @@ switch($_GET['site']){
                 $framework->template->setTemplateVariables(array('tp',$user['tp']));
                 $framework->template->setTemplateVariables(array('dmgd',$user['dmgd']));
                 $framework->template->setTemplateVariables(array('dmgnd',$user['dmgnd']));
+                $framework->template->setTemplateVariables(array('w4',$user['w4']));
+                $framework->template->setTemplateVariables(array('w6',$user['w6']));
+                $framework->template->setTemplateVariables(array('w8',$user['w8']));
+                $framework->template->setTemplateVariables(array('w10',$user['w10']));
+                $framework->template->setTemplateVariables(array('w12',$user['w12']));
+                $framework->template->setTemplateVariables(array('w20',$user['w20']));
+                $framework->template->setTemplateVariables(array('w100',$user['w100']));
             }
             elseif($_GET['action']=='createuser'){
                 $framework->template->setTemplateFile('useradmin_createuser');
@@ -126,6 +133,119 @@ switch($_GET['site']){
         break;
     case 'wuerfel':
         $framework->template->setTemplateFile('wuerfel');
+
+        if($framework->users->currentUser('userlevel')>60)$framework->template->setTemplateVariables(array('isadmin',true));
+        $framework->template->setTemplateVariables(array('gab',$framework->users->currentUser('gab')));
+        $framework->template->setTemplateVariables(array('init',$framework->users->currentUser('init')));
+        $framework->template->setTemplateVariables(array('rk',$framework->users->currentUser('rk')));
+        $framework->template->setTemplateVariables(array('tp',$framework->users->currentUser('tp')));
+        $framework->template->setTemplateVariables(array('dmgd',$framework->users->currentUser('dmgd')));
+        $framework->template->setTemplateVariables(array('dmgnd',$framework->users->currentUser('dmgnd')));
+
+        $round= new document();
+        $round->setDocument('data/pathfinder_runde.db');
+        $roundsavegame=unserialize($round->getFileAsString());
+        if(empty($roundsavegame['w4']))$roundsavegame['w4']='0';
+        if(empty($roundsavegame['w6']))$roundsavegame['w6']='0';
+        if(empty($roundsavegame['w8']))$roundsavegame['w8']='0';
+        if(empty($roundsavegame['w10']))$roundsavegame['w10']='0';
+        if(empty($roundsavegame['w12']))$roundsavegame['w12']='0';
+        if(empty($roundsavegame['w20']))$roundsavegame['w20']='0';
+        if(empty($roundsavegame['w100']))$roundsavegame['w100']='0';
+        $framework->template->setTemplateVariables(array('w4',$roundsavegame['w4']));
+        $framework->template->setTemplateVariables(array('w6',$roundsavegame['w6']));
+        $framework->template->setTemplateVariables(array('w8',$roundsavegame['w8']));
+        $framework->template->setTemplateVariables(array('w10',$roundsavegame['w10']));
+        $framework->template->setTemplateVariables(array('w12',$roundsavegame['w12']));
+        $framework->template->setTemplateVariables(array('w20',$roundsavegame['w20']));
+        $framework->template->setTemplateVariables(array('w100',$roundsavegame['w100']));
+        $framework->template->setTemplateVariables(array('currentplayer',$roundsavegame['user']));
+
+
+        if($_GET['action']=='getdice'){
+            $savegame=new document();
+            $savegame->setDocument('data/pathfinder_wuerfel.db');
+            $db=unserialize($savegame->getFileAsString());
+            echo $db['w4'].'|'.$db['w6'].'|'.$db['w8'].'|'.$db['w10'].'|'.$db['w12'].'|'.$db['w20'].'|'.$db['w100'];
+            exit;
+        }
+        elseif($_GET['action']=='setdice'){
+            $savegame=new document();
+            $savegame->setDocument('data/pathfinder_wuerfel.db');
+            $db=unserialize($savegame->getFileAsString());
+            $db['w'.$_GET['slot']]=$_GET['value'];
+            $savegame->writeDB(serialize($db));
+            $roundsavegame['w'.$_GET['slot']]--;
+            $round->writeDB(serialize($roundsavegame));
+            exit;
+        }
+        elseif($_GET['action']=='flushdice'){
+            $savegame=new document();
+            $savegame->setDocument('data/pathfinder_wuerfel.db');
+            $savegame->writeDB('');
+            exit;
+        }
+        elseif($_GET['action']=='setturn'){
+            if($_GET['confirm']=='true'){
+                $savegame=new document();
+                $savegame->setDocument('data/pathfinder_runde.db');
+                $roundsavegame['user']=$_GET['user'];
+                $roundsavegame['w4']=$_POST['w4'];
+                $roundsavegame['w6']=$_POST['w6'];
+                $roundsavegame['w8']=$_POST['w8'];
+                $roundsavegame['w10']=$_POST['w10'];
+                $roundsavegame['w12']=$_POST['w12'];
+                $roundsavegame['w20']=$_POST['w20'];
+                $roundsavegame['w100']=$_POST['w100'];
+                $savegame->writeDB(serialize($roundsavegame));
+                header('Location:'.$page.'?site=wuerfel');
+            }
+
+
+            $framework->template->setTemplateVariables(array('user',$_GET['user']));
+            $framework->template->setTemplateFile('wuerfel_setturn');
+
+
+        }
+        elseif($_GET['action']=='getturn'){
+            echo $roundsavegame['user'].'|'.$roundsavegame['w4'].'|'.$roundsavegame['w6'].'|'.$roundsavegame['w8'].'|'.$roundsavegame['w10'].'|'.$roundsavegame['w12'].'|'.$roundsavegame['w20'].'|'.$roundsavegame['w100'];
+            exit;
+        }
+
+
+        $allUsers=$framework->users->getAllUsers();
+        $userOverview='<table class="table table-responsive">
+            <tr>
+                <th>Name</th>
+                <th>GAB</th>
+                <th>Init-Bonus</th>
+                <th>Rüstungsklasse</th>
+                <th>TP</th>
+                <th>Schaden tödlich</th>
+                <th>Schaden nicht-tödlich</th>
+                <th></th>
+            </tr>';
+        foreach($allUsers as $user){
+            $userOverview.='
+            <tr>
+                <td>'.$user['username'].'</td>
+                <td>'.$user['gab'].'</td>
+                <td>'.$user['init'].'</td>
+                <td>'.$user['rk'].'</td>
+                <td>'.$user['tp'].'</td>
+                <td>'.$user['dmgd'].'</td>
+                <td>'.$user['dmgnd'].'</td>
+                <td>
+                     <a href="'.$page.'?site=wuerfel&action=setturn&user='.$user['username'].'"><span class="glyphicon glyphicon-retweet" title="Spieler Würfel geben"></span></a>
+                </td>
+            </tr>
+            ';
+        }
+        $userOverview.='</table>';
+        $framework->template->setTemplateVariables(array('overview',$userOverview));
+
+
+
         break;
     case 'karte':
         $framework->template->setTemplateFile('karte');

@@ -5,10 +5,7 @@
         <form action="{$index}?site=useradmin&action=edituser" method="post">
         <div class="form-group disabled">
             <input type="hidden" name="username" id="username" value="{$playername}" class="form-control">
-        </div>
-        <div class="form-group disabled">
             <input type="hidden" name="password" id="password" value="{$password}" class="form-control">
-        </div>
         <div class="form-group">
             <label for="userlevel">Userlevel:</label>
             <input type="text" name="userlevel" id="userlevel" value="{$playerlevel}" class="form-control">

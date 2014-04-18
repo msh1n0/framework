@@ -41,7 +41,6 @@
     {/if}
 </div>
 
-<script src="templates/pathfinder/scripts/custom.js"></script>
 {block name="scriptblock_unten"}
     {$jquery}
     {$bootstrap_js}
