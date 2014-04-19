@@ -21,6 +21,17 @@ $page='pathfinder.php';
 /*
  * Basis
  * */
+/*
+ * Objekte für mehrere Seiten
+ * */
+$mapSaveFile= new document();
+$mapSaveFile->setDocument('data/pathfinder_map.db');
+$mapSave=unserialize($mapSaveFile->getFileAsString());
+$mapDirectory=new files();
+$maps=$mapDirectory->DirectoryContents('content/pathfinder/images/maps');
+/*
+ * Objekte für mehrere Seiten
+ * */
 
 switch($_GET['site']){
     case 'login':
@@ -391,8 +402,81 @@ switch($_GET['site']){
         break;
     case 'karte':
         $framework->template->setTemplateFile('karte');
-        $map= new map('images/maps/map.jpg');
-        $framework->template->setTemplateVariables($map->prepareMap(10,''));
+        if(is_file('content/pathfinder/images/maps/'.$mapSave['mapname'])){
+            $map= new map('content/pathfinder/images/maps/'.$mapSave['mapname']);
+            $mapcss='
+                #cell_10_10{background:url(templates/system/_resources/images/map/marker_f0f.png) center center no-repeat;background-size:contain;}
+                #cell_10_10 div:after{content:\'abc\';}
+                #cell_10_10:hover div{display:block;}
+                ';
+            $framework->template->setTemplateVariables(array('map_css',$mapcss));
+            $framework->template->setTemplateVariables($map->prepareMap($mapSave['cols'],$mapSave['rows']));
+        }
+        else{
+            $framework->template->setTemplateVariables(array('error','Aktuell ist keine Karte aktiv'));
+        }
+
+        break;
+    case 'mapadmin':
+        $framework->template->setTemplateFile('mapadmin');
+        $mapoverview='<table class="table table-responsive">';
+        foreach($maps as $element){
+            if($mapSave['mapname']==$element)$active='AKTIV';
+            else $active=false;
+            $mapoverview.='<tr>
+            <td>'.$active.'</td>
+            <td>'.$element.'</td>
+            <td>
+                <a href="'.$page.'?site=mapadmin&action=activatemap&mapname='.$element.'" title="Karte aktivieren"><span class="glyphicon glyphicon-asterisk"></span></a>
+                &nbsp;&nbsp;
+                <a href="'.$page.'?site=mapadmin&action=deletefile&mapname='.$element.'" title="Datei löschen"><span class="glyphicon glyphicon-trash"></span></a>
+            </td>
+            </tr>';
+        }
+        $mapoverview.='<tr>
+            <td></td>
+            <td></td>
+            <td>
+                <a href="'.$page.'?site=mapadmin&action=uploadmap" title="Karte aktivieren"><span class="glyphicon glyphicon-plus"></span></a>
+            </td>
+            </tr></table>';
+        $framework->template->setTemplateVariables(array('mapoverview',$mapoverview));
+
+        switch($_GET['action']){
+            case 'activatemap':
+                if($_GET['confirm']==true){
+                    $mapSave['mapname']=$_GET['mapname'];
+                    $mapSave['cols']=$_POST['cols'];
+                    $mapSave['rows']=$_POST['rows'];
+                    $mapSaveFile->writeDB(serialize($mapSave));
+                    header('Location:'.$page.'?site=mapadmin');
+                }
+                else{
+                    $framework->template->setTemplateVariables(array('mapname',$_GET['mapname']));
+                    $framework->template->setTemplateFile('mapadmin_activate');
+                }
+                break;
+            case 'deletefile':
+                unlink('content/pathfinder/images/maps/'.$_GET['mapname']);
+                header('Location:'.$page.'?site=mapadmin');
+                break;
+            case 'uploadmap':
+                if($_GET['confirm']==true){
+                    $uploaddir = 'content/pathfinder/images/maps/';
+                    $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
+                    if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+                        $_SESSION['message']='Datei-Upload erfolgreich';
+                    } else {
+                        $_SESSION['error']='Datei-Upload fehlgeschlagen';
+                    }
+                    header('Location:'.$page.'?site=mapadmin');
+                }
+                else{
+                    $framework->template->setTemplateFile('mapadmin_upload');
+                }
+                break;
+        }
+
         break;
     default:
         $framework->template->setTemplateFile('index');

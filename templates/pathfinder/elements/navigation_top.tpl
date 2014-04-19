@@ -19,7 +19,7 @@
                     <li><a href="{$index}?site=karte">Karte</a></li>
                 {/if}
                 {if $admin}
-                    <li><a href="{$index}?site=mapadmin">Karte setzen</a></li>
+                    <li><a href="{$index}?site=mapadmin">Karten verwalten</a></li>
                     <li><a href="{$index}?site=useradmin">User-Admin</a></li>
                 {/if}
                 {if isset($username)}

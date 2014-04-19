@@ -26,11 +26,15 @@ class map{
     }
 
     private function generateMapGrid($cols, $rows){
-        $output='<table class="mapboard" cellpadding="0" cellspacing="0">';
+        $output='
+        <style>
+            td div{position:absolute;margin:-50px 0 0 0;padding:3px 6px;border:1px solid #000;border-radius:7px;background:#fff;display:none;}
+        </style>
+        <table class="mapboard" cellpadding="0" cellspacing="0">';
         for($row=1;$row<=$rows;$row++){
             $output.='<tr>';
             for($col=1;$col<=$cols;$col++){
-                $output.='<td id="'.$row.'_'.$col.'" class=""></td>';
+                $output.='<td id="cell_'.$row.'_'.$col.'" class="cell"><div></div></td>';
             }
             $output.='</tr>';
         }
