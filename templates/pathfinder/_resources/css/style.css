@@ -1,5 +1,5 @@
 
-.fullscreenEffect{
+#fullscreenEffect{
     position:fixed;width:100%;height:100%;z-index: -1;
 }
 @-moz-keyframes effectDanger {
@@ -12,7 +12,7 @@
     100% {box-shadow:inset 0 0 150px #f00;}
 ;}
 
-#effectDanger{
+.effectDanger{
     box-shadow:inset 0 0 150px #f00;
     -moz-animation: effectDanger 10s infinite ease-in alternate backwards ;
     -webkit-animation: effectDanger 10s infinite linear;
@@ -28,7 +28,7 @@
     100% {box-shadow:inset 0 0 150px #f60;}
 ;}
 
-#effectWarning{
+.effectWarning{
     box-shadow:inset 0 0 150px #f60;
     -moz-animation: effectWarning 10s infinite ease-in alternate backwards ;
     -webkit-animation: effectWarning 10s infinite linear;
@@ -44,7 +44,7 @@
     100% {box-shadow:inset 0 0 150px #ff0;}
 ;}
 
-#effectAttention{
+.effectAttention{
     box-shadow:inset 0 0 150px #ff0;
     -moz-animation: effectAttention 10s infinite ease-in alternate backwards ;
     -webkit-animation: effectAttention 10s infinite linear;
@@ -60,7 +60,7 @@
     100% {box-shadow:inset 0 0 150px #00f;}
 ;}
 
-#effectInfo{
+.effectInfo{
     box-shadow:inset 0 0 150px #00f;
     -moz-animation: effectInfo 10s infinite ease-in alternate backwards ;
     -webkit-animation: effectInfo 10s infinite linear;

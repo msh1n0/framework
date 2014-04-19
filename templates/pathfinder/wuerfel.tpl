@@ -1,11 +1,20 @@
 {extends "templates/pathfinder/index.tpl"}
 {block name=content}
     <div class="alert alert-info">
-        <h2>Würfel bei: {$currentplayer}</h2>
+        <h2>aktiver Spieler:</h2>
+        <input type="text" disabled="disabled" value="{$currentplayer}" id="currentplayer_headline" class="disabled form-control">
+        <h2>Phase:</h2>
+        <input type="text" disabled="disabled" value="" id="currentphase" class="disabled form-control">
     </div>
+    {if $isadmin}
+        <div class="alert alert-info">
+            <h3>Alle Spieler</h3>
+            {$overview}
+        </div>
+    {/if}
     <div class="alert alert-info">
-        <h3>Alle Spieler</h3>
-        {$overview}
+        <h3>Runden</h3>
+        {$combatoverview}
     </div>
     {if !$isadmin}
         <div class="alert alert-info">
@@ -29,15 +38,9 @@
                 </tr>
             </table>
         </div>
-        <input type="hidden" value="{$currentplayer}" id="currentplayer">
-        <input type="hidden" value="{$w4}" id="contingent-w4">
-        <input type="hidden" value="{$w6}" id="contingent-w6">
-        <input type="hidden" value="{$w8}" id="contingent-w8">
-        <input type="hidden" value="{$w10}" id="contingent-w10">
-        <input type="hidden" value="{$w12}" id="contingent-w12">
-        <input type="hidden" value="{$w20}" id="contingent-w20">
-        <input type="hidden" value="{$w100}" id="contingent-w100">
     {/if}
+    <input type="hidden" value="" id="currentplayer">
+    <input type="hidden" value="{$activeplayer}" id="activeplayer">
 
 
 
@@ -113,17 +116,6 @@
                 </div>
             </div>
         </div>
-        {if $isadmin}
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-3">
-                </div>
-                <div class="col-xs-9">
-                    <input type="button" class="btn btn-default form-control" id="btn-clean-all" value="Alle Felder löschen">
-                </div>
-            </div>
-        </div>
-        {/if}
     </div>
 {/block}
 {block name=scriptblock_unten append}

@@ -5,18 +5,12 @@ $("#btn-w10").click(function(){wuerfeln(10);});
 $("#btn-w12").click(function(){wuerfeln(12);});
 $("#btn-w20").click(function(){wuerfeln(20);});
 $("#btn-w100").click(function(){wuerfeln(100);});
-$("#btn-skip").click(function(){
-    $.get('index.php?action=turn', function (data) {
-    });
-    checkRound();
-});
 $("#btn-clean-all").click(function(){
     flush();
     flushDice()
 });
 function wuerfeln(modus){
     var value;
-    var slot;
     switch(modus){
         case 4:
             value=randomRange(1,4);
@@ -40,10 +34,9 @@ function wuerfeln(modus){
             value=(randomRange(1,10)*10);
             break;
     }
-    disableButtons();
+    disable('w'+modus);
     setValue(modus,value);
     setDice(modus,$('#w'+modus).val());
-    checkRound();
 }
 function randomRange (min, max) {
     return Math.round(Math.random() * (max - min) + min);
@@ -55,18 +48,18 @@ function setValue(modus, value){
 function flush(){
     $('input[type="text"]').val('');
 }
-function setTurn(player){
-    flush();
-    flushDice();
-    $.get('index.php?action=turn&player='+player, function (data) {
+function setphase(phase){
+    $.get('pathfinder.php?site=wuerfel&action=setphase&phase='+phase, function (data) {
     });
-    checkRound();
 }
 function enableButtons(){
     $('input[type="button"]').removeClass('disabled');
 }
 function enable(id){
     $('#btn-'+id).removeClass('disabled');
+}
+function disable(id){
+    $('#btn-'+id).addClass('disabled');
 }
 function disableButtons(){
     $('input[type="button"]').addClass('disabled');
@@ -84,19 +77,55 @@ function getDice(){
         $("#w100").val(savegame[6]);
     });
 }
+function setTurn(user){
+    $('input[type="checkbox"]').prop('checked', false);
+    $.get('pathfinder.php?site=wuerfel&action=setturn&user='+user+'&confirm=true&js=true', function (data) {
+    });
+}
 function getTurn(){
     var savegame;
     $.get('pathfinder.php?site=wuerfel&action=getturn', function (data) {
         savegame=data.split('|');
         $("#currentplayer").val(savegame[0]);
-        $("#contingent-w4").val(savegame[1]);
-        $("#contingent-w6").val(savegame[2]);
-        $("#contingent-w8").val(savegame[3]);
-        $("#contingent-w10").val(savegame[4]);
-        $("#contingent-w12").val(savegame[5]);
-        $("#contingent-w20").val(savegame[6]);
-        $("#contingent-w100").val(savegame[7]);
+        $('input[type="checkbox"]').prop('checked', false);
+        $("#status-"+savegame[0]).prop('checked', true);
+        $("#currentplayer_headline").val(savegame[0]);
+        $("#currentphase").val(savegame[8]);
+        setEffect(savegame[8],savegame[0]);
+        if(savegame[0]==$('#activeplayer').val()){
+            if(savegame[1]>0) enable('w4');
+            else disable('w4');
+            if(savegame[2]>0) enable('w6');
+            else disable('w6');
+            if(savegame[3]>0) enable('w8');
+            else disable('w8');
+            if(savegame[4]>0) enable('w10');
+            else disable('w10');
+            if(savegame[5]>0) enable('w12');
+            else disable('w12');
+            if(savegame[6]>0) enable('w20');
+            else disable('w20');
+            if(savegame[7]>0) enable('w100');
+            else disable('w100');
+        }
+        else{
+            disableButtons();
+        }
     });
+}
+function setEffect(phase,player){
+    $('#fullscreenEffect').removeClass('effectDanger');
+    $('#fullscreenEffect').removeClass('effectWarning');
+    $('#fullscreenEffect').removeClass('effectAttention');
+    $('#fullscreenEffect').removeClass('effectInfo');
+    if(phase=='Initiativ-Phase'){
+        if(player==$('#activeplayer').val())  $('#fullscreenEffect').addClass('effectInfo');
+        else $('#fullscreenEffect').addClass('effectWarning');
+    }
+    else if(phase=='Kampf-Phase'){
+        if(player==$('#activeplayer').val())  $('#fullscreenEffect').addClass('effectAttention');
+        else $('#fullscreenEffect').addClass('effectDanger');
+    }
 }
 function setDice(slot,wert){
     $.get('pathfinder.php?site=wuerfel&action=setdice&slot='+slot+'&value='+wert, function (data) {
@@ -108,17 +137,10 @@ function setDice(slot,wert){
 function checkRound(){
     getDice();
     getTurn();
-    disableButtons();
-    if($('#contingent-w4').val()>0) enable('w4');
-    if($('#contingent-w6').val()>0) enable('w6');
-    if($('#contingent-w8').val()>0) enable('w8');
-    if($('#contingent-w10').val()>0) enable('w10');
-    if($('#contingent-w12').val()>0) enable('w12');
-    if($('#contingent-w20').val()>0) enable('w20');
-    if($('#contingent-w100').val()>0) enable('w100');
 
 }
 $(document).ready(function() {
+    disableButtons();
     checkRound();
-    setInterval(checkRound,500);
+    setInterval(checkRound,1000);
 });

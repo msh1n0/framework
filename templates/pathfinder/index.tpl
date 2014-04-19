@@ -12,7 +12,7 @@
     {/block}
 </head>
 <body>
-<div class="fullscreenEffect"></div>
+<div id="fullscreenEffect"></div>
 {block name=navigation_top}
     {include "templates/pathfinder/elements/navigation_top.tpl"}
 {/block}

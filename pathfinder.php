@@ -131,16 +131,80 @@ switch($_GET['site']){
             $framework->template->setTemplateVariables(array('overview',$userOverview));
         }
         break;
+    case 'combatadmin':
+        $framework->template->setTemplateFile('combatadmin');
+        $combat=new document();
+        $combat->setDocument('data/pathfinder_combat.db');
+        $combatusers=unserialize($combat->getFileAsString());
+        $success=true;
+        if(!empty($_GET['action'])){
+            if($_POST){
+                if($_GET['action']=='edituser'){
+                    $newcombat=array();
+                    foreach($combatusers as $user){
+                        if($user['playername']==$_POST['playername']){
+                            $user['initiative']=$_POST['initiative'];
+                            $user['active']=$_POST['active'];
+                        }
+                        $newcombat[]=$user;
+                    }
+                    $combat->writeDB(serialize($newcombat));
+                    header('Location:'.$page.'?site=wuerfel');
+                }
+                if($_GET['action']=='createuser'){
+                    $user=array();
+                    $user['playername']=$_POST['playername'];
+                    $user['initiative']=$_POST['initiative'];
+                    $user['active']=$_POST['active'];
+                    $combatusers[]=$user;
+                    $combat->writeDB(serialize($combatusers));
+                    header('Location:'.$page.'?site=wuerfel');
+                }
+            }
+            if($_GET['action']=='edituser'){
+                $framework->template->setTemplateFile('combatadmin_edituser');
+                foreach($combatusers as $user){
+                    if($user['playername']==$_GET['user']){
+                        $framework->template->setTemplateVariables(array('active',$user['active']));
+                        $framework->template->setTemplateVariables(array('playername',$user['playername']));
+                        $framework->template->setTemplateVariables(array('initiative',$user['initiative']));
+                    }
+                }
+            }
+            elseif($_GET['action']=='createuser'){
+                $framework->template->setTemplateFile('combatadmin_createuser');
+            }
+            elseif($_GET['action']=='deleteuser'){
+                $newcombat=array();
+                foreach($combatusers as $user){
+                    if($user['playername']==$_GET['user']){}
+                    else $newcombat[]=$user;
+                }
+                var_dump($newcombat);
+                $combat->writeDB(serialize($newcombat));
+                header('Location:'.$page.'?site=wuerfel');
+            }
+        }
+        break;
     case 'wuerfel':
         $framework->template->setTemplateFile('wuerfel');
 
-        if($framework->users->currentUser('userlevel')>60)$framework->template->setTemplateVariables(array('isadmin',true));
+        if($framework->users->currentUser('userlevel')>60){
+            $framework->template->setTemplateVariables(array('isadmin',true));
+            $isadmin=true;
+        }
+        else $isadmin=false;
+
         $framework->template->setTemplateVariables(array('gab',$framework->users->currentUser('gab')));
         $framework->template->setTemplateVariables(array('init',$framework->users->currentUser('init')));
         $framework->template->setTemplateVariables(array('rk',$framework->users->currentUser('rk')));
         $framework->template->setTemplateVariables(array('tp',$framework->users->currentUser('tp')));
         $framework->template->setTemplateVariables(array('dmgd',$framework->users->currentUser('dmgd')));
         $framework->template->setTemplateVariables(array('dmgnd',$framework->users->currentUser('dmgnd')));
+
+        $combat=new document();
+        $combat->setDocument('data/pathfinder_combat.db');
+        $combatusers=unserialize($combat->getFileAsString());
 
         $round= new document();
         $round->setDocument('data/pathfinder_runde.db');
@@ -161,7 +225,6 @@ switch($_GET['site']){
         $framework->template->setTemplateVariables(array('w100',$roundsavegame['w100']));
         $framework->template->setTemplateVariables(array('currentplayer',$roundsavegame['user']));
 
-
         if($_GET['action']=='getdice'){
             $savegame=new document();
             $savegame->setDocument('data/pathfinder_wuerfel.db');
@@ -169,7 +232,7 @@ switch($_GET['site']){
             echo $db['w4'].'|'.$db['w6'].'|'.$db['w8'].'|'.$db['w10'].'|'.$db['w12'].'|'.$db['w20'].'|'.$db['w100'];
             exit;
         }
-        elseif($_GET['action']=='setdice'){
+        if($_GET['action']=='setdice'){
             $savegame=new document();
             $savegame->setDocument('data/pathfinder_wuerfel.db');
             $db=unserialize($savegame->getFileAsString());
@@ -198,7 +261,11 @@ switch($_GET['site']){
                 $roundsavegame['w20']=$_POST['w20'];
                 $roundsavegame['w100']=$_POST['w100'];
                 $savegame->writeDB(serialize($roundsavegame));
-                header('Location:'.$page.'?site=wuerfel');
+                $savegame=new document();
+                $savegame->setDocument('data/pathfinder_wuerfel.db');
+                $savegame->writeDB('');
+                if($_GET['js']=='true')exit;
+                else header('Location:'.$page.'?site=wuerfel');
             }
 
 
@@ -208,9 +275,69 @@ switch($_GET['site']){
 
         }
         elseif($_GET['action']=='getturn'){
-            echo $roundsavegame['user'].'|'.$roundsavegame['w4'].'|'.$roundsavegame['w6'].'|'.$roundsavegame['w8'].'|'.$roundsavegame['w10'].'|'.$roundsavegame['w12'].'|'.$roundsavegame['w20'].'|'.$roundsavegame['w100'];
+            echo $roundsavegame['user'].'|'.$roundsavegame['w4'].'|'.$roundsavegame['w6'].'|'.$roundsavegame['w8'].'|'.$roundsavegame['w10'].'|'.$roundsavegame['w12'].'|'.$roundsavegame['w20'].'|'.$roundsavegame['w100'].'|'.$roundsavegame['phase'];
             exit;
         }
+        elseif($_GET['action']=='setphase'){
+            $savegame=new document();
+            $savegame->setDocument('data/pathfinder_runde.db');
+            $roundsavegame=unserialize($savegame->getFileAsString());
+            $roundsavegame['phase']=$_GET['phase'];
+            $savegame->writeDB(serialize($roundsavegame));
+            exit;
+        }
+
+
+        $combatoverview='<table class="table table-responsive">
+            <tr>
+                <th>Aktiv</th>
+                <th>Name</th>
+                <th>Initiative</th>
+                <th></th>
+            </tr>';
+        $temparray=array();
+        foreach($combatusers as $user){
+            if($user['active']=='on')$temp=' checked="checked"';
+            else $temp='';
+            if(!$isadmin===true){
+                $disableCheckbox=' disabled="disabled"';
+            }
+            else{
+                $buttons='
+                     <a href="'.$page.'?site=combatadmin&action=edituser&user='.$user['playername'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>
+                     <a href="'.$page.'?site=combatadmin&action=deleteuser&user='.$user['playername'].'"><span class="glyphicon glyphicon-remove" title="Spieler löschen"></span></a>';
+            }
+
+            $temparray[]='<!-- '.$user['initiative'].' -->
+            <tr>
+                <td><input type="checkbox"'.$temp.' onclick="setTurn(\''.$user['playername'].'\')"'.$disableCheckbox.' id="status-'.$user['playername'].'"></span></td>
+                <td>'.$user['playername'].'</td>
+                <td>'.$user['initiative'].'</td>
+                <td>'.$buttons.'
+                </td>
+            </tr>
+            ';
+        }
+        sort($temparray);
+        foreach ($temparray as $element){
+            $combatoverview.=$element;
+        }
+        if($isadmin===true){
+        $combatoverview.='
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <a href="'.$page.'?site=combatadmin&action=createuser"><span class="glyphicon glyphicon-plus" title="Neuen Nutzer anlegen"></span></a>
+                </td>
+            </tr>';
+        }
+        $combatoverview.='</table>';
+        $framework->template->setTemplateVariables(array('combatoverview',$combatoverview));
+
+
+
 
 
         $allUsers=$framework->users->getAllUsers();
@@ -236,13 +363,28 @@ switch($_GET['site']){
                 <td>'.$user['dmgd'].'</td>
                 <td>'.$user['dmgnd'].'</td>
                 <td>
+                     <a href="'.$page.'?site=useradmin&action=edituser&user='.$user['username'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>&nbsp;&nbsp;&nbsp;
                      <a href="'.$page.'?site=wuerfel&action=setturn&user='.$user['username'].'"><span class="glyphicon glyphicon-retweet" title="Spieler Würfel geben"></span></a>
                 </td>
             </tr>
             ';
         }
-        $userOverview.='</table>';
+        $userOverview.='</table>
+            <div class="row">
+                <div class="col-xs-4">
+                    <input type="button" class="form-control" onclick="setphase(\'Initiativ-Phase\')" value="Initiativ-Phase">
+                </div>
+                <div class="col-xs-4">
+                    <input type="button" class="form-control" onclick="setphase(\'Kampf-Phase\')" value="Kampf-Phase">
+                </div>
+                <div class="col-xs-4">
+                    <input type="button" class="form-control" onclick="setphase(\'Frei\')" value="Frei">
+                </div>
+            </div>
+
+            ';
         $framework->template->setTemplateVariables(array('overview',$userOverview));
+        $framework->template->setTemplateVariables(array('activeplayer',$framework->users->currentUser('username')));
 
 
 
