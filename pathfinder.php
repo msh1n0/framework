@@ -197,7 +197,6 @@ switch($_GET['site']){
                     if($user['playername']==$_GET['user']){}
                     else $newcombat[]=$user;
                 }
-                var_dump($newcombat);
                 $combat->writeDB(serialize($newcombat));
                 header('Location:'.$page.'?site=wuerfel');
             }

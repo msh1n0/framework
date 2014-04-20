@@ -104,7 +104,6 @@ class users{
         $this->saveDB();
     }
     public function editUser($new=array()){
-        var_dump($new);
         $output=array();
         foreach($this->users as $user){
             if($new['username']===$user['username']) $new['password']=$user['password'];
