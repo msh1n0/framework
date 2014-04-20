@@ -13,7 +13,7 @@
         </div>
     {/if}
     <div class="alert alert-info">
-        <h3>Runden</h3>
+        <h3>Runde</h3>
         {$combatoverview}
     </div>
     {if !$isadmin}

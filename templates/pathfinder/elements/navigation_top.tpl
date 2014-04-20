@@ -18,7 +18,7 @@
                     <li><a href="{$index}?site=wuerfel">Würfeln</a></li>
                     <li><a href="{$index}?site=karte">Karte</a></li>
                 {/if}
-                {if $admin}
+                {if $isadmin}
                     <li><a href="{$index}?site=mapadmin">Karten verwalten</a></li>
                     <li><a href="{$index}?site=useradmin">User-Admin</a></li>
                 {/if}

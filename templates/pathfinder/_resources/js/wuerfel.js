@@ -142,5 +142,5 @@ function checkRound(){
 $(document).ready(function() {
     disableButtons();
     checkRound();
-    setInterval(checkRound,1000);
+    setInterval(checkRound,500);
 });

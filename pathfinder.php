@@ -24,6 +24,12 @@ $page='pathfinder.php';
 /*
  * Objekte für mehrere Seiten
  * */
+
+if($framework->users->currentUser('userlevel')>60){
+    $framework->template->setTemplateVariables(array('isadmin',true));
+    $isadmin=true;
+}
+else $isadmin=false;
 $mapSaveFile= new document();
 $mapSaveFile->setDocument('data/pathfinder_map.db');
 $mapSave=unserialize($mapSaveFile->getFileAsString());
@@ -200,11 +206,6 @@ switch($_GET['site']){
     case 'wuerfel':
         $framework->template->setTemplateFile('wuerfel');
 
-        if($framework->users->currentUser('userlevel')>60){
-            $framework->template->setTemplateVariables(array('isadmin',true));
-            $isadmin=true;
-        }
-        else $isadmin=false;
 
         $framework->template->setTemplateVariables(array('gab',$framework->users->currentUser('gab')));
         $framework->template->setTemplateVariables(array('init',$framework->users->currentUser('init')));
@@ -375,7 +376,7 @@ switch($_GET['site']){
                 <td>'.$user['dmgnd'].'</td>
                 <td>
                      <a href="'.$page.'?site=useradmin&action=edituser&user='.$user['username'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>&nbsp;&nbsp;&nbsp;
-                     <a href="'.$page.'?site=wuerfel&action=setturn&user='.$user['username'].'"><span class="glyphicon glyphicon-retweet" title="Spieler Würfel geben"></span></a>
+                     <a href="'.$page.'?site=wuerfel&action=setturn&user='.$user['username'].'"><span class="glyphicon glyphicon-share-alt" title="Spieler Würfel geben"></span></a>
                 </td>
             </tr>
             ';
@@ -401,21 +402,149 @@ switch($_GET['site']){
 
         break;
     case 'karte':
-        $framework->template->setTemplateFile('karte');
-        if(is_file('content/pathfinder/images/maps/'.$mapSave['mapname'])){
-            $map= new map('content/pathfinder/images/maps/'.$mapSave['mapname']);
-            $mapcss='
-                #cell_10_10{background:url(templates/system/_resources/images/map/marker_f0f.png) center center no-repeat;background-size:contain;}
-                #cell_10_10 div:after{content:\'abc\';}
-                #cell_10_10:hover div{display:block;}
+        $combat=new document();
+        $combat->setDocument('data/pathfinder_combat.db');
+        $combatusers=unserialize($combat->getFileAsString());
+        $mappointersave=new document();
+        $mappointersave->setDocument('data/pathfinder_mappointers.db');
+        $mapPointers=unserialize($mappointersave->getFileAsString());
+        if(empty($mapPointers))$mapPointers= array();
+        $framework->template->setTemplateVariables(array('activeplayer',$framework->users->currentUser('username')));
+
+        $combatoverview='<table class="table table-responsive">
+            <tr>
+                <th>Aktiv</th>
+                <th>Name</th>
+                <th>Initiative</th>
+                <th></th>
+            </tr>';
+        $temparray=array();
+        foreach($combatusers as $user){
+            if($user['active']=='on')$temp=' checked="checked"';
+            else $temp='';
+            if(!$isadmin===true){
+                $disableCheckbox=' disabled="disabled"';
+            }
+            else{
+                $buttons='
+                     <a href="'.$page.'?site=combatadmin&action=edituser&user='.$user['playername'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>
+                     <a href="'.$page.'?site=combatadmin&action=deleteuser&user='.$user['playername'].'"><span class="glyphicon glyphicon-remove" title="Spieler löschen"></span></a>';
+            }
+
+            $temparray[]='<!-- '.$user['initiative'].' -->
+            <tr>
+                <td><input type="checkbox"'.$temp.' onclick="setTurn(\''.$user['playername'].'\')"'.$disableCheckbox.' id="status-'.$user['playername'].'"></span></td>
+                <td>'.$user['playername'].'</td>
+                <td>'.$user['initiative'].'</td>
+                <td>'.$buttons.'
+                </td>
+            </tr>
+            ';
+        }
+        sort($temparray);
+        foreach ($temparray as $element){
+            $combatoverview.=$element;
+        }
+        if($isadmin===true){
+            $combatoverview.='
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <a href="'.$page.'?site=combatadmin&action=createuser"><span class="glyphicon glyphicon-plus" title="Neuen Nutzer anlegen"></span></a>
+                </td>
+            </tr>';
+        }
+        $combatoverview.='</table>';
+        $framework->template->setTemplateVariables(array('combatoverview',$combatoverview));
+
+
+
+        if($_GET['action']=='getpointers'){
+            $mapcss='';
+            foreach($mapPointers as $pointer){
+                $mapcss.='<style>
+                #cell_'.$pointer['col'].'_'.$pointer['row'].'{background:url(templates/system/_resources/images/map/marker_'.$pointer['color'].'.png) center center no-repeat;background-size:contain;}
+                #cell_'.$pointer['col'].'_'.$pointer['row'].' div:after{content:\''.$pointer['name'].'\';}
+                #cell_'.$pointer['col'].'_'.$pointer['row'].':hover div{display:block;}
+                </style>
                 ';
-            $framework->template->setTemplateVariables(array('map_css',$mapcss));
-            $framework->template->setTemplateVariables($map->prepareMap($mapSave['cols'],$mapSave['rows']));
+            }
+            echo $mapcss;
+            exit;
+        }
+        if($_GET['action']=='flushpointers'){
+                $mappointersave->writeDB('');
+            exit;
+        }
+        elseif($_GET['action']=='setpointer'){
+            $newpointers=array();
+            foreach($mapPointers as $pointer){
+                if($pointer['name']!=='Ziel'){
+                    $newpointers[]=$pointer;
+                }
+            }
+            $mapPointers=$newpointers;
+            $duplicate=false;
+            $newpointers=array();
+            foreach($mapPointers as $pointer){
+                if($pointer['name']==$_GET['name']){
+                    if($_GET['color'])$color=$_GET['color'];
+                    else $color= $pointer['color'];
+                    $newpointers[]=array('name'=>$_GET['name'],'col'=>$_GET['col'],'row'=>$_GET['row'],'color'=>$color);
+                    $duplicate=true;
+                }
+                else $newpointers[]=$pointer;
+            }
+            if($duplicate===true){
+                $mapPointers=$newpointers;
+                $mappointersave->writeDB(serialize($mapPointers));
+            }
+            else{
+                $newpointer= array('name'=>$_GET['name'],'col'=>$_GET['col'],'row'=>$_GET['row'],'color'=>$_GET['color']);
+                $mapPointers[]=$newpointer;
+                $mappointersave->writeDB(serialize($mapPointers));
+            }
+            exit;
+        }
+        elseif($_GET['action']=='deletepointer'){
+            $duplicate=false;
+            $newpointers=array();
+            foreach($mapPointers as $pointer){
+                if($pointer['name']!==$_GET['name']){
+                    $newpointers[]=$pointer;
+                }
+            }
+            $mappointersave->writeDB(serialize($newpointers));
+            exit;
         }
         else{
-            $framework->template->setTemplateVariables(array('error','Aktuell ist keine Karte aktiv'));
+            $framework->template->setTemplateFile('karte');
+            if(is_file('content/pathfinder/images/maps/'.$mapSave['mapname'])){
+                $map= new map('content/pathfinder/images/maps/'.$mapSave['mapname']);
+                $framework->template->setTemplateVariables($map->prepareMap($mapSave['cols'],$mapSave['rows']));
+            }
+            else{
+                $framework->template->setTemplateVariables(array('error','Aktuell ist keine Karte aktiv'));
+            }
         }
+        $markerDirectory= new files();
+        $allmarkers=$markerDirectory->DirectoryContents('templates/system/_resources/images/map');
+        $markers='<select id="color" name="color" class="form-control"><option value="">Farbe beibehalten</option>';
+        foreach($allmarkers as $element){
+            $plit=explode('_',$element);
+            $markers.='<option value="'.substr($plit[1],0,3).'" style="background:#'.substr($plit[1],0,3).';">'.substr($plit[1],0,3).'</option>';
+        }
+        $markers.='</select>';
+        $framework->template->setTemplateVariables(array('markers',$markers));
 
+        $players='<select id="name" name="name" class="form-control">';
+        foreach($combatusers as $player){
+            $players.='<option value="'.$player['playername'].'">'.$player['playername'].'</option>';
+        }
+        $players.='</select>';
+        $framework->template->setTemplateVariables(array('players',$players));
         break;
     case 'mapadmin':
         $framework->template->setTemplateFile('mapadmin');
