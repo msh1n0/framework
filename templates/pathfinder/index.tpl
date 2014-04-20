@@ -4,7 +4,7 @@
     <meta charset="{$metaCharset}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, user-scalable=no">
-    <title>Testumgebung</title>
+    <title>Pathfinder</title>
     <link rel="stylesheet" type="text/css" href="templates/pathfinder/_resources/css/style.css">
     {block name="scriptblock_unten"}
         {$bootstrap_css}
