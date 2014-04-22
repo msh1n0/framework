@@ -8,7 +8,7 @@ class database {
     private $db_table;
     private $db_login;
     private $db_password;
-    private $attributes = array();
+    private $attributes;
 
     function __construct(){
         $this->config=configuration::loadConfig('database');
@@ -21,7 +21,8 @@ class database {
         $this->db_table=$table;
     }
     public function setAttributes($attributes){
-        $this->attributes=$attributes;
+        if(is_array($attributes)) $this->attributes=$attributes;
+        else $this->attributes=explode(',',$attributes);
     }
     public function save($data){
         $this->connect();
@@ -85,8 +86,9 @@ class database {
         }
         $part2.=') ';
         $part3.=');';
-
         $sql = $part1.$part2.$part3;
+
+
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
@@ -103,6 +105,7 @@ class database {
             $first=false;
         }
         $sql.=' WHERE `'.$this->db_table.'`.`id` = \''.$input['id'].'\';';
+
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {

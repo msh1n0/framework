@@ -49,14 +49,14 @@ class element{
     public function getAttributes(){
         return $this->attributes;
     }
-    public function deleteElement($value){
+    public function deleteElement($id){
         if($this->config['db_mode']){
-            $this->database->delete('id',$value);
+            $this->database->delete('id',$id);
         }
         else{
             $output=array();
             foreach($this->elements as $element){
-                if($value!==$element['elementname']) $output[]=$element;
+                if($id!==$element['id']) $output[]=$element;
             }
             $this->elements=$output;
             $this->saveDB();
@@ -65,7 +65,7 @@ class element{
     public function editElement($new=array()){
         $output=array();
         foreach($this->elements as $element){
-            if($new['elementname']===$element['elementname']) $output[]=$new;
+            if($new['id']===$element['id']) $output[]=$new;
             else $output[]=$element;
         }
         $this->elements=$output;
@@ -76,7 +76,7 @@ class element{
     }
     public function currentElement($attribute){
         foreach($this->elements as $element){
-            if($element['elementname']==$_SESSION['elementname']){
+            if($element['id']==$_SESSION['id']){
                 return $element[$attribute];
             }
         }
@@ -94,7 +94,7 @@ class element{
         $this->database->setTable($db_table);
     }
     public function setFile($filename){
-        $this->config['elementfile']=$filename;
+        $this->config['file']=$filename;
     }
     public function setupDatabase($db_table,$attributes= array()){
         $this->setAttributes($attributes);
@@ -103,19 +103,13 @@ class element{
         $this->importElementData();
     }
     protected function setAttributes($attributes){
-        if(is_array($attributes)){
-            $newattributes='';
-            $first=true;
-            foreach($attributes as $attribute){
-                if($first===false)$newattributes.=$attribute;
-                else $newattributes.=','.$attribute;
+        $output=array('id');
+        if(is_array($attributes)) $this->attributes=$attributes;
+        else {
+            $split= explode(',',$attributes);
+            foreach($split as $element){
+                $output[]=$element;
             }
-            $attributes=$newattributes;
-        }
-        $output=array('elementname');
-        $split= explode(',',$attributes);
-        foreach($split as $element){
-            $output[]=$element;
         }
         $this->attributes=$output;
     }
@@ -129,15 +123,11 @@ class element{
     protected function saveDB(){
         $this->document->writeDB(serialize($this->elements));
     }
-    /**
-     * @param $elementname
-     * @return bool
-     */
-    protected function checkForDupe($elementname){
+    protected function checkForDupe($id){
         $this->importElementData();
-        if($elementname=='')return false;
+        if($id=='')return false;
         foreach($this->elements as $element){
-            if($elementname===$element['elementname']) return true;
+            if($id==$element['id']) return true;
         }
         return false;
     }

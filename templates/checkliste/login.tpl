@@ -5,10 +5,10 @@
             <div class="row">
                 <div class="form-group {$has_error}">
                     <div class="col-md-2">
-                        <label for="username" class="form-control">Benutzername:</label>
+                        <label for="id" class="form-control">Benutzername:</label>
                     </div>
                     <div class="col-md-10">
-                        <input type="text" name="username" id="username" class="form-control">
+                        <input type="text" name="id" id="id" class="form-control">
                     </div>
                 </div>
             </div>

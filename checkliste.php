@@ -42,7 +42,7 @@ switch($_GET['site']){
     case 'login':
         $framework->template->setTemplateFile('login');
         if($_POST){
-            if($framework->users->logIn($_POST['username'],$_POST['password'])=='1'){
+            if($framework->users->logIn($_POST['id'],$_POST['password'])=='1'){
                 $_SESSION['message']='Einloggen erfolgreich';
                 header('Location:'.$page.'?site=statistics');
                 exit;
@@ -219,6 +219,11 @@ switch($_GET['site']){
                     $_SESSION['error']=$e->getMessage();
                     header('Location:'.$page.'?site=useradmin_create');
                 }
+                catch(ElementDupeException $e){
+                    $_SESSION['error']='Benutzer existiert bereits';
+                    header('Location:'.$page.'?site=useradmin_create');
+                    exit;
+                }
                 $_SESSION['message']='Benutzer wurde erfolgreich angelegt';
                 header('Location:'.$page.'?site=useradmin_summary');
             }
@@ -269,8 +274,23 @@ switch($_GET['site']){
     case 'useradmin_usergroups_create':
         if($_POST){
             $usergroups->createElement(array('name'=>$_POST['name']));
+            header('Location:'.$page.'?site=useradmin_usergroups_summary');
         }
         $framework->template->setTemplateFile('usergroups/create');
+        break;
+    case 'useradmin_usergroups_delete':
+        $usergroups->deleteElement($_GET['id']);
+        header('Location:'.$page.'?site=useradmin_usergroups_summary');
+        break;
+    case 'useradmin_usergroups_edit':    # Verändert, wird aber neu gespeichert ###
+        if($_POST){
+            $usergroups->editElement(array('id'=>$_POST['id'],'name'=>$_POST['name']));
+        }
+        $element=$usergroups->getElementByAttribute('id',$_GET['id']);
+        $framework->template->setTemplateVariables(array('id',$element['id']));
+        $framework->template->setTemplateVariables(array('name',$element['name']));
+
+        $framework->template->setTemplateFile('usergroups/edit');
         break;
     default:
         $framework->template->setTemplateFile('index');

@@ -4,11 +4,6 @@
  * Class users
  */
 class users extends element{
-    /**
-     * @var array
-     */
-    private $users = array();
-    private $userconfig=array();
 
     /**
      *
@@ -17,14 +12,18 @@ class users extends element{
         $this->config=configuration::loadConfig('users');
         parent::__construct($this->config['db_mode']);
         if($this->config['db_mode']){
-            $this->setupDatabase($this->config['db_table'],$this->config['attributes']);
+            $this->setAttributes($this->config['attributes']);
+            $this->setupDatabase($this->config['db_table'],$this->attributes);
         }
     }
 
 
     public function createUser($input=array()){
+        $this->importElementData();
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
-        elseif($this->checkForDupe($input['id']))throw new ElementDupeException("Das Element existiert bereits");
+        elseif($this->checkForDupe($input['id'])){
+            throw new ElementDupeException("Das Element existiert bereits");
+        }
         else{
             $input['password']=md5($input['password']);
             if(!$this->config['db_mode']){
@@ -41,13 +40,13 @@ class users extends element{
         }
     }
 
-    public function logIn($username,$password){
+    public function logIn($id,$password){
         $this->importElementData();
-        foreach($this->users as $user){
-            if($user['username']==$username){
+        foreach($this->elements as $user){
+            if($user['id']==$id){
                 if($user['password']==md5($password)){
                     session_start();
-                    $_SESSION['username']=$user['username'];
+                    $_SESSION['id']=$user['id'];
                     return true;
                 }
             }
@@ -66,21 +65,12 @@ class users extends element{
      * @return bool
      */
     public function isLoggedIn(){
-        if(empty($_SESSION['username'])){
+        if(empty($_SESSION['id'])){
             return false;
         }
         else {
             return true;
         }
-    }
-    protected function setAttributes($attributes){
-        $output=array('id','password');
-        $split= explode(',',$attributes);
-        foreach($split as $element){
-            $output[]=$element;
-        }
-        $this->attributes=$output;
-        if($this->config['db_mode']) $this->database->setAttributes($this->attributes);
     }
     public function deleteUser($value){
         parent::deleteElement($value);
@@ -91,7 +81,7 @@ class users extends element{
         }else{
             $output=array();
             foreach($this->elements as $element){
-                if($new['elementname']===$element['elementname']){
+                if($new['id']===$element['id']){
                     if(empty($new['password']))$new['password']=$element['password'];
                     $output[]=$new;
                 }
