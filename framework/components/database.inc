@@ -40,6 +40,17 @@ class database {
         $this->disconnect();
         return $result;
     }
+    public function delete($attribute,$value){
+        $this->connect();
+        $sql='DELETE FROM `'.$this->db_name.'`.`'.$this->db_table.'` WHERE `'.$this->db_table.'`.`'.$attribute.'` = '.$value;
+
+        $db_erg = mysqli_query( $this->sqlLink, $sql );
+        if ( ! $db_erg )
+        {
+            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
+        }
+        $this->disconnect();
+    }
     private function connect(){
         $this->sqlLink = mysqli_connect($this->db_server, $this->db_login, $this->db_password,$this->db_name);
     }

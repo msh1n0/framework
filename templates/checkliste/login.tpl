@@ -1,9 +1,9 @@
 {extends "templates/checkliste/index.tpl"}
 {block name=content}
     <div class="alert">
-        <form action="index.php?site=login" method="post">
+        <form action="{$page}?site=login" method="post">
             <div class="row">
-                <div class="form-group {$has-error}">
+                <div class="form-group {$has_error}">
                     <div class="col-md-2">
                         <label for="username" class="form-control">Benutzername:</label>
                     </div>
@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="form-group {$has-error}">
+                <div class="form-group {$has_error}">
                     <div class="col-md-2">
                         <label for="password" class="form-control">Password:</label>
                     </div>

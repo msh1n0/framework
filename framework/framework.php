@@ -4,6 +4,7 @@ include 'components/configuration.inc';
 include 'components/contentpool.inc';
 include 'components/database.inc';
 include 'components/document.inc';
+include 'components/element.inc';
 include 'components/exceptions.inc';
 include 'components/ext/mobile-detect/mobile_detect.php';
 include 'components/externalcontent.inc';

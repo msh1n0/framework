@@ -1,1 +1,0 @@
-{extends "templates/checkliste/index.tpl"}

@@ -48,6 +48,12 @@ class document{
         }
         return $text;
     }
+    public function getSerializedFile(){
+        unserialize($this->getFileAsString());
+    }
+    public function witeSerializedFile($content){
+        $this->writeDB(serialize($content));
+    }
 
     /**
      * @param string $needle Zu suchender Text

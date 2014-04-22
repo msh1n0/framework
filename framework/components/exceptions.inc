@@ -3,7 +3,7 @@
 /**
  * Class UserDupeException
  */
-class UserDupeException extends Exception{
+class ElementDupeException extends Exception{
     /**
      * @param string $message
      * @param int $code
@@ -16,7 +16,7 @@ class UserDupeException extends Exception{
      * @return string
      */
     public function __tostring(){
-        return '## UserDupeException:'.$this->message.'##';
+        return '## ElementDupeException:'.$this->message.'##';
     }
 }
 
