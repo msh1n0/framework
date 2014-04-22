@@ -14,13 +14,10 @@ class users extends element{
      *
      */
     function __construct(){
-        $this->userconfig=configuration::loadConfig('users');
-        parent::__construct($this->userconfig['db_mode']);
-        if($this->userconfig['db_mode']){
-            $this->setAttributes($this->config['attributes']);
-            $this->database->setTable($this->userconfig['db_table']);
-            $this->database->setAttributes($this->config['attributes']);
-            $this->importElementData();
+        $this->config=configuration::loadConfig('users');
+        parent::__construct($this->config['db_mode']);
+        if($this->config['db_mode']){
+            $this->setupDatabase($this->config['db_table'],$this->config['attributes']);
         }
     }
 
@@ -62,18 +59,33 @@ class users extends element{
         }
     }
     protected function setAttributes($attributes){
-        $output=array('elementname','password');
+        $output=array('id','password');
         $split= explode(',',$attributes);
         foreach($split as $element){
             $output[]=$element;
         }
         $this->attributes=$output;
+        if($this->config['db_mode']) $this->database->setAttributes($this->attributes);
     }
     public function deleteUser($value){
         parent::deleteElement($value);
     }
     public function editUser($new=array()){
-        parent::editElement($new);
+        if($this->config['db_mode']){
+            $this->database->edit($new);
+        }else{
+            $output=array();
+            foreach($this->elements as $element){
+                if($new['elementname']===$element['elementname']){
+                    if(empty($new['password']))$new['password']=$element['password'];
+                    $output[]=$new;
+                }
+                else $output[]=$element;
+            }
+            $this->elements=$output;
+            $this->saveDB();
+        }
+
     }
     public function getAllUsers(){
         return parent::getAllElements();

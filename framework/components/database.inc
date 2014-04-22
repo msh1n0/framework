@@ -42,8 +42,7 @@ class database {
     }
     public function delete($attribute,$value){
         $this->connect();
-        $sql='DELETE FROM `'.$this->db_name.'`.`'.$this->db_table.'` WHERE `'.$this->db_table.'`.`'.$attribute.'` = '.$value;
-
+        $sql='DELETE FROM `'.$this->db_name.'`.`'.$this->db_table.'` WHERE `'.$this->db_table.'`.`'.$attribute.'` = \''.$value.'\'';
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
@@ -74,7 +73,6 @@ class database {
         $part1='INSERT INTO `'.$this->db_name.'`.`'.$this->db_table.'` ';
         $part2='(';
         $part3=' VALUES (';
-
         $first=true;
         foreach($this->attributes as $element){
             if($first===false){
@@ -89,12 +87,29 @@ class database {
         $part3.=');';
 
         $sql = $part1.$part2.$part3;
-
+echo $sql;
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
             throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
         }
+    }
+    public function edit($input=array()){
+        $this->connect();
+        $sql='UPDATE `'.$this->db_name.'`.`'.$this->db_table.'` SET ';
+        $first=true;
+        foreach($this->attributes as $attribute){
+            if($first===false) $sql.=', ';
+            $sql.='`'.$attribute.'` = \''.$input[$attribute].'\'';
+            $first=false;
+        }
+        $sql.=' WHERE `'.$this->db_table.'`.`id` = \''.$input['id'].'\';';
+        $db_erg = mysqli_query( $this->sqlLink, $sql );
+        if ( ! $db_erg )
+        {
+            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
+        }
+        $this->disconnect();
     }
     private function disconnect(){
         mysqli_close($this->sqlLink);

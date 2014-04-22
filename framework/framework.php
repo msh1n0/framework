@@ -12,7 +12,6 @@ include 'components/files.inc';
 include 'components/image.inc';
 include 'components/map.inc';
 include 'components/template.inc';
-include 'components/users.inc';
 
 /**
  * Class framework Sammlung Funktionen

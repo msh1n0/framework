@@ -23,10 +23,9 @@ if($framework->users->isLoggedIn()){
 $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
 
-$db_usergroups=new database();
-$db_usergroups->setTable('usergroups');
-$db_usergroups->setAttributes($framework->users->getAttributes());
-$usergroups=$db_usergroups->getAll();
+$usergroups=new element(true);
+$usergroups->setupDatabase('usergroups',$framework->users->getAttributes());
+$allUsers=$framework->users->getAllUsers();
 
 /*
  * Basis-Definitionen Ende
@@ -67,9 +66,12 @@ switch($_GET['site']){
     case 'summary':
         $framework->template->setTemplateFile('summary');
         break;
+    case 'useradmin':
+        header('Location:'.$page.'?site=useradmin_summary');
+        break;
+        break;
     case 'useradmin_summary':
-        $framework->template->setTemplateFile('useradmin/summary');
-        $allUsers=$framework->users->getAllUsers();
+        $framework->template->setTemplateFile('users/summary');
         $userOverview='<table class="table table-responsive">
             <tr>
                 <th class="visible-md visible-lg">Login-Name</th>
@@ -82,13 +84,13 @@ switch($_GET['site']){
                 <th></th>
             </tr>';
         foreach($allUsers as $user){
-            foreach($usergroups as $group){
+            foreach($usergroups->getAllElements() as $group){
                 if($group['id']==$user['group']) $user['group']=$group['name'];
             }
 
             $userOverview.='
             <tr>
-                <td class="visible-md visible-lg">'.$user['username'].'</td>
+                <td class="visible-md visible-lg">'.$user['id'].'</td>
                 <td>'.$user['firstname'].'</td>
                 <td class="visible-md visible-lg">'.$user['surname'].'</td>
                 <td class="visible-md visible-lg">'.$user['email'].'</td>
@@ -124,25 +126,69 @@ switch($_GET['site']){
         $framework->template->setTemplateVariables(array('overview',$userOverview));
         break;
     case 'useradmin_edit':
-        if($_GET['action']=='edit'){
-
-        }
         if($_POST){
-            //Login existiert bereits
-            if(!$framework->users->getUser($_POST['login'])=='');
-                $framework->template->setTemplateVariables(array('new',true));
+            $framework->template->setTemplateVariables(array('id',$_POST['id']));
+            $framework->template->setTemplateVariables(array('password',$_POST['password']));
+            $framework->template->setTemplateVariables(array('firstname',$_POST['firstname']));
+            $framework->template->setTemplateVariables(array('surname',$_POST['surname']));
+            $framework->template->setTemplateVariables(array('email',$_POST['email']));
+            $framework->template->setTemplateVariables(array('phone',$_POST['phone']));
+            $framework->template->setTemplateVariables(array('group',$_POST['group']));
+
+            $template_groups='';
+            foreach($usergroups->getAllElements() as $group){
+                $template_groups.='<option class="form-control" value="'.$group['id'].'"';
+                if($_POST['group']==$group['id'])$template_groups.=' selected="selected"';
+                $template_groups.='>'.$group['name'].'</option>';
+            }
+            $framework->template->setTemplateVariables(array('groups',$template_groups));
+            try{
+                $framework->users->editUser(array(
+                    'id'=> $_POST['id'],
+                    'password'=> $_POST['password'],
+                    'firstname'=> $_POST['firstname'],
+                    'surname'=> $_POST['surname'],
+                    'email'=> $_POST['email'],
+                    'phone'=> $_POST['phone'],
+                    'group'=> $_POST['group']
+                ));
+            }
+            catch(InputErrorException $e){
+                $_SESSION['error']=$e->getMessage();
+                header('Location:'.$page.'?site=useradmin_edit');
+            }
+            $_SESSION['message']='Benutzer wurde erfolgreich bearbeitet';
+            header('Location:'.$page.'?site=useradmin_summary');
 
 
         }
         else{
+            foreach($allUsers as $user){
+                if($user['id']==$_GET['id']){
+                    $framework->template->setTemplateVariables(array('id',$user['id']));
+                    $framework->template->setTemplateVariables(array('password',$user['password']));
+                    $framework->template->setTemplateVariables(array('firstname',$user['firstname']));
+                    $framework->template->setTemplateVariables(array('surname',$user['surname']));
+                    $framework->template->setTemplateVariables(array('email',$user['email']));
+                    $framework->template->setTemplateVariables(array('phone',$user['phone']));
+                    $framework->template->setTemplateVariables(array('group',$user['group']));
 
+                    $template_groups='';
+                    foreach($usergroups->getAllElements() as $group){
+                        $template_groups.='<option class="form-control" value="'.$group['id'].'"';
+                        if($user['group']==$group['id'])$template_groups.=' selected="selected"';
+                        $template_groups.='>'.$group['name'].'</option>';
+                    }
+                    $framework->template->setTemplateVariables(array('groups',$template_groups));
+                }
+            }
         }
-        $framework->template->setTemplateVariables(array('new',true));
-        $framework->template->setTemplateFile('useradmin/edit');
+
+        $framework->template->setTemplateFile('users/edit');
         break;
     case 'useradmin_create':
         if($_POST){
-            $framework->template->setTemplateVariables(array('login',$_POST['login']));
+            $framework->template->setTemplateVariables(array('id',$_POST['id']));
             $framework->template->setTemplateVariables(array('password',$_POST['password']));
             $framework->template->setTemplateVariables(array('firstname',$_POST['firstname']));
             $framework->template->setTemplateVariables(array('surname',$_POST['surname']));
@@ -151,7 +197,7 @@ switch($_GET['site']){
             $framework->template->setTemplateVariables(array('group',$_POST['group']));
 
             //Login existiert bereits
-            if(!$framework->users->getUser($_POST['login'])==''){
+            if(!$framework->users->getUser($_POST['id'])==''){
                 $framework->template->setTemplateVariables(array('error','<div class="alert alert-danger">Benutzer existiert bereits</div>'));
             }
             elseif(empty($_POST['password'])){
@@ -160,7 +206,7 @@ switch($_GET['site']){
             else{
                 try{
                     $framework->users->createUser(array(
-                        'username'=> $_POST['login'],
+                        'id'=> $_POST['id'],
                         'password'=> $_POST['password'],
                         'firstname'=> $_POST['firstname'],
                         'surname'=> $_POST['surname'],
@@ -178,11 +224,11 @@ switch($_GET['site']){
             }
         }
         $template_groups='';
-        foreach($usergroups as $group){
+        foreach($usergroups->getAllElements() as $group){
             $template_groups.='<option class="form-control" value="'.$group['id'].'">'.$group['name'].'</option>';
         }
         $framework->template->setTemplateVariables(array('groups',$template_groups));
-        $framework->template->setTemplateFile('useradmin/create');
+        $framework->template->setTemplateFile('users/create');
         break;
     case 'useradmin_delete':
         try{
@@ -193,6 +239,38 @@ switch($_GET['site']){
         }
         $_SESSION['message']='Benutzer wurde gelöscht';
         header('Location:'.$page.'?site=useradmin_summary');
+        break;
+    case 'useradmin_usergroups':
+        header('Location:'.$page.'?site=useradmin_usergroups_summary');
+        break;
+    case 'useradmin_usergroups_summary':
+        $overview='<table class="table table-responsive">';
+        foreach($usergroups->getAllElements() as $group){
+            $overview.='
+            <tr>
+                <td class="visible-md visible-lg">'.$group['name'].'</td>
+                <td>
+                    <a href="'.$page.'?site=useradmin_usergroups_edit&id='.$group['id'].'"><span class="glyphicon glyphicon-pencil" title="Gruppe bearbeiten"></span></a>
+                    <a href="'.$page.'?site=useradmin_usergroups_delete&id='.$group['id'].'"><span class="glyphicon glyphicon-remove" title="Gruppe entfernen"></span></a>
+                </td>
+            </tr>
+            ';
+        }
+        $overview.='
+            <tr>
+                <td></td>
+                <td>
+                    <a href="'.$page.'?site=useradmin_usergroups_create"><span class="glyphicon glyphicon-plus" title="Neue Gruppe anlegen"></span></a>
+                </td>
+            </tr></table>';
+        $framework->template->setTemplateVariables(array('overview',$overview));
+        $framework->template->setTemplateFile('usergroups/summary');
+        break;
+    case 'useradmin_usergroups_create':
+        if($_POST){
+            $usergroups->createElement(array('name'=>$_POST['name']));
+        }
+        $framework->template->setTemplateFile('usergroups/create');
         break;
     default:
         $framework->template->setTemplateFile('index');

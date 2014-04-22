@@ -1,4 +1,6 @@
 <?php
+include 'element/tasks.inc';
+include 'element/users.inc';
 
 /**
  * Class elements
@@ -26,9 +28,7 @@ class element{
 
     public function createElement($input=array()){
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
-        if(empty($input['elementname'])) throw new InputErrorException('Der Benutzername darf nicht leer sein');
-        elseif(empty($input['password'])) throw new InputErrorException('Das Password darf nicht leer sein');
-        elseif($this->checkForDupe($input['elementname']))throw new ElementDupeException("Der Nutzer existiert bereits");
+        elseif($this->checkForDupe($input['id']))throw new ElementDupeException("Das Element existiert bereits");
         else{
             $input['password']=md5($input['password']);
             if(!$this->config['db_mode']){
@@ -66,9 +66,6 @@ class element{
     public function editElement($new=array()){
         $output=array();
         foreach($this->elements as $element){
-            if($new['elementname']===$element['elementname']) $new['password']=$element['password'];
-        }
-        foreach($this->elements as $element){
             if($new['elementname']===$element['elementname']) $output[]=$new;
             else $output[]=$element;
         }
@@ -100,7 +97,21 @@ class element{
     public function setFile($filename){
         $this->config['elementfile']=$filename;
     }
+    public function setupDatabase($db_table,$attributes= array()){
+        $this->setAttributes($attributes);
+        $this->database->setTable($db_table);
+        $this->importElementData();
+    }
     protected function setAttributes($attributes){
+        if(is_array($attributes)){
+            $newattributes='';
+            $first=true;
+            foreach($attributes as $attribute){
+                if($first===false)$newattributes.=$attribute;
+                else $newattributes.=','.$attribute;
+            }
+            $attributes=$newattributes;
+        }
         $output=array('elementname');
         $split= explode(',',$attributes);
         foreach($split as $element){
@@ -124,6 +135,7 @@ class element{
      */
     protected function checkForDupe($elementname){
         $this->importElementData();
+        if($elementname=='')return false;
         foreach($this->elements as $element){
             if($elementname===$element['elementname']) return true;
         }
