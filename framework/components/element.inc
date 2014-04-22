@@ -30,7 +30,6 @@ class element{
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
         elseif($this->checkForDupe($input['id']))throw new ElementDupeException("Das Element existiert bereits");
         else{
-            $input['password']=md5($input['password']);
             if(!$this->config['db_mode']){
                 $this->elements[]=$input;
                 $this->saveDB();
@@ -99,6 +98,7 @@ class element{
     }
     public function setupDatabase($db_table,$attributes= array()){
         $this->setAttributes($attributes);
+        $this->database->setAttributes($attributes);
         $this->database->setTable($db_table);
         $this->importElementData();
     }

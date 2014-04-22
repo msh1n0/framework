@@ -24,7 +24,7 @@ $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
 
 $usergroups=new element(true);
-$usergroups->setupDatabase('usergroups',$framework->users->getAttributes());
+$usergroups->setupDatabase('usergroups',array('id','name'));
 $allUsers=$framework->users->getAllUsers();
 
 /*

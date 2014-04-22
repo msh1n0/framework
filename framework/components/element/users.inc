@@ -23,7 +23,22 @@ class users extends element{
 
 
     public function createUser($input=array()){
-        parent::createElement($input);
+        if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
+        elseif($this->checkForDupe($input['id']))throw new ElementDupeException("Das Element existiert bereits");
+        else{
+            $input['password']=md5($input['password']);
+            if(!$this->config['db_mode']){
+                $this->elements[]=$input;
+                $this->saveDB();
+            }
+            else{
+                try{
+                    $this->database->save($input);
+                }catch (mysqli_sql_exception $e){
+                    $_SESSION['error']=$e->getMessage();
+                }
+            }
+        }
     }
 
     public function logIn($username,$password){
