@@ -87,7 +87,6 @@ class database {
         $part3.=');';
 
         $sql = $part1.$part2.$part3;
-echo $sql;
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
