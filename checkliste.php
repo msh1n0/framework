@@ -25,7 +25,15 @@ $framework->template->setTemplateVariables(array('page',$page));
 
 $usergroups=new element(true);
 $usergroups->setupDatabase('usergroups',array('id','name'));
+$framework->users->sort();
 $allUsers=$framework->users->getAllUsers();
+
+$tasks = new element(true);
+$tasks->setupDatabase('tasks',array('id','headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished'));
+
+$task_Users = new element(true);
+$task_Users->setupDatabase('tasks_users',array('id','taskid','userid'));
+
 
 /*
  * Basis-Definitionen Ende
@@ -36,9 +44,6 @@ $allUsers=$framework->users->getAllUsers();
 $content='';
 
 switch($_GET['site']){
-    case 'checklist':
-        $framework->template->setTemplateFile('checklist/index');
-        break;
     case 'login':
         $framework->template->setTemplateFile('login');
         if($_POST){
@@ -55,20 +60,136 @@ switch($_GET['site']){
         $framework->users->logOut();
         header('Location:'.$page);
         break;
-    case 'map':
-        $framework->template->setTemplateFile('map');
-        $map=new map('testfiles/hallenplan.jpg');
-        $framework->template->setTemplateVariables($map->prepareMap('40',''));
+    case 'tasks':
+        header('Location:'.$page.'?site=tasks_summary');
         break;
-    case 'statistics':
-        $framework->template->setTemplateFile('statistics');
+    case 'tasks_create':
+        $suitable_groups='';
+        foreach($usergroups->getAllElements() as $group){
+            $checked='';
+            if($_POST['suitable_groups']){
+                foreach($_POST['suitable_groups'] as $element){
+                    if($element==$group['id']) $checked=' checked="checked"';
+                }
+            }
+            $suitable_groups.='
+            <div class="checkbox-inline">
+                <label>
+                    <input type="checkbox" name="suitable_groups[]" value="'.$group['id'].'"'.$checked.'>
+                    '.$group['name'].'
+                </label>
+            </div>
+            ';
+        }
+
+        if($_POST){
+            $suitable_groups_new='';
+            $first=true;
+            foreach($_POST['suitable_groups'] as $element){
+                if($first===false)$suitable_groups_new.=$element;
+                else $suitable_groups_new.=','.$element;
+            }
+            $newtask=array(
+                'headline'=>$_POST['headline'],
+                'task'=>$_POST['task'],
+                'place'=>$_POST['place'],
+                'suitable_groups'=>$suitable_groups_new,
+                'deadline'=>$_POST['deadline']
+            );
+            $tasks->createElement($newtask);
+            header('Location:'.$page.'?site=tasks_summary');
+        }
+
+        foreach($suitable_groups as $lement){
+        }
+
+        $framework->template->setTemplateVariables(array('suitable_groups',$suitable_groups));
+        $framework->template->setTemplateFile('tasks/create');
         break;
-    case 'summary':
-        $framework->template->setTemplateFile('summary');
+    case 'tasks_summary':
+        $framework->template->setTemplateFile('tasks/summary');
+        $overview='<table cellpadding="0" cellspacing="0" class="table table-responsive"><tr>
+                <td>Aufgabe</td>
+                <td>Erstellt</td>
+                <td>Deadline</td>
+                <td></td>
+            </tr>';
+        foreach($tasks->getAllElements() as $task){
+            $overview.='
+            <tr>
+            <td>'.$task['headline'].'</td>
+            <td>'.$task['time_created'].'</td>
+            <td>'.$task['deadline'].'</td>
+            <td>
+                <a href="'.$page.'?site=tasks_details&id='.$task['id'].'"><span class="glyphicon glyphicon-list" title="Details anzeigen"></span></a>
+                <a href="'.$page.'?site=tasks_give_user&id='.$task['id'].'"><span class="glyphicon glyphicon-send" title="Aufgabe zuteilen"></span></a>
+                <a href="'.$page.'?site=tasks&id='.$task['id'].'"><span class="glyphicon glyphicon-ok" title="Aufgabe annehmen"></span></a>
+                <a href="'.$page.'?site=tasks&id='.$task['id'].'"><span class="glyphicon glyphicon-floppy-save" title="Aufgabe abschließen"></span></a>
+            </td>
+            </tr>
+            ';
+        }
+        $overview.='<tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <a href="'.$page.'?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>
+            </td>
+            </tr></table>';
+        $framework->template->setTemplateVariables(array('overview',$overview));
+        break;
+    case 'tasks_give_user':
+        if($_POST){
+            $task_Users->createElement(array(
+                'taskid'=>$_POST['taskid'],
+                'userid'=>$_POST['user']
+            ));
+
+            header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
+        }
+        else{
+            $framework->template->setTemplateVariables(array('taskid',$_GET['id']));
+
+        }
+        $users='<select class="form-control" name="user" >';
+        foreach($allUsers as $user){
+            $users.='<option value="'.$user['id'].'">'.$user['firstname'].' '.$user['surname'].'</option>'
+;        }
+        $users.='</select>';
+        $task=$tasks->getElementByAttribute('id',$_GET['id']);
+        $framework->template->setTemplateVariables(array('overview',$overview));
+        $framework->template->setTemplateVariables(array('allusers',$users));
+        $framework->template->setTemplateVariables(array('taskheadline',$task['headline']));;
+        $framework->template->setTemplateFile('tasks/give_user');
+        break;
+    case 'tasks_details':
+        $task=$tasks->getElementByAttribute('id',$_GET['id']);
+        $groups='';
+        $first=true;
+        foreach(explode(',',$task['suitable_groups']) as $suitable_group){
+            foreach($usergroups->getAllElements() as $element){
+                if($element['id']==$suitable_group){
+                    if($first===false)$groups .=', ';
+                    $groups.=$element['name'];
+                    $first=false;
+                }
+            }
+        }
+        if($task['finished_by']=='0')$task['finished_by']='';
+        if($task['deadline']=='0')$task['deadline']='';
+        if($task['time_finished']=='0')$task['time_finished']='';
+        $framework->template->setTemplateVariables(array('headline',$task['headline']));
+        $framework->template->setTemplateVariables(array('task',$task['task']));
+        $framework->template->setTemplateVariables(array('place',$task['place']));
+        $framework->template->setTemplateVariables(array('suitable_groups',$groups));
+        $framework->template->setTemplateVariables(array('finished_by',$task['finished_by']));
+        $framework->template->setTemplateVariables(array('deadline',$task['deadline']));
+        $framework->template->setTemplateVariables(array('time_finished',$task['time_finished']));
+        $framework->template->setTemplateFile('tasks/details');
         break;
     case 'useradmin':
         header('Location:'.$page.'?site=useradmin_summary');
-        break;
         break;
     case 'useradmin_summary':
         $framework->template->setTemplateFile('users/summary');
@@ -99,7 +220,7 @@ switch($_GET['site']){
                 <td>'.$user['group'].'</td>
                 <td>
                     <!--<a href="'.$page.'?site=useradmin_task"><span class="glyphicon glyphicon-tag" title="Aufgabe zuteilen"></span></a>-->
-                    <!--<a href="'.$page.'?site=useradmin_userinformaion"><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>-->
+                    <!--<a href="'.$page.'?site=tasks_summary&user="><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>-->
                     <!--<a href="tel:'.$user['phone'].'"><span class="glyphicon glyphicon-earphone" title="anrufen"></span></a>-->
                     <!--<a href="tel:'.$user['email'].'"><span class="glyphicon glyphicon-comment" title="E-Mail schreiben"></span></a>-->
                     <!--<a href="#"><span class="glyphicon glyphicon-retweet" title="'.$user['firstname'].' soll sich bei mir melden"></span></a>-->
@@ -282,9 +403,12 @@ switch($_GET['site']){
         $usergroups->deleteElement($_GET['id']);
         header('Location:'.$page.'?site=useradmin_usergroups_summary');
         break;
-    case 'useradmin_usergroups_edit':    # Verändert, wird aber neu gespeichert ###
+    case 'useradmin_usergroups_edit':
         if($_POST){
             $usergroups->editElement(array('id'=>$_POST['id'],'name'=>$_POST['name']));
+        }
+        if($_GET['confirm']==true){
+            header('Location:'.$page.'?site=useradmin_usergroups');
         }
         $element=$usergroups->getElementByAttribute('id',$_GET['id']);
         $framework->template->setTemplateVariables(array('id',$element['id']));

@@ -63,13 +63,18 @@ class element{
         }
     }
     public function editElement($new=array()){
-        $output=array();
-        foreach($this->elements as $element){
-            if($new['id']===$element['id']) $output[]=$new;
-            else $output[]=$element;
+        if($this->config['db_mode']){
+            $this->database->edit($new);
         }
-        $this->elements=$output;
-        $this->saveDB();
+        else{
+            $output=array();
+            foreach($this->elements as $element){
+                if($new['id']===$element['id']) $output[]=$new;
+                else $output[]=$element;
+            }
+            $this->elements=$output;
+            $this->saveDB();
+        }
     }
     public function getAllElements(){
         return $this->elements;
@@ -90,6 +95,15 @@ class element{
         }
         return '';
     }
+    public function getElementsByAttribute($attribute,$value){
+        $output=array();
+        foreach($this->elements as $element){
+            if($element[$attribute]==$value){
+                return $output[]=$element;
+            }
+        }
+        return $output;
+    }
     public function setDBTable($db_table){
         $this->database->setTable($db_table);
     }
@@ -101,6 +115,9 @@ class element{
         $this->database->setAttributes($attributes);
         $this->database->setTable($db_table);
         $this->importElementData();
+    }
+    public function sort(){
+        sort($this->elements);
     }
     protected function setAttributes($attributes){
         $output=array('id');

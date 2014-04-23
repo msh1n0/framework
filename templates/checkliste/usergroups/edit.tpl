@@ -1,7 +1,7 @@
 {extends "templates/checkliste/index.tpl"}
 {block name=content}
     <h1>Benutzergruppe bearbeiten</h1>
-    <form action="{$page}?site=useradmin_usergroups_create" method="post">
+    <form action="{$page}?site=useradmin_usergroups_edit&confirm=true" method="post">
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">

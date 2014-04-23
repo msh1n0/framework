@@ -18,19 +18,14 @@
                 {if $isLoggedIn}
                     <li><a href="{$page}?site=statistics">Übersicht</a></li>
                     <li><a href="{$page}?site=checklist">Meine Checkliste</a></li>
-                    <li><a data-toggle="dropdown" href="#">Aufgaben</a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a href="{$page}?site=checklist">Hilfe benötigt</a></li>
-                            <li><a href="{$page}?site=checklist">Alle Aufgaben</a></li>
-                        </ul>
-                    </li>
+                    <li><a href="{$page}?site=tasks">Aufgaben</a></li>
                     <li><a href="">Hallenplan</a></li>
                     <li><a data-toggle="dropdown" href="#">Mein Status</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a href="{$page}">beschäftigt</a></li>
-                            <li><a href="{$page}">suche Aufgabe</a></li>
-                            <li><a href="{$page}">Pause</a></li>
-                            <li><a href="{$page}?site=logout">ABMELDEN</a></li>
+                            <li><a href="{$page}"><span class="glyphicon glyphicon-briefcase" title="Aufgabe abschließen"></span>&nbsp;&nbsp;beschäftigt</a></li>
+                            <li><a href="{$page}"><span class="glyphicon glyphicon-refresh" title="Aufgabe abschließen"></span>&nbsp;&nbsp;suche Aufgabe</a></li>
+                            <li><a href="{$page}"><span class="glyphicon glyphicon-cutlery" title="Aufgabe abschließen"></span>&nbsp;&nbsp;Pause</a></li>
+                            <li><a href="{$page}?site=logout"><span class="glyphicon glyphicon-log-out" title="Aufgabe abschließen"></span>&nbsp;&nbsp;ABMELDEN</a></li>
                         </ul>
                     </li>
                 {/if}
