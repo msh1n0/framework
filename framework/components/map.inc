@@ -1,7 +1,17 @@
 <?php
 
+/**
+ * Class map
+ */
 class map{
+    /**
+     * @var image
+     */
     private $image;
+
+    /**
+     * @param $imagePath
+     */
     function __construct($imagePath){
         $this->image=new image();
         $this->image->setFile($imagePath);
@@ -25,6 +35,11 @@ class map{
         return array(array('mapboard',$this->generateMapGrid($cols, $rows)),array('mapboard_css',$this->generateMapGridCSS()));
     }
 
+    /**
+     * @param $cols
+     * @param $rows
+     * @return string
+     */
     private function generateMapGrid($cols, $rows){
         $output='
         <style>
@@ -42,6 +57,9 @@ class map{
         return $output;
     }
 
+    /**
+     * @return string
+     */
     private function generateMapGridCSS(){
        /*
         * css für marker: background:url(framework/template/system/_resources/images/map/marker_f00.png) 50% 50% no-repeat; background-size:80%;

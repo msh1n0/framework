@@ -46,6 +46,9 @@ class template{
         array('framework/components/ext/bootstrap/glyphicons.css'),
         array('framework/components/ext/bootstrap/bootstrap.min.js')
     );
+    /**
+     * @var array
+     */
     private $swipe=array(
         array('framework/components/ext/swipe/swipe.css'),
         array('framework/components/ext/swipe/swipe.js',
@@ -55,6 +58,9 @@ class template{
      * @var
      */
     private $jqueryNeeded;
+    /**
+     * @var array
+     */
     private $config;
 
     /**
@@ -154,6 +160,9 @@ class template{
         $this->smarty->assign($scriptname.'_js',$values[1]);
     }
 
+    /**
+     * @param $swipeDirectory
+     */
     public function setSwipeDirectory($swipeDirectory){
         $this->swipeDirectory=$swipeDirectory;
         $this->generateSwipe();
@@ -166,6 +175,10 @@ class template{
             $this->smarty->assign('jquery','<script src="framework/components/ext/jquery/jquery.js"></script>');
         }
     }
+
+    /**
+     * @throws ConfigurationException
+     */
     private function generateSwipe(){
         if(empty($this->swipeDirectory))throw new ConfigurationException('Das SwipeDirectory ist nicht eingerichtet');
         $galleryElements=$this->files->DirectoryContents($this->swipeDirectory);
@@ -177,6 +190,10 @@ class template{
         $output.='</ul></div>';
         $this->smarty->assign('swipe',$output);
     }
+
+    /**
+     * @return string
+     */
     private function getIndex(){
         $index=$_SERVER['PHP_SELF'];
         $index=substr($index,(strrpos($index,'/')+1));

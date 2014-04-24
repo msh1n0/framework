@@ -18,6 +18,11 @@ class users extends element{
     }
 
 
+    /**
+     * @param array $input
+     * @throws ElementDupeException
+     * @throws InputErrorException
+     */
     public function createUser($input=array()){
         $this->importElementData();
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
@@ -40,6 +45,11 @@ class users extends element{
         }
     }
 
+    /**
+     * @param $id
+     * @param $password
+     * @return bool
+     */
     public function logIn($id,$password){
         $this->importElementData();
         foreach($this->elements as $user){
@@ -72,9 +82,17 @@ class users extends element{
             return true;
         }
     }
+
+    /**
+     * @param $value
+     */
     public function deleteUser($value){
         parent::deleteElement($value);
     }
+
+    /**
+     * @param array $new
+     */
     public function editUser($new=array()){
         if($this->config['db_mode']){
             $this->database->edit($new);
@@ -92,15 +110,35 @@ class users extends element{
         }
 
     }
+
+    /**
+     * @return array
+     */
     public function getAllUsers(){
         return parent::getAllElements();
     }
+
+    /**
+     * @param $attribute
+     * @return bool
+     */
     public function currentUser($attribute){
          return parent::currentElement($attribute);
     }
+
+    /**
+     * @param $username
+     * @return string
+     */
     public function getUser($username){
         return parent::getElementByAttribute('username',$username);
     }
+
+    /**
+     * @param $attribute
+     * @param $value
+     * @return string
+     */
     public function getUserByAttribute($attribute,$value){
         return parent::getElementByAttribute($attribute,$value);
     }

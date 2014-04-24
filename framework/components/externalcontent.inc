@@ -79,6 +79,11 @@ class externalContent{
         return $this->content;
     }
 
+    /**
+     * TODO: funktioniert aktuell noch nicht
+     * @param $site
+     * @return array
+     */
     public function danbooru($site){
         switch($site){
             case 'yande.re':

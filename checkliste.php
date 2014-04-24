@@ -24,15 +24,15 @@ $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
 
 $usergroups=new element(true);
-$usergroups->setupDatabase('usergroups',array('id','name'));
+$usergroups->setupDatabase('usergroups',array('name'));
 $framework->users->sort();
 $allUsers=$framework->users->getAllUsers();
 
 $tasks = new element(true);
-$tasks->setupDatabase('tasks',array('id','headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished'));
+$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished'));
 
 $task_Users = new element(true);
-$task_Users->setupDatabase('tasks_users',array('id','taskid','userid'));
+$task_Users->setupDatabase('tasks_users',array('taskid','userid'));
 
 
 /*
@@ -100,11 +100,73 @@ switch($_GET['site']){
             header('Location:'.$page.'?site=tasks_summary');
         }
 
-        foreach($suitable_groups as $lement){
-        }
 
         $framework->template->setTemplateVariables(array('suitable_groups',$suitable_groups));
         $framework->template->setTemplateFile('tasks/create');
+        break;
+    case 'tasks_details':
+        $task=$tasks->getElementByAttribute('id',$_GET['id']);
+        $groups='';
+        $first=true;
+        foreach(explode(',',$task['suitable_groups']) as $suitable_group){
+            foreach($usergroups->getAllElements() as $element){
+                if($element['id']==$suitable_group){
+                    if($first===false)$groups .=', ';
+                    $groups.=$element['name'];
+                    $first=false;
+                }
+            }
+        }
+        $setUsers='';
+        foreach($task_Users->getAllElements() as $element){
+            if($element['taskid']==$_GET['id']){
+                foreach($allUsers as $user){
+                    if($user['id']==$element['userid']) $setUsers.=$user['firstname'].' '.$user['surname'].'<br>';
+                }
+            }
+        }
+        if($task['finished_by']=='0')$task['finished_by']='';
+        if($task['deadline']=='0')$task['deadline']='';
+        if($task['time_finished']=='0')$task['time_finished']='';
+        $framework->template->setTemplateVariables(array('id',$_GET['id']));
+        $framework->template->setTemplateVariables(array('setusers',$setUsers));
+        $framework->template->setTemplateVariables(array('headline',$task['headline']));
+        $framework->template->setTemplateVariables(array('task',$task['task']));
+        $framework->template->setTemplateVariables(array('place',$task['place']));
+        $framework->template->setTemplateVariables(array('suitable_groups',$groups));
+        $framework->template->setTemplateVariables(array('finished_by',$task['finished_by']));
+        $framework->template->setTemplateVariables(array('deadline',$task['deadline']));
+        $framework->template->setTemplateVariables(array('time_finished',$task['time_finished']));
+        $framework->template->setTemplateFile('tasks/details');
+        break;
+    case 'tasks_give_user':
+        if($_POST){
+            try{
+                $task_Users->createElement(array(
+                    'taskid'=>$_POST['taskid'],
+                    'userid'=>$_POST['user']
+                ));
+            }catch(ElementDupeException $e){
+                $_SESSION['error']='Die Aufgabe wurde dem Nutzer bereits zugewiesen';
+                header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
+            }
+
+            header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
+        }
+        else{
+            $framework->template->setTemplateVariables(array('taskid',$_GET['id']));
+
+        }
+        $users='<select class="form-control" name="user" >';
+        foreach($allUsers as $user){
+            $users.='<option value="'.$user['id'].'">'.$user['firstname'].' '.$user['surname'].'</option>'
+            ;        }
+        $users.='</select>';
+        $task=$tasks->getElementByAttribute('id',$_GET['id']);
+        $framework->template->setTemplateVariables(array('overview',$overview));
+        $framework->template->setTemplateVariables(array('allusers',$users));
+        $framework->template->setTemplateVariables(array('taskheadline',$task['headline']));;
+        $framework->template->setTemplateFile('tasks/give_user');
         break;
     case 'tasks_summary':
         $framework->template->setTemplateFile('tasks/summary');
@@ -123,8 +185,8 @@ switch($_GET['site']){
             <td>
                 <a href="'.$page.'?site=tasks_details&id='.$task['id'].'"><span class="glyphicon glyphicon-list" title="Details anzeigen"></span></a>
                 <a href="'.$page.'?site=tasks_give_user&id='.$task['id'].'"><span class="glyphicon glyphicon-send" title="Aufgabe zuteilen"></span></a>
-                <a href="'.$page.'?site=tasks&id='.$task['id'].'"><span class="glyphicon glyphicon-ok" title="Aufgabe annehmen"></span></a>
-                <a href="'.$page.'?site=tasks&id='.$task['id'].'"><span class="glyphicon glyphicon-floppy-save" title="Aufgabe abschließen"></span></a>
+                <a href="'.$page.'?site=tasks_take&id='.$task['id'].'"><span class="glyphicon glyphicon-ok" title="Aufgabe annehmen"></span></a>
+                <a href="'.$page.'?site=tasks&id='.$task['id'].'"><span class="glyphicon glyphicon-lock" title="Aufgabe abschließen"></span></a>
             </td>
             </tr>
             ';
@@ -139,54 +201,17 @@ switch($_GET['site']){
             </tr></table>';
         $framework->template->setTemplateVariables(array('overview',$overview));
         break;
-    case 'tasks_give_user':
-        if($_POST){
+    case 'tasks_take':
+        try{
             $task_Users->createElement(array(
-                'taskid'=>$_POST['taskid'],
-                'userid'=>$_POST['user']
+                'taskid'=>$_GET['id'],
+                'userid'=>$_SESSION['id']
             ));
-
+        }catch(ElementDupeException $e){
+            $_SESSION['error']='Die Aufgabe wurde dem Nutzer bereits zugewiesen';
             header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
         }
-        else{
-            $framework->template->setTemplateVariables(array('taskid',$_GET['id']));
-
-        }
-        $users='<select class="form-control" name="user" >';
-        foreach($allUsers as $user){
-            $users.='<option value="'.$user['id'].'">'.$user['firstname'].' '.$user['surname'].'</option>'
-;        }
-        $users.='</select>';
-        $task=$tasks->getElementByAttribute('id',$_GET['id']);
-        $framework->template->setTemplateVariables(array('overview',$overview));
-        $framework->template->setTemplateVariables(array('allusers',$users));
-        $framework->template->setTemplateVariables(array('taskheadline',$task['headline']));;
-        $framework->template->setTemplateFile('tasks/give_user');
-        break;
-    case 'tasks_details':
-        $task=$tasks->getElementByAttribute('id',$_GET['id']);
-        $groups='';
-        $first=true;
-        foreach(explode(',',$task['suitable_groups']) as $suitable_group){
-            foreach($usergroups->getAllElements() as $element){
-                if($element['id']==$suitable_group){
-                    if($first===false)$groups .=', ';
-                    $groups.=$element['name'];
-                    $first=false;
-                }
-            }
-        }
-        if($task['finished_by']=='0')$task['finished_by']='';
-        if($task['deadline']=='0')$task['deadline']='';
-        if($task['time_finished']=='0')$task['time_finished']='';
-        $framework->template->setTemplateVariables(array('headline',$task['headline']));
-        $framework->template->setTemplateVariables(array('task',$task['task']));
-        $framework->template->setTemplateVariables(array('place',$task['place']));
-        $framework->template->setTemplateVariables(array('suitable_groups',$groups));
-        $framework->template->setTemplateVariables(array('finished_by',$task['finished_by']));
-        $framework->template->setTemplateVariables(array('deadline',$task['deadline']));
-        $framework->template->setTemplateVariables(array('time_finished',$task['time_finished']));
-        $framework->template->setTemplateFile('tasks/details');
+        header('Location:'.$page.'?site=tasks_details&id='.$_GET['id']);
         break;
     case 'useradmin':
         header('Location:'.$page.'?site=useradmin_summary');

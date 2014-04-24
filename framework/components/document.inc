@@ -48,9 +48,17 @@ class document{
         }
         return $text;
     }
+
+    /**
+     *
+     */
     public function getSerializedFile(){
         unserialize($this->getFileAsString());
     }
+
+    /**
+     * @param $content
+     */
     public function witeSerializedFile($content){
         $this->writeDB(serialize($content));
     }
@@ -91,6 +99,10 @@ class document{
         fwrite($filehandle,$text);
         fclose($filehandle);
     }
+
+    /**
+     * @param $content
+     */
     public function writeDB($content){
         $filehandle = fopen($this->file, 'w');
         fwrite($filehandle,$content);

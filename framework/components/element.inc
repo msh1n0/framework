@@ -6,10 +6,25 @@ include 'element/users.inc';
  * Class elements
  */
 class element{
+    /**
+     * @var array
+     */
     protected $elements = array();
+    /**
+     * @var document
+     */
     protected $document;
+    /**
+     * @var array
+     */
     protected $config=array();
+    /**
+     * @var database
+     */
     protected $database;
+    /**
+     * @var
+     */
     protected $attributes;
 
     /**
@@ -26,9 +41,14 @@ class element{
     }
 
 
+    /**
+     * @param array $input
+     * @throws ElementDupeException
+     * @throws InputErrorException
+     */
     public function createElement($input=array()){
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
-        elseif($this->checkForDupe($input['id']))throw new ElementDupeException("Das Element existiert bereits");
+        elseif($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
         else{
             if(!$this->config['db_mode']){
                 $this->elements[]=$input;
@@ -49,6 +69,10 @@ class element{
     public function getAttributes(){
         return $this->attributes;
     }
+
+    /**
+     * @param $id
+     */
     public function deleteElement($id){
         if($this->config['db_mode']){
             $this->database->delete('id',$id);
@@ -62,6 +86,10 @@ class element{
             $this->saveDB();
         }
     }
+
+    /**
+     * @param array $new
+     */
     public function editElement($new=array()){
         if($this->config['db_mode']){
             $this->database->edit($new);
@@ -76,9 +104,18 @@ class element{
             $this->saveDB();
         }
     }
+
+    /**
+     * @return array
+     */
     public function getAllElements(){
         return $this->elements;
     }
+
+    /**
+     * @param $attribute
+     * @return bool
+     */
     public function currentElement($attribute){
         foreach($this->elements as $element){
             if($element['id']==$_SESSION['id']){
@@ -87,6 +124,12 @@ class element{
         }
         return false;
     }
+
+    /**
+     * @param $attribute
+     * @param $value
+     * @return string
+     */
     public function getElementByAttribute($attribute,$value){
         foreach($this->elements as $element){
             if($element[$attribute]==$value){
@@ -95,6 +138,12 @@ class element{
         }
         return '';
     }
+
+    /**
+     * @param $attribute
+     * @param $value
+     * @return array
+     */
     public function getElementsByAttribute($attribute,$value){
         $output=array();
         foreach($this->elements as $element){
@@ -104,21 +153,42 @@ class element{
         }
         return $output;
     }
+
+    /**
+     * @param $db_table
+     */
     public function setDBTable($db_table){
         $this->database->setTable($db_table);
     }
+
+    /**
+     * @param $filename
+     */
     public function setFile($filename){
         $this->config['file']=$filename;
     }
+
+    /**
+     * @param $db_table
+     * @param array $attributes
+     */
     public function setupDatabase($db_table,$attributes= array()){
         $this->setAttributes($attributes);
-        $this->database->setAttributes($attributes);
+        $this->database->setAttributes($this->attributes);
         $this->database->setTable($db_table);
         $this->importElementData();
     }
+
+    /**
+     *
+     */
     public function sort(){
         sort($this->elements);
     }
+
+    /**
+     * @param $attributes
+     */
     protected function setAttributes($attributes){
         $output=array('id');
         if(is_array($attributes)) $this->attributes=$attributes;
@@ -127,9 +197,13 @@ class element{
             foreach($split as $element){
                 $output[]=$element;
             }
+            $this->attributes=$output;
         }
-        $this->attributes=$output;
     }
+
+    /**
+     *
+     */
     protected function importElementData(){
         if(!$this->config['db_mode'])$this->elements=unserialize($this->document->getFileAsString());
         else{
@@ -137,14 +211,28 @@ class element{
         }
     }
 
+    /**
+     *
+     */
     protected function saveDB(){
         $this->document->writeDB(serialize($this->elements));
     }
-    protected function checkForDupe($id){
+
+    /**
+     * @param $input
+     * @return bool
+     */
+    protected function checkForDupe($input){
         $this->importElementData();
-        if($id=='')return false;
         foreach($this->elements as $element){
-            if($id==$element['id']) return true;
+            $found=false;
+            if($input['id']==$element['id']) return true;
+            foreach($this->attributes as $attribute){
+                if($attribute=='id')break;
+                if($element[$attribute]!=$input[$attribute])$found=false;
+                else $found=true;
+            }
+            if($found==true)return true;
         }
         return false;
     }

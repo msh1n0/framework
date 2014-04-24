@@ -5,20 +5,47 @@
  * TODO: Wasserzeichen, Rahmen, Texte, Verarbeitung in Datei ablegen beim Resize
  */
 class image{
+    /**
+     * @var
+     */
     private $filename;
+    /**
+     * @var
+     */
     private $width;
+    /**
+     * @var
+     */
     private $height;
+    /**
+     * @var
+     */
     private $mime;
 
+    /**
+     * @return mixed
+     */
     public function getWidth(){
         return $this->width;
     }
+
+    /**
+     * @return mixed
+     */
     public function getHeight(){
         return $this->height;
     }
+
+    /**
+     * @return mixed
+     */
     public function getFilename(){
         return $this->filename;
     }
+
+    /**
+     * @param $filename
+     */
     public function setFile($filename){
         $this->filename=$filename;
         $this->refresh();
@@ -91,6 +118,10 @@ class image{
         imagejpeg($newImage,$this->filename,99);
         $this->refresh();
     }
+
+    /**
+     *
+     */
     private function refresh(){
         $fileInfo  = getimagesize($this->filename);
         $this->width  = $fileInfo[0];
