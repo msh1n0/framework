@@ -34,7 +34,6 @@ class element{
         $this->config['db_mode']=$db_mode;
         if(!$this->config['db_mode']){ //Datei-Modus
             $this->document = new document();
-            $this->importElementData();
         }else{
             $this->database = new database();
         }
@@ -46,20 +45,20 @@ class element{
      * @throws ElementDupeException
      * @throws InputErrorException
      */
-    public function createElement($input=array()){
+    public function createElement($input=array()){ ####################################################################### ABÄNDERN WIE IN USERS
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
         elseif($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
         else{
-            if(!$this->config['db_mode']){
-                $this->elements[]=$input;
-                $this->saveDB();
-            }
-            else{
+            if($this->config['db_mode']){
                 try{
                     $this->database->save($input);
                 }catch (mysqli_sql_exception $e){
                     $_SESSION['error']=$e->getMessage();
                 }
+            }
+            else{
+                $this->elements=$input;
+                $this->saveDB();
             }
         }
     }
@@ -161,13 +160,14 @@ class element{
         $this->database->setTable($db_table);
     }
 
-    /**
-     * @param $filename
-     */
-    public function setFile($filename){
-        $this->config['file']=$filename;
-    }
 
+    public function setupFile($filename,$attributes= array()){
+        $this->config['file']=$filename;
+        $this->setAttributes($attributes);
+        $this->document->setDocument($this->config['file']);
+        $this->elements=$this->document->getSerializedFile();
+        $this->importElementData();
+    }
     /**
      * @param $db_table
      * @param array $attributes
@@ -179,6 +179,13 @@ class element{
         $this->importElementData();
     }
 
+    /**
+     *
+     */
+    public function deleteElements(){
+        $this->elements=array();
+        $this->saveDB();
+    }
     /**
      *
      */
@@ -205,10 +212,8 @@ class element{
      *
      */
     protected function importElementData(){
-        if(!$this->config['db_mode'])$this->elements=unserialize($this->document->getFileAsString());
-        else{
-           $this->elements=$this->database->getAll();
-        }
+        if($this->config['db_mode'])$this->elements=$this->database->getAll();
+        else $this->elements=$this->document->getSerializedFile();
     }
 
     /**

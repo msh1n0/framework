@@ -11,7 +11,7 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                {if !isset($username)}
+                {if !isset($id)}
                     <li><a href="{$index}?site=login">Anmelden</a></li>
                 {/if}
                 {if $player}
@@ -22,7 +22,7 @@
                     <li><a href="{$index}?site=mapadmin">Karten verwalten</a></li>
                     <li><a href="{$index}?site=useradmin">User-Admin</a></li>
                 {/if}
-                {if isset($username)}
+                {if isset($id)}
                     <li><a href="{$index}?site=logout">Abmelden</a></li>
                 {/if}
             </ul>

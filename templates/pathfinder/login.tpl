@@ -5,10 +5,10 @@
         <form action="{$index}?site=login" method="post">
             <div class="row">
                 <div class="col-xs-3">
-                    <label for="pass" class="control-label">Benutzername</label>
+                    <label for="id" class="control-label">Benutzername</label>
                 </div>
                 <div class="col-xs-9">
-                    <input name="username" type="text" value="" class="form-control">
+                    <input name="id" type="text" value="" class="form-control">
                 </div>
             </div>
             <div class="row">

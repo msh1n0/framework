@@ -53,7 +53,7 @@ class document{
      *
      */
     public function getSerializedFile(){
-        unserialize($this->getFileAsString());
+        return unserialize($this->getFileAsString());
     }
 
     /**

@@ -14,6 +14,10 @@ class users extends element{
         if($this->config['db_mode']){
             $this->setAttributes($this->config['attributes']);
             $this->setupDatabase($this->config['db_table'],$this->attributes);
+        }else{
+            $this->setAttributes($this->config['attributes']);
+            $this->document->setDocument($this->config['userfile']);
+            $this->elements=$this->document->getSerializedFile();
         }
     }
 
@@ -29,19 +33,17 @@ class users extends element{
         elseif($this->checkForDupe($input['id'])){
             throw new ElementDupeException("Das Element existiert bereits");
         }
+        $input['password']=md5($input['password']);
+        if($this->config['db_mode']){
+            try{
+                $this->database->save($input);
+            }catch (mysqli_sql_exception $e){
+                $_SESSION['error']=$e->getMessage();
+            }
+        }
         else{
-            $input['password']=md5($input['password']);
-            if(!$this->config['db_mode']){
-                $this->elements[]=$input;
-                $this->saveDB();
-            }
-            else{
-                try{
-                    $this->database->save($input);
-                }catch (mysqli_sql_exception $e){
-                    $_SESSION['error']=$e->getMessage();
-                }
-            }
+            $this->elements[]=$input;
+            $this->saveDB();
         }
     }
 

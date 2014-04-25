@@ -1,10 +1,10 @@
 {extends "templates/pathfinder/index.tpl"}
 {block name=content}
     <div class="alert alert-info">
-        <h1>{$playername} bearbeiten</h1>
+        <h1>{$playerid} bearbeiten</h1>
         <form action="{$index}?site=useradmin&action=edituser" method="post">
         <div class="form-group disabled">
-            <input type="hidden" name="username" id="username" value="{$playername}" class="form-control">
+            <input type="hidden" name="id" id="id" value="{$playerid}" class="form-control">
             <input type="hidden" name="password" id="password" value="{$password}" class="form-control">
         <div class="form-group">
             <label for="userlevel">Userlevel:</label>

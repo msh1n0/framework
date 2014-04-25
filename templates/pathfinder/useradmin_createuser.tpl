@@ -4,8 +4,8 @@
         <h1>Spieler anlegen</h1>
         <form action="{$index}?site=useradmin&action=createuser" method="post">
         <div class="form-group">
-            <label for="username">Spielername:</label>
-            <input type="text" name="username" id="username" value="" class="form-control">
+            <label for="id">Spielername:</label>
+            <input type="text" name="id" id="id" value="" class="form-control">
         </div>
         <div class="form-group">
             <label for="password">Password:</label>

@@ -30,9 +30,9 @@ if($framework->users->currentUser('userlevel')>60){
     $isadmin=true;
 }
 else $isadmin=false;
-$mapSaveFile= new document();
-$mapSaveFile->setDocument('data/pathfinder_map.db');
-$mapSave=unserialize($mapSaveFile->getFileAsString());
+$mapSaveFile= new element(false);
+$mapSaveFile->setupFile('data/pathfinder_map.db',array('mapname','cols','rows'));
+$mapSave=$mapSaveFile->getAllElements();
 $mapDirectory=new files();
 $maps=$mapDirectory->DirectoryContents('content/pathfinder/images/maps');
 /*
@@ -43,13 +43,13 @@ switch($_GET['site']){
     case 'login':
         $framework->template->setTemplateFile('login');
         if(!empty($_POST)){
-            if($framework->users->logIn($_POST['username'],$_POST['password'])){
+            if($framework->users->logIn($_POST['id'],$_POST['password'])){
                 $_SESSION['message']='Du bist jetzt eingeloggt';
             }
             else{
                 $_SESSION['warning']='Fehler beim Einloggen. Versuche es nochmal plx :3';
             }
-            header('Location:'.$page);
+            #header('Location:'.$page);
         }
         break;
     case 'logout':
@@ -65,16 +65,17 @@ switch($_GET['site']){
                 if($_GET['action']=='edituser'){
                     $framework->users->editUser($_POST);
                     header('Location:'.$page.'?site=useradmin');
+
                 }
-                if($_GET['action']=='createuser'){
+                elseif($_GET['action']=='createuser'){
                     $framework->users->createUser($_POST);
                     header('Location:'.$page.'?site=useradmin');
                 }
             }
-            if($_GET['action']=='edituser'){
+            elseif($_GET['action']=='edituser'){
                 $framework->template->setTemplateFile('useradmin_edituser');
-                $user=$framework->users->getUser($_GET['user']);
-                $framework->template->setTemplateVariables(array('playername',$user['username']));
+                $user=$framework->users->getElementByAttribute('id',$_GET['id']);
+                $framework->template->setTemplateVariables(array('playerid',$user['id']));
                 $framework->template->setTemplateVariables(array('password',$user['password']));
                 $framework->template->setTemplateVariables(array('playerlevel',$user['userlevel']));
                 $framework->template->setTemplateVariables(array('gab',$user['gab']));
@@ -116,7 +117,7 @@ switch($_GET['site']){
             foreach($allUsers as $user){
                 $userOverview.='
             <tr>
-                <td>'.$user['username'].'</td>
+                <td>'.$user['id'].'</td>
                 <td>'.$user['userlevel'].'</td>
                 <td>'.$user['gab'].'</td>
                 <td>'.$user['init'].'</td>
@@ -125,8 +126,8 @@ switch($_GET['site']){
                 <td>'.$user['dmgd'].'</td>
                 <td>'.$user['dmgnd'].'</td>
                 <td>
-                     <a href="'.$page.'?site=useradmin&action=edituser&user='.$user['username'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>
-                     <a href="'.$page.'?site=useradmin&action=deleteuser&user='.$user['username'].'"><span class="glyphicon glyphicon-remove" title="Spieler löschen"></span></a>
+                     <a href="'.$page.'?site=useradmin&action=edituser&id='.$user['id'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>
+                     <a href="'.$page.'?site=useradmin&action=deleteuser&user='.$user['id'].'"><span class="glyphicon glyphicon-remove" title="Spieler löschen"></span></a>
                 </td>
             </tr>
             ';
@@ -366,7 +367,7 @@ switch($_GET['site']){
         foreach($allUsers as $user){
             $userOverview.='
             <tr>
-                <td>'.$user['username'].'</td>
+                <td>'.$user['id'].'</td>
                 <td>'.$user['gab'].'</td>
                 <td>'.$user['init'].'</td>
                 <td>'.$user['rk'].'</td>
@@ -374,8 +375,8 @@ switch($_GET['site']){
                 <td>'.$user['dmgd'].'</td>
                 <td>'.$user['dmgnd'].'</td>
                 <td>
-                     <a href="'.$page.'?site=useradmin&action=edituser&user='.$user['username'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>&nbsp;&nbsp;&nbsp;
-                     <a href="'.$page.'?site=wuerfel&action=setturn&user='.$user['username'].'"><span class="glyphicon glyphicon-share-alt" title="Spieler Würfel geben"></span></a>
+                     <a href="'.$page.'?site=useradmin&action=edituser&user='.$user['id'].'"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>&nbsp;&nbsp;&nbsp;
+                     <a href="'.$page.'?site=wuerfel&action=setturn&user='.$user['id'].'"><span class="glyphicon glyphicon-share-alt" title="Spieler Würfel geben"></span></a>
                 </td>
             </tr>
             ';
@@ -395,7 +396,7 @@ switch($_GET['site']){
 
             ';
         $framework->template->setTemplateVariables(array('overview',$userOverview));
-        $framework->template->setTemplateVariables(array('activeplayer',$framework->users->currentUser('username')));
+        $framework->template->setTemplateVariables(array('activeplayer',$framework->users->currentUser('id')));
 
 
 
@@ -408,7 +409,7 @@ switch($_GET['site']){
         $mappointersave->setDocument('data/pathfinder_mappointers.db');
         $mapPointers=unserialize($mappointersave->getFileAsString());
         if(empty($mapPointers))$mapPointers= array();
-        $framework->template->setTemplateVariables(array('activeplayer',$framework->users->currentUser('username')));
+        $framework->template->setTemplateVariables(array('activeplayer',$framework->users->currentUser('id')));
 
         $combatoverview='<table class="table table-responsive">
             <tr>
@@ -546,6 +547,8 @@ switch($_GET['site']){
         $framework->template->setTemplateVariables(array('players',$players));
         break;
     case 'mapadmin':
+
+
         $framework->template->setTemplateFile('mapadmin');
         $mapoverview='<table class="table table-responsive">';
         foreach($maps as $element){
@@ -570,13 +573,15 @@ switch($_GET['site']){
             </tr></table>';
         $framework->template->setTemplateVariables(array('mapoverview',$mapoverview));
 
+
         switch($_GET['action']){
             case 'activatemap':
                 if($_GET['confirm']==true){
                     $mapSave['mapname']=$_GET['mapname'];
                     $mapSave['cols']=$_POST['cols'];
                     $mapSave['rows']=$_POST['rows'];
-                    $mapSaveFile->writeDB(serialize($mapSave));
+                    $mapSaveFile->deleteElements();
+                    $mapSaveFile->createElement($mapSave);
                     header('Location:'.$page.'?site=mapadmin');
                 }
                 else{
@@ -617,7 +622,7 @@ if(!$framework->users->isLoggedIn()){
 
 }
 else{
-    $framework->template->setTemplateVariables(array('username',$_SESSION['username']));
+    $framework->template->setTemplateVariables(array('id',$_SESSION['id']));
     $framework->template->setTemplateVariables(array('player',true));
     $framework->template->setTemplateVariables(array('admin',true));
 }

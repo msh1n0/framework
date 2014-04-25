@@ -34,7 +34,7 @@
         </div>
 
     {/block}
-    {if !isset($username)}
+    {if !isset($id)}
         <div class="alert alert-info">
             Zum Mitspielen bitte <a href="{$index}?site=login">anmelden</a>
         </div>
