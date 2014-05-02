@@ -129,3 +129,4 @@ class image{
         $this->mime = $fileInfo['mime'];
     }
 }
+###
