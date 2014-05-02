@@ -1,7 +1,7 @@
 {extends "templates/checkliste/index.tpl"}
 {block name=content}
     <div class="alert alert-info">
-        <h2>Details: {$headline}</h2>
+        <h2>Details: {$headline} <a href="{$page}?site=tasks_edit&id={$id}"><span class="glyphicon glyphicon-pencil"></span></a></h2>
         <p>{$task}</p>
         <p>&nbsp;</p>
         {if $place}

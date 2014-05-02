@@ -1,11 +1,10 @@
 <?php
-include 'element/tasks.inc';
-include 'element/users.inc';
+include 'collections/users.inc';
 
 /**
  * Class elements
  */
-class element{
+class collection{
     /**
      * @var array
      */
@@ -50,16 +49,16 @@ class element{
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
         elseif($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
         else{
-            if(!$this->config['db_mode']){
-                $this->elements[]=$input;
-                $this->saveDB();
-            }
-            else{
+            if($this->config['db_mode']){
                 try{
                     $this->database->save($input);
                 }catch (mysqli_sql_exception $e){
                     $_SESSION['error']=$e->getMessage();
                 }
+            }
+            else{
+                $this->elements[]=$input;
+                $this->saveDB();
             }
         }
     }
@@ -225,12 +224,11 @@ class element{
     protected function checkForDupe($input){
         $this->importElementData();
         foreach($this->elements as $element){
-            $found=false;
+            $found=true;
             if($input['id']==$element['id']) return true;
             foreach($this->attributes as $attribute){
                 if($attribute=='id')break;
                 if($element[$attribute]!=$input[$attribute])$found=false;
-                else $found=true;
             }
             if($found==true)return true;
         }

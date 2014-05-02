@@ -3,7 +3,7 @@
 /**
  * Class users
  */
-class users extends element{
+class users extends collection{
 
     /**
      *
