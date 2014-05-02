@@ -146,9 +146,9 @@ class collection{
     public function getElementsByAttribute($attribute,$value){
         $output=array();
         foreach($this->elements as $element){
-            if($element[$attribute]==$value){
-                return $output[]=$element;
-            }
+           if($element[$attribute]==$value){
+                $output[]=$element;
+           }
         }
         return $output;
     }

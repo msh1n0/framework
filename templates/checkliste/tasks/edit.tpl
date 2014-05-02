@@ -5,7 +5,7 @@
 {block name=content}
     <h1>Aufgabe anlegen</h1>
     <form action="{$page}?site=tasks_edit" method="post">
-        <input type="hidden" class="form-control" id="id" name="id">
+        <input type="hidden" class="form-control" id="id" name="id" value="{$id}">
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">

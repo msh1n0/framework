@@ -23,6 +23,9 @@ if($framework->users->isLoggedIn()){
 $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
 
+if($framework->users->isLoggedIn()) $currentUser=$framework->users->getUser($_SESSION['id']);
+else  $currentUser='';
+
 $usergroups=new collection(true);
 $usergroups->setupDatabase('usergroups',array('name'));
 $framework->users->sort();
@@ -128,9 +131,11 @@ switch($_GET['site']){
         if($_POST){
             $suitable_groups_new='';
             $first=true;
-            foreach($_POST['suitable_groups'] as $element){
-                if($first===false)$suitable_groups_new.=$element;
-                else $suitable_groups_new.=','.$element;
+            if(!empty($_POST['suitable_groups'])){
+                foreach($_POST['suitable_groups'] as $element){
+                    if($first===false)$suitable_groups_new.=$element;
+                    else $suitable_groups_new.=','.$element;
+                }
             }
             $newtask=array(
                 'id'=>$_POST['id'],
@@ -218,26 +223,52 @@ switch($_GET['site']){
         break;
     case 'tasks_summary':
         $framework->template->setTemplateFile('tasks/summary');
+
         $overview='<table cellpadding="0" cellspacing="0" class="table table-responsive"><tr>
-                <td>Aufgabe</td>
-                <td>Erstellt</td>
-                <td>Deadline</td>
-                <td></td>
+                <th>Aufgabe</th>
+                <th>Freigegeben für</th>
+                <th>Deadline</th>
+                <th></th>
             </tr>';
-        foreach($tasks->getAllElements() as $task){
-            $overview.='
-            <tr>
-            <td>'.$task['headline'].'</td>
-            <td>'.$task['time_created'].'</td>
-            <td>'.$task['deadline'].'</td>
-            <td>
-                <a href="'.$page.'?site=tasks_details&id='.$task['id'].'"><span class="glyphicon glyphicon-list" title="Details anzeigen"></span></a>
-                <a href="'.$page.'?site=tasks_give_user&id='.$task['id'].'"><span class="glyphicon glyphicon-send" title="Aufgabe zuteilen"></span></a>
-                <a href="'.$page.'?site=tasks_take&id='.$task['id'].'"><span class="glyphicon glyphicon-ok" title="Aufgabe annehmen"></span></a>
-                <a href="'.$page.'?site=tasks&id='.$task['id'].'"><span class="glyphicon glyphicon-lock" title="Aufgabe abschließen"></span></a>
-            </td>
-            </tr>
-            ';
+        $elements=array();
+        foreach($tasks->getElementsByAttribute('finish_status','0') as $task){
+
+            $groups='';
+            $first=true;
+            $taskVisible=false;
+            foreach(explode(',',$task['suitable_groups']) as $suitable_group){
+                foreach($usergroups->getAllElements() as $element){
+                    if($element['id']==$suitable_group){
+                        if($first===false)$groups .=', ';
+                        $groups.=$element['name'];
+                        $first=false;
+                    }
+                }
+                if($suitable_group==$currentUser['group']) $taskVisible=true;
+            }
+
+            if($taskVisible){
+
+                $elements[]='
+                <tr>
+                <td>'.$task['headline'].'</td>
+                <td>'.$groups.'</td>
+                <td>'.$task['deadline'].'</td>
+                <td>
+                    <a href="'.$page.'?site=tasks_edit&id='.$task['id'].'"><span class="glyphicon glyphicon-pencil" title="Details anzeigen"></span></a>
+                    <a href="'.$page.'?site=tasks_details&id='.$task['id'].'"><span class="glyphicon glyphicon-list" title="Details anzeigen"></span></a>
+                    <a href="'.$page.'?site=tasks_give_user&id='.$task['id'].'"><span class="glyphicon glyphicon-send" title="Aufgabe zuteilen"></span></a>
+                    <a href="'.$page.'?site=tasks_take&id='.$task['id'].'"><span class="glyphicon glyphicon-ok" title="Aufgabe annehmen"></span></a>
+                    <a href="'.$page.'?site=tasks_close&id='.$task['id'].'"><span class="glyphicon glyphicon-lock green" title="Aufgabe abschließen"></span></a>
+                    <a href="'.$page.'?site=tasks_cancel&id='.$task['id'].'"><span class="glyphicon glyphicon-remove red" title="Aufgabe abbrechen"></span></a>
+                </td>
+                </tr>
+                ';
+            }
+        }
+        sort($elements);
+        foreach($elements as $element){
+            $overview.=$element;
         }
         $overview.='<tr>
             <td></td>
@@ -256,10 +287,12 @@ switch($_GET['site']){
                 'userid'=>$_SESSION['id']
             ));
         }catch(ElementDupeException $e){
-            $_SESSION['error']='Die Aufgabe wurde dem Nutzer bereits zugewiesen';
-            header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
+            $_SESSION['error']='Die Aufgabe wurde bereits angenommen';
+            header('Location:'.$page.'?site=tasks_summary');
+            exit;
         }
-        header('Location:'.$page.'?site=tasks_details&id='.$_GET['id']);
+        $_SESSION['message']='Die Aufgabe wurde angenommen';
+        header('Location:'.$page.'?site=tasks_summary');
         break;
     case 'useradmin':
         header('Location:'.$page.'?site=useradmin_summary');

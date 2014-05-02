@@ -131,7 +131,7 @@ class users extends collection{
      * @return string
      */
     public function getUser($username){
-        return parent::getElementByAttribute('username',$username);
+        return parent::getElementByAttribute('id',$username);
     }
 
     /**
