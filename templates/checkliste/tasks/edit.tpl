@@ -3,6 +3,7 @@
     <link type="text/css" href="framework/components/ext/datepicker/css/datepicker.css" rel="stylesheet">
 {/block}
 {block name=content}
+<div class="alert alert-info">
     <h1>Aufgabe anlegen</h1>
     <form action="{$page}?site=tasks_edit" method="post">
         <input type="hidden" class="form-control" id="id" name="id" value="{$id}">
@@ -68,6 +69,7 @@
             </div>
         </div>
     </form>
+</div>
 {/block}
 {block name=scripts_bottom append}
     <script type="text/javascript" src="framework/components/ext/datepicker/js/datepicker.js"></script>

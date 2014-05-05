@@ -62,7 +62,6 @@ class template{
      * @var array
      */
     private $config;
-
     /**
      *
      */
@@ -81,7 +80,6 @@ class template{
         $this->smarty->assign('templateDirectory',$this->templatePath.'/');
         $this->smarty->assign('index',$this->getIndex());
     }
-
     /**
      * Anzeigen der Seite mit dem eingestellten Template
      */
@@ -90,7 +88,6 @@ class template{
         if(is_file($this->templatePath.'/'.$this->template.'/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->template.'/'.$this->templateFile.'.tpl');
         elseif(is_file($this->templatePath.'/system/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->systemTemplate.'/'.$this->templateFile.'.tpl');
     }
-
     /**
      * Setzen der Templatevariablen in Arrayform
      * @param array $variables entweder Array eines Wertes oder Array aus mehreren Werte-Arrays
@@ -106,26 +103,31 @@ class template{
     }
 
     /**
+     * Setzen einer Templatevariable als Array
+     * @param $name
+     * @param $variable
+     */
+    public function setTemplateArray($name,$variable){
+        $this->smarty->assign($name,$variable);
+    }
+    /**
      * Caching deaktivieren
      */
     public function disableCaching(){
         $this->smarty->caching=false;
     }
-
     /**
      * @param string $newTemplate Name des Neuen Templates(Muss im Templateverzeichnis liegen)
      */
     public function setTemplate($newTemplate){
         $this->template=$newTemplate;
     }
-
     /**
      * @param string $newFile Template-Datei, die verwendet werden soll
      */
     public function setTemplateFile($newFile){
         $this->templateFile=$newFile;
     }
-
     /**
      * @param $scriptname
      */
@@ -159,7 +161,6 @@ class template{
         $this->smarty->assign($scriptname.'_css',$values[0]);
         $this->smarty->assign($scriptname.'_js',$values[1]);
     }
-
     /**
      * @param $swipeDirectory
      */
@@ -175,7 +176,6 @@ class template{
             $this->smarty->assign('jquery','<script src="framework/components/ext/jquery/jquery.js"></script>');
         }
     }
-
     /**
      * @throws ConfigurationException
      */
@@ -190,7 +190,6 @@ class template{
         $output.='</ul></div>';
         $this->smarty->assign('swipe',$output);
     }
-
     /**
      * @return string
      */
