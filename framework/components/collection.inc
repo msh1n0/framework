@@ -135,7 +135,7 @@ class collection{
                 return $element;
             }
         }
-        return '';
+        return false;
     }
 
     /**
@@ -223,15 +223,7 @@ class collection{
      */
     protected function checkForDupe($input){
         $this->importElementData();
-        foreach($this->elements as $element){
-            $found=true;
-            if($input['id']==$element['id']) return true;
-            foreach($this->attributes as $attribute){
-                if($attribute=='id')break;
-                if($element[$attribute]!=$input[$attribute])$found=false;
-            }
-            if($found==true)return true;
-        }
+        if($this->getElementByAttribute('id',$input['id'])) return true;
         return false;
     }
 }

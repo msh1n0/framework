@@ -16,8 +16,9 @@
 {/block}
 
 <div class="container">
-    {$error}
+    {$success}
     {$message}
+    {$error}
     {block name=content}
     {/block}
 </div>

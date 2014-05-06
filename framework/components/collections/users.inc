@@ -24,9 +24,8 @@ class users extends collection{
      * @throws InputErrorException
      */
     public function createUser($input=array()){
-        $this->importElementData();
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
-        elseif($this->checkForDupe($input['id'])){
+        elseif($this->checkForDupe($input)){
             throw new ElementDupeException("Das Element existiert bereits");
         }
         else{

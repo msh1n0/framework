@@ -9,8 +9,8 @@
                         <label for="name" class="label-default form-control">Gruppenname</label>
                     </div>
                     <div class="col-md-9">
-                        <input type="hidden" id="id" name="id" value="{$id}">
-                        <input type="text" id="name" name="name" class="form-control" value="{$name}">
+                        <input type="hidden" id="id" name="id" value="{$group['id']}">
+                        <input type="text" id="name" name="name" class="form-control" value="{$group['name']}">
                     </div>
                 </div>
                 <div class="row">
