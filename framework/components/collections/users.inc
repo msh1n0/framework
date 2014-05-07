@@ -3,7 +3,7 @@
 /**
  * Class users
  */
-class users extends element{
+class users extends collection{
 
     /**
      *
@@ -28,9 +28,8 @@ class users extends element{
      * @throws InputErrorException
      */
     public function createUser($input=array()){
-        $this->importElementData();
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
-        elseif($this->checkForDupe($input['id'])){
+        elseif($this->checkForDupe($input)){
             throw new ElementDupeException("Das Element existiert bereits");
         }
         $input['password']=md5($input['password']);
@@ -58,7 +57,9 @@ class users extends element{
             if($user['id']==$id){
                 if($user['password']==md5($password)){
                     session_start();
-                    $_SESSION['id']=$user['id'];
+                    foreach($this->attributes as $attribute){
+                        if($attribute!='password') $_SESSION['user_'.$attribute]=$user[$attribute];
+                    }
                     return true;
                 }
             }
@@ -77,7 +78,7 @@ class users extends element{
      * @return bool
      */
     public function isLoggedIn(){
-        if(empty($_SESSION['id'])){
+        if(empty($_SESSION['user_id'])){
             return false;
         }
         else {
@@ -97,6 +98,11 @@ class users extends element{
      */
     public function editUser($new=array()){
         if($this->config['db_mode']){
+            $old=$this->getElementByAttribute('id',$new['id']);
+            foreach($this->attributes as $attribute){
+                if($attribute=='password') $new['password']=$old['password'];
+            }
+
             $this->database->edit($new);
         }else{
             $output=array();
@@ -125,7 +131,12 @@ class users extends element{
      * @return bool
      */
     public function currentUser($attribute){
-         return parent::currentElement($attribute);
+        foreach($this->elements as $user){
+            if($user['id']==$_SESSION['user_id']){
+                return $user[$attribute];
+            }
+        }
+        return false;
     }
 
     /**
@@ -133,7 +144,7 @@ class users extends element{
      * @return string
      */
     public function getUser($username){
-        return parent::getElementByAttribute('username',$username);
+        return parent::getElementByAttribute('id',$username);
     }
 
     /**

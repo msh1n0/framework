@@ -1,10 +1,6 @@
 {extends "templates/checkliste/index.tpl"}
 {block name=content}
-    {if $overview}
-        <div class="alert alert-info">
-
-        </div>
-    {/if}
+<div class="alert alert-info">
     <h1>Aufgabe zuteilen: ("{$taskheadline}")</h1>
     <form action="{$page}?site=tasks_give_user&id={$taskid}" method="post">
         <input type="hidden" name="taskid" value="{$taskid}">
@@ -28,4 +24,5 @@
             </div>
         </div>
     </form>
+</div>
 {/block}

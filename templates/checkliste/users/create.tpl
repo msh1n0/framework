@@ -1,14 +1,18 @@
 {extends "templates/checkliste/index.tpl"}
 {block name=content}
+<div class="alert alert-info">
     <h1>Benutzer anlegen</h1>
     <form action="{$page}?site=useradmin_create" method="post">
+
+        <input type="hidden" id="status" name="status" value="3">
+
         <div class="form-group">
             <div class="row {$has_error}">
                 <div class="col-md-3">
                     <label for="id" class="form-control label-default">Login*</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="id" id="id" value="{$id}">
+                    <input type="text" class="form-control" name="id" id="id" value="{$user['id']}">
                 </div>
             </div>
         </div>
@@ -18,7 +22,7 @@
                     <label for="password" class="form-control label-default">Password*</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="password" class="form-control" name="password" id="password" value="{$password}">
+                    <input type="password" class="form-control" name="password" id="password" value="">
                 </div>
             </div>
         </div>
@@ -28,7 +32,7 @@
                     <label for="firstname" class="form-control label-default">Vorname</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="firstname" id="firstname" value="{$firstname}">
+                    <input type="text" class="form-control" name="firstname" id="firstname" value="{$user['firstname']}">
                 </div>
             </div>
         </div>
@@ -38,7 +42,7 @@
                     <label for="surname" class="form-control label-default">Nachname</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="surname" id="surname" value="{$surname}">
+                    <input type="text" class="form-control" name="surname" id="surname" value="{$user['surname']}">
                 </div>
             </div>
         </div>
@@ -48,7 +52,7 @@
                     <label for="email" class="form-control label-default">E-Mail</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="email" id="email" value="{$email}">
+                    <input type="text" class="form-control" name="email" id="email" value="{$user['email']}">
                 </div>
             </div>
         </div>
@@ -58,7 +62,7 @@
                     <label for="phone" class="form-control label-default">Telefon</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" name="phone" id="phone" value="{$phone}">
+                    <input type="text" class="form-control" name="phone" id="phone" value="{$user['phone']}">
                 </div>
             </div>
         </div>
@@ -69,7 +73,9 @@
                 </div>
                 <div class="col-md-9">
                     <select class="form-control" id="group" name="group">
-                    {$groups}
+                        {foreach item=group from=$groups}
+                            <option value="{$group['id']}"{if $group['id']==$user['group']} selected="selected" {/if}>{$group['name']}</option>
+                        {/foreach}
                     </select>
                 </div>
             </div>
@@ -84,4 +90,5 @@
             </div>
         </div>
     </form>
+</div>
 {/block}
