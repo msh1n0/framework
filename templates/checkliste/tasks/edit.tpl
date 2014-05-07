@@ -6,14 +6,14 @@
 <div class="alert alert-info">
     <h1>Aufgabe anlegen</h1>
     <form action="{$page}?site=tasks_edit" method="post">
-        <input type="hidden" class="form-control" id="id" name="id" value="{$id}">
+        <input type="hidden" class="form-control" id="id" name="id" value="{$task['id']}">
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">
                     <label for="headline" class="form-control label-default">Überschrift:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="headline" name="headline" value="{$headline}">
+                    <input type="text" class="form-control" id="headline" name="headline" value="{$task['headline']}">
                 </div>
             </div>
         </div>
@@ -23,7 +23,7 @@
                     <label for="task" class="form-control label-default">Aufgabe:</label>
                 </div>
                 <div class="col-md-9">
-                    <textarea class="form-control" id="task" name="task">{$task}</textarea>
+                    <textarea class="form-control" id="task" name="task">{$task['task']}</textarea>
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
                     <label for="place" class="form-control label-default">Ort:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="place" name="place" value="{$place}">
+                    <input type="text" class="form-control" id="place" name="place" value="{$task['place']}">
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
                     <label for="deadline" class="form-control label-default">Deadline:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="deadline" name="deadline" value="{$deadline}">
+                    <input type="text" class="form-control" id="deadline" name="deadline" value="{$task['deadline']}">
                 </div>
             </div>
         </div>

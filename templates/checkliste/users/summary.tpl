@@ -20,7 +20,7 @@
                 <td class="visible-md visible-lg">{$user['surname']}</td>
                 <td class="visible-md visible-lg">{$user['email']}</td>
                 <td>{$user['phone']}</td>
-                <td>{$user['status']}</td>
+                <td>{if $user['status']=='0'}frei{elseif $user['status']=='1'}beschäftigt{elseif $user['status']=='2'}Pause{elseif $user['status']=='3'}<span class="disabled">abgemeldet</span>{/if}</td>
                 <td>{$user['group']}</td>
                 <td>
                     <!--<a href="{$page}?site=useradmin_task"><span class="glyphicon glyphicon-tag" title="Aufgabe zuteilen"></span></a>-->

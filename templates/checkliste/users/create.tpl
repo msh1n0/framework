@@ -3,6 +3,9 @@
 <div class="alert alert-info">
     <h1>Benutzer anlegen</h1>
     <form action="{$page}?site=useradmin_create" method="post">
+
+        <input type="hidden" id="status" name="status" value="3">
+
         <div class="form-group">
             <div class="row {$has_error}">
                 <div class="col-md-3">

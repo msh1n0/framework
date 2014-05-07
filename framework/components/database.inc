@@ -36,6 +36,10 @@ class database {
      * @var
      */
     private $attributes;
+    /**
+     * @var
+     */
+    private $debug=false;
 
     /**
      *
@@ -103,12 +107,45 @@ class database {
     public function delete($attribute,$value){
         $this->connect();
         $sql='DELETE FROM `'.$this->db_name.'`.`'.$this->db_table.'` WHERE `'.$this->db_table.'`.`'.$attribute.'` = \''.$value.'\'';
+
+        if($this->debug)echo $sql;
+
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
             throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
         }
         $this->disconnect();
+    }
+
+    /**
+     * @param array $input
+     * @throws mysqli_sql_exception
+     */
+    public function edit($input=array()){
+        $this->connect();
+        $sql='UPDATE `'.$this->db_name.'`.`'.$this->db_table.'` SET ';
+        $first=true;
+        foreach($this->attributes as $attribute){
+            if($first===false) $sql.=', ';
+            $sql.='`'.$attribute.'` = \''.$input[$attribute].'\'';
+            $first=false;
+        }
+        $sql.=' WHERE `'.$this->db_table.'`.`id` = \''.$input['id'].'\';';
+
+        if($this->debug)echo $sql;
+
+        $db_erg = mysqli_query( $this->sqlLink, $sql );
+        if ( ! $db_erg )
+        {
+            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
+        }
+        $this->disconnect();
+    }
+
+    public function debugging($enable){
+        if($enable===true)$this->debug=true;
+        else $this->debug=false;
     }
 
     /**
@@ -127,6 +164,8 @@ class database {
         if($where!='')$where=' WHERE '.$where;
         $sql = "SELECT * FROM ".$this->db_table.$where.";";
 
+        if($this->debug)echo $sql;
+
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
@@ -135,7 +174,7 @@ class database {
         $output=array();
         while ($zeile = mysqli_fetch_array( $db_erg, MYSQL_ASSOC))
         {
-           $output[]=$zeile;
+            $output[]=$zeile;
         }
         return $output;
     }
@@ -162,35 +201,13 @@ class database {
         $part3.=');';
         $sql = $part1.$part2.$part3;
 
+        if($this->debug)echo $sql;
 
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         if ( ! $db_erg )
         {
             throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
         }
-    }
-
-    /**
-     * @param array $input
-     * @throws mysqli_sql_exception
-     */
-    public function edit($input=array()){
-        $this->connect();
-        $sql='UPDATE `'.$this->db_name.'`.`'.$this->db_table.'` SET ';
-        $first=true;
-        foreach($this->attributes as $attribute){
-            if($first===false) $sql.=', ';
-            $sql.='`'.$attribute.'` = \''.$input[$attribute].'\'';
-            $first=false;
-        }
-        $sql.=' WHERE `'.$this->db_table.'`.`id` = \''.$input['id'].'\';';
-
-        $db_erg = mysqli_query( $this->sqlLink, $sql );
-        if ( ! $db_erg )
-        {
-            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
-        }
-        $this->disconnect();
     }
 
     /**

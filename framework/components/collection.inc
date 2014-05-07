@@ -113,19 +113,6 @@ class collection{
 
     /**
      * @param $attribute
-     * @return bool
-     */
-    public function currentElement($attribute){
-        foreach($this->elements as $element){
-            if($element['id']==$_SESSION['id']){
-                return $element[$attribute];
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param $attribute
      * @param $value
      * @return string
      */
@@ -179,10 +166,25 @@ class collection{
     }
 
     /**
-     *
+     * @param string $attribute Attribut, nach dem sortiert werden soll
      */
-    public function sort(){
-        sort($this->elements);
+    public function sort($attribute){
+        $sort=array();
+        foreach($this->elements as $task){ //Liste anlegen
+            $sort[]=$task[$attribute];
+        }
+        $sort=array_unique($sort); //Doppelte Einträge beseitigen
+        natcasesort($sort);
+
+
+        $temp=array();
+        foreach($sort as $element){
+            foreach($this->getElementsByAttribute($attribute,$element) as $item){
+                $temp[]=$item;
+            }
+        }
+        unset($this->elements);
+        $this->elements=$temp;
     }
 
     /**

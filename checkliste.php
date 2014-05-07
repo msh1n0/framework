@@ -1,7 +1,6 @@
 <?php
 include 'framework/framework.php';
 
-
 /*
  * Basis-Definitionen
  * */
@@ -22,17 +21,16 @@ if(!empty($_SESSION['message'])){
 }
 if($framework->users->isLoggedIn()){
     $framework->template->setTemplateVariables(array('isLoggedIn',true));
-    if($framework->users->currentUser('group'))$framework->template->setTemplateVariables(array('isAdmin',true));
+    if($_SESSION['user_group'])$framework->template->setTemplateVariables(array('isAdmin',true));
 }
 $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
 
-if($framework->users->isLoggedIn()) $currentUser=$framework->users->getUser($_SESSION['id']);
+if($framework->users->isLoggedIn()) $currentUser=$framework->users->getUser($_SESSION['user_id']);
 else  $currentUser='';
 
 $usergroups=new collection(true);
 $usergroups->setupDatabase('usergroups',array('name'));
-$framework->users->sort();
 $allUsers=$framework->users->getAllUsers();
 
 $tasks = new collection(true);
@@ -46,9 +44,6 @@ $task_Users->setupDatabase('tasks_users',array('taskid','userid'));
  * Basis-Definitionen Ende
  * */
 
-
-
-$content='';
 if(empty($_GET['site'])) $site='login';
 elseif(!$framework->users->isLoggedIn() && $_GET['site'] != 'login') $site='login';
 else $site=$_GET['site'];
@@ -59,6 +54,9 @@ switch($site){
         $framework->template->setTemplateFile('login');
         if($_POST){
             if($framework->users->logIn($_POST['id'],$_POST['password'])=='1'){
+                $temp=$framework->users->getUserByAttribute('id',$_POST['id']);
+                $temp['status']='0';
+                $framework->users->editUser($temp);
                 $_SESSION['success']='Einloggen erfolgreich';
                 header('Location:'.$page.'?site=statistics');
                 exit;
@@ -68,12 +66,15 @@ switch($site){
         }
         break;
     case 'logout':
+        $temp=$framework->users->getUserByAttribute('id',$_SESSION['user_id']);
+        $temp['status']='3';
+        $framework->users->editUser($temp);
         $framework->users->logOut();
         header('Location:'.$page);
         break;
     case 'statistics':
         $framework->template->setTemplateFile('statistics');
-        $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['id']);
+        $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
 
 
         $openTasks=array();
@@ -86,7 +87,7 @@ switch($site){
             }
             if($show===true){
                 foreach($task_Users->getElementsByAttribute('taskid',$task['id']) as $element){
-                    if($element['userid']==$_SESSION['id']) $own=true;
+                    if($element['userid']==$_SESSION['user_id']) $own=true;
                 }
             }
 
@@ -116,7 +117,7 @@ switch($site){
             }
             if($show===true){
                 foreach($task_Users->getElementsByAttribute('taskid',$task['id']) as $element){
-                    if($element['userid']==$_SESSION['id']) $own=true;
+                    if($element['userid']==$_SESSION['user_id']) $own=true;
                 }
             }
 
@@ -130,7 +131,7 @@ switch($site){
         break;
     case 'status':
         if(isset($_GET['status'])){
-            $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['id']);
+            $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
             $currentUser['status']=$_GET['status'];
             $framework->users->editElement($currentUser);
             header('Location:'.$page.'?site=statistics');
@@ -161,9 +162,11 @@ switch($site){
         if($_POST){
             $suitable_groups_new='';
             $first=true;
-            foreach($_POST['suitable_groups'] as $element){
-                if($first===false)$suitable_groups_new.=$element;
-                else $suitable_groups_new.=','.$element;
+            if(!empty($_POST['suitable_groups'])){
+                foreach($_POST['suitable_groups'] as $element){
+                    if($first===false)$suitable_groups_new.=$element;
+                    else $suitable_groups_new.=','.$element;
+                }
             }
             $newtask=array(
                 'headline'=>$_POST['headline'],
@@ -188,6 +191,10 @@ switch($site){
             $checked='';
             if($_POST['suitable_groups']){
                 foreach($_POST['suitable_groups'] as $element){
+                    if($element==$group['id']) $checked=' checked="checked"';
+                }
+            }else{
+                foreach(explode(',',$currentTask['suitable_groups']) as $element){
                     if($element==$group['id']) $checked=' checked="checked"';
                 }
             }
@@ -221,12 +228,7 @@ switch($site){
             $tasks->editElement($newtask);
             header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
         }
-        $framework->template->setTemplateVariables(array('id',$currentTask['id']));
-        $framework->template->setTemplateVariables(array('headline',$currentTask['headline']));
-        $framework->template->setTemplateVariables(array('task',$currentTask['task']));
-        $framework->template->setTemplateVariables(array('place',$currentTask['place']));
-        $framework->template->setTemplateVariables(array('deadline',$currentTask['deadline']));
-
+        $framework->template->setTemplateArray('task',$currentTask);
         $framework->template->setTemplateVariables(array('suitable_groups',$suitable_groups));
         $framework->template->setTemplateFile('tasks/edit');
         break;
@@ -254,15 +256,10 @@ switch($site){
         if($task['finished_by']=='0')$task['finished_by']='';
         if($task['deadline']=='0')$task['deadline']='';
         if($task['time_finished']=='0')$task['time_finished']='';
-        $framework->template->setTemplateVariables(array('id',$_GET['id']));
-        $framework->template->setTemplateVariables(array('setusers',$setUsers));
-        $framework->template->setTemplateVariables(array('headline',$task['headline']));
-        $framework->template->setTemplateVariables(array('task',$task['task']));
-        $framework->template->setTemplateVariables(array('place',$task['place']));
-        $framework->template->setTemplateVariables(array('suitable_groups',$groups));
-        $framework->template->setTemplateVariables(array('finished_by',$task['finished_by']));
-        $framework->template->setTemplateVariables(array('deadline',$task['deadline']));
-        $framework->template->setTemplateVariables(array('time_finished',$task['time_finished']));
+
+        $framework->template->setTemplateArray('setusers',$setUsers);
+        $framework->template->setTemplateArray('groups',$groups);
+        $framework->template->setTemplateArray('task',$task);
         $framework->template->setTemplateFile('tasks/details');
         break;
     case 'tasks_give_user':
@@ -304,38 +301,21 @@ switch($site){
         if(isset($_GET['mode'])) $_SESSION['task_summary_mode']=$_GET['mode'];
         elseif(empty($_SESSION['task_summary_mode'])) $_SESSION['task_summary_mode'] ='';
 
-        $overview=array();
-        foreach($tasks->getElementsByAttribute($_SESSION['task_summary_filter'],$_SESSION['task_summary_value']) as $task){
 
-            $groups='';
-            $first=true;
-            if($_SESSION['task_summary_mode']=='all') $taskVisible=true;
-            else $taskVisible=false;
-            foreach(explode(',',$task['suitable_groups']) as $suitable_group){
-                foreach($usergroups->getAllElements() as $element){
-                    if($element['id']==$suitable_group){
-                        if($first===false)$groups .=', ';
-                        $groups.=$element['name'];
-                        $first=false;
+        $tasks->sort('headline');
+        foreach($tasks->getAllElements() as $task){                  //Sortiert Datensätze laden
+            if($_SESSION['task_summary_value']==$task[$_SESSION['task_summary_filter']]){       //Filter prüfen
+                if($_SESSION['task_summary_mode']=='own'){
+                    foreach(explode(',',$task['suitable_groups']) as $group){
+                        if($group==$_SESSION['user_group'])$overview[]=$task;
                     }
+                }else{
+                    $overview[]=$task;
                 }
-                if($suitable_group==$currentUser['group']) $taskVisible=true;
-            }
-
-            if($taskVisible){
-                $overview[]=$task;
             }
         }
-        $order=array();
-        foreach($overview as $element){
-            $order[]=$element['headline'];
-        }
-        sort($order);
-        $overview=array();
-        foreach($order as $element){
-            $overview[]=$tasks->getElementByAttribute('headline',$element);
 
-        }
+
 
         if($_SESSION['task_summary_mode']=='own') $headline='Eigene ';
         if($_SESSION['task_summary_filter']=='finish_status'){
@@ -352,7 +332,7 @@ switch($site){
         try{
             $task_Users->createElement(array(
                 'taskid'=>$_GET['id'],
-                'userid'=>$_SESSION['id']
+                'userid'=>$_SESSION['user_id']
             ));
         }catch(ElementDupeException $e){
             $_SESSION['error']='Die Aufgabe wurde bereits angenommen';
@@ -387,7 +367,8 @@ switch($site){
                 'surname'=> $_POST['surname'],
                 'email'=> $_POST['email'],
                 'phone'=> $_POST['phone'],
-                'group'=> $_POST['group']
+                'group'=> $_POST['group'],
+                'status'=> $_POST['status']
             );
 
             if(empty($newUser['id'])){
@@ -438,7 +419,6 @@ switch($site){
             try{
                 $framework->users->editUser(array(
                     'id'=> $_POST['id'],
-                    'password'=> $_POST['password'],
                     'firstname'=> $_POST['firstname'],
                     'surname'=> $_POST['surname'],
                     'email'=> $_POST['email'],
@@ -517,7 +497,6 @@ switch($site){
 /*
  * Abschluss
  * */
-$framework->template->setTemplateVariables(array('content',$content));
 $framework->template->setupScript('bootstrap');
-$framework->template->disableCaching();  //BEI PRODUKTIVNUTZUNG ENTFERNEN
+$framework->template->disableCaching();
 $framework->template->display();
