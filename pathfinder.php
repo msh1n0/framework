@@ -1,5 +1,13 @@
 <?php
 include 'framework/framework.php';
+/*
+ * TODO: Basisdefinitionen überarbeiten
+ * TODO: Strukturlogik in Template auslagern
+ * TODO: Integrated Mode mit weniger Scriptlaufzeit und Speichernutzung
+ * TODO: User-Attribute prüfen
+ * TODO: Map auf Divs mit absoluten Positionen umstellen
+ * */
+
 
 /*
  * Basis
@@ -626,6 +634,7 @@ else{
     $framework->template->setTemplateVariables(array('player',true));
     $framework->template->setTemplateVariables(array('admin',true));
 }
+
 $framework->template->setupScript('bootstrap');
 $framework->template->disableCaching();
 $framework->template->display();

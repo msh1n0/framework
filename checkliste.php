@@ -1,5 +1,13 @@
 <?php
 include 'framework/framework.php';
+/*
+ * TODO: Checkliste bauen(aktuelle Aufgaben, offene Aufgaben)
+ * TODO: Hallenplan
+ * TODO: Benutzerliste - ohne abgemeldete Benutzer, Adminfunktionen als eigener Punkt
+ * TODO: Navigationspunkt refresh
+ * TODO: Navipunkt Übesicht raus
+ * TODO: Navipunkt Benutzer, nicht für jeden, mit Benutzerübersicht
+ * */
 
 /*
  * Basis-Definitionen
