@@ -1,10 +1,11 @@
 <?php
+
 include 'collections/users.inc';
 
 /**
  * Class elements
  */
-class element{
+class collection{
     /**
      * @var array
      */
@@ -38,7 +39,6 @@ class element{
             $this->database = new database();
         }
     }
-
 
     /**
      * @param array $input
