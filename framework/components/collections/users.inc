@@ -59,9 +59,7 @@ class users extends collection{
             if($user['id']==$id){
                 if($user['password']==md5($password)){
                     session_start();
-                    foreach($this->attributes as $attribute){
-                        if($attribute!='password') $_SESSION['user_'.$attribute]=$user[$attribute];
-                    }
+                    $_SESSION['user_id']=$user['id'];
                     return true;
                 }
             }

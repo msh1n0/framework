@@ -24,7 +24,7 @@
             <p>&nbsp;</p>
             <h4>Zugeteilte Nutzer:</h4>
             <p>{$setusers}</p>
-            <p><a href="{$page}?site=tasks_give_user&id={$id}"><span class="glyphicon glyphicon-plus"></span></a></p>
+            <p><a href="{$page}?site=tasks_give_user&id={$task['id']}"><span class="glyphicon glyphicon-plus"></span></a></p>
             <p>&nbsp;</p>
         {if $task['deadline']}
             <h4>Deadline:</h4>

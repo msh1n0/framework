@@ -1,16 +1,17 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Checkliste bauen(aktuelle Aufgaben, offene Aufgaben)
+ * TODO: Checkliste bauen aktuelle Aufgaben, große Felder zum Abhaken, Problem melden, Hilfe nötig, Aufgabe abgeben
  * TODO: Hallenplan
  * TODO: Benutzerliste - ohne abgemeldete Benutzer, Adminfunktionen als eigener Punkt
- * TODO: Navigationspunkt refresh
- * TODO: Navipunkt Übesicht raus
  * TODO: Navipunkt Benutzer, nicht für jeden, mit Benutzerübersicht
  * TODO: Feed einrichten, wer wann welche Aufgabe geholt hat
  * TODO: Für Aufgaben Personenanzahl verfügbar machen
  * TODO: "Bitte melden bei..."
- * TODO:
+ * TODO: FIX: Beim Klick auf zurück von den Aufgabendetails wird nichts angezeigt
+ * TODO: Beim Abschließen einer Aufgabe müssen noch die Abschlussfelder ausgefüllt werden
+ * TODO: In den Statistiken müssen andere Felder angezeigt werden
+ * TODO: FIX: Offene Aufgaben werden bei einem Nicht-Admin nicht gefiltert
  * */
 
 /*
@@ -33,7 +34,19 @@ if(!empty($_SESSION['message'])){
 }
 if($framework->users->isLoggedIn()){
     $framework->template->setTemplateVariables(array('isLoggedIn',true));
-    if($_SESSION['user_group'])$framework->template->setTemplateVariables(array('isAdmin',true));
+    $currentUser= $framework->users->getUserByAttribute('id',$_SESSION['user_id']);
+    $framework->template->setTemplateArray('currentuser',$currentUser);
+    if($currentUser['group']=='27'){
+        $framework->template->setTemplateVariables(array('isAdmin',true));
+        $_SESSION['admin']=true;
+    }
+    else{
+        $framework->template->setTemplateVariables(array('isAdmin',false));
+        $_SESSION['admin']=false;
+    }
+
+
+
 }
 $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
@@ -43,7 +56,6 @@ else  $currentUser='';
 
 $usergroups=new collection(true);
 $usergroups->setupDatabase('usergroups',array('name'));
-$allUsers=$framework->users->getAllUsers();
 
 $tasks = new collection(true);
 $tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
@@ -86,8 +98,14 @@ switch($site){
         break;
     case 'statistics':
         $framework->template->setTemplateFile('statistics');
-        $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
-
+        if($_GET['mode']=='admin'){
+            $currentUser=$framework->users->getElementByAttribute('id',$_GET['user']);
+            $framework->template->setTemplateVariables(array('adminmode',true));
+        }
+        else{
+            $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
+            $framework->template->setTemplateVariables(array('adminmode',false));
+        }
 
         $openTasks=array();
         foreach($tasks->getAllElements() as $task){
@@ -99,7 +117,7 @@ switch($site){
             }
             if($show===true){
                 foreach($task_Users->getElementsByAttribute('taskid',$task['id']) as $element){
-                    if($element['userid']==$_SESSION['user_id']) $own=true;
+                    if($element['userid']==$currentUser['id']) $own=true;
                 }
             }
 
@@ -129,7 +147,7 @@ switch($site){
             }
             if($show===true){
                 foreach($task_Users->getElementsByAttribute('taskid',$task['id']) as $element){
-                    if($element['userid']==$_SESSION['user_id']) $own=true;
+                    if($element['userid']==$currentUser['id']) $own=true;
                 }
             }
 
@@ -139,7 +157,8 @@ switch($site){
         $framework->template->setTemplateArray('mytasks',$myTasks);
         $framework->template->setTemplateArray('closedtasks',$closedTasks);
         $framework->template->setTemplateArray('opentasks',$openTasks);
-        $framework->template->setTemplateVariables(array('status',$currentUser['status']));
+        $framework->template->setTemplateArray('user',$currentUser);
+        unset($currentUser);
         break;
     case 'status':
         if(isset($_GET['status'])){
@@ -260,7 +279,7 @@ switch($site){
         $setUsers='';
         foreach($task_Users->getAllElements() as $element){
             if($element['taskid']==$_GET['id']){
-                foreach($allUsers as $user){
+                foreach($framework->users->getAllUsers() as $user){
                     if($user['id']==$element['userid']) $setUsers.=$user['firstname'].' '.$user['surname'].'<br>';
                 }
             }
@@ -293,7 +312,7 @@ switch($site){
 
         }
         $users='<select class="form-control" name="user" >';
-        foreach($allUsers as $user){
+        foreach($framework->users->getAllUsers() as $user){
             $users.='<option value="'.$user['id'].'">'.$user['firstname'].' '.$user['surname'].'</option>'
             ;        }
         $users.='</select>';
@@ -326,10 +345,6 @@ switch($site){
                 }
             }
         }
-
-
-
-        if($_SESSION['task_summary_mode']=='own') $headline='Eigene ';
         if($_SESSION['task_summary_filter']=='finish_status'){
             if($_SESSION['task_summary_value']==0) $headline.='Offene Aufgaben';
             elseif($_SESSION['task_summary_value']==1) $headline.='Fertige Aufgaben';
@@ -339,6 +354,8 @@ switch($site){
 
         $framework->template->setTemplateArray('headline',$headline);
         $framework->template->setTemplateArray('overview',$overview);
+        $framework->template->setTemplateVariables(array('finishstatus',$_SESSION['task_summary_value']));
+
         break;
     case 'tasks_take':
         try{
@@ -458,7 +475,7 @@ switch($site){
         break;
     case 'useradmin_summary':
         $userlist=array();
-        foreach($allUsers as $user){
+        foreach($framework->users->getAllUsers() as $user){
             $group=$usergroups->getElementByAttribute('id',$user['group']);
             $user['group']=$group['name'];
             $userlist[]=$user;
@@ -499,11 +516,6 @@ switch($site){
         $framework->template->setTemplateFile('index');
         break;
 }
-
-
-
-
-
 
 
 /*

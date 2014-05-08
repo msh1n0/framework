@@ -33,13 +33,15 @@
                 </td>
             </tr>
         {/foreach}
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-                <a href="checkliste.php?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>
-            </td>
-        </tr></table>
+        {if $finishstatus==0}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <a href="checkliste.php?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>
+                </td>
+        </tr>{/if}
+        </table>
     </div>
 {/block}

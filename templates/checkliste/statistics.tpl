@@ -2,14 +2,18 @@
 
 {block name=content}
     <div class="alert alert-info">
-        <h2>Aktueller Status:
-            {if $status==0}<span class="glyphicon glyphicon-refresh"></span>&nbsp;frei{/if}
-            {if $status==1}<span class="glyphicon glyphicon-briefcase"></span>&nbsp;beschäftigt{/if}
-            {if $status==2}<span class="glyphicon glyphicon-cutlery"></span>&nbsp;Pause{/if}
+        {if $adminmode}
+            <h2>{$user['firstname']} {$user['surname']}</h2>
+        {/if}
+            <h2>Aktueller Status:
+            {if $user['status']==0}<span class="glyphicon glyphicon-user"></span>&nbsp;frei{/if}
+            {if $user['status']==1}<span class="glyphicon glyphicon-briefcase"></span>&nbsp;beschäftigt{/if}
+            {if $user['status']==2}<span class="glyphicon glyphicon-cutlery"></span>&nbsp;Pause{/if}
+            {if $user['status']==3}<span class="glyphicon glyphicon-log-out"></span>&nbsp;Abgemeldet{/if}
         </h2>
     </div>
     <div class="alert alert-info">
-        <h2>Meine Aufgaben:</h2>
+        <h2>Aktuelle Aufgaben:</h2>
         <table class="table table-responsive"><tr>
             <th>Aufgabe</th>
             <th>Freigegeben für</th>
@@ -22,6 +26,7 @@
                 <td>{$suitablegroups}</td>
                 <td>{$task['deadline']}</td>
                 <td>
+                    <!--<a href="checkliste.php?site=tasks_details&amp;id={$task['id']}"><span class="glyphicon glyphicon-list" title="Aufgabe abgeben"></span></a>&nbsp;-->
                     <a href="checkliste.php?site=tasks_details&amp;id={$task['id']}"><span class="glyphicon glyphicon-list" title="Details anzeigen"></span></a>&nbsp;
                 </td>
             </tr>
@@ -29,7 +34,7 @@
         </table>
     </div>
     <div class="alert alert-info">
-        <h2>Offene Aufgaben:</h2>
+        <h2>Verfügbare Aufgaben:</h2>
         <table class="table table-responsive"><tr>
             <th>Aufgabe</th>
             <th>Freigegeben für</th>
@@ -42,18 +47,12 @@
                 <td>{$suitablegroups}</td>
                 <td>{$task['deadline']}</td>
                 <td>
+                    <!--<a href="checkliste.php?site=tasks_details&amp;id={$task['id']}"><span class="glyphicon glyphicon-list" title="Aufgabe annehmen"></span></a>&nbsp;-->
                     <a href="checkliste.php?site=tasks_details&amp;id={$task['id']}"><span class="glyphicon glyphicon-list" title="Details anzeigen"></span></a>&nbsp;
                 </td>
             </tr>
         {/foreach}
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td>
-                <a href="checkliste.php?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>
-            </td>
-        </tr></table>
+        </table>
     </div>
     <div class="alert alert-info">
         <h2>Abgeschlossene Aufgaben:</h2>

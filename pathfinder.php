@@ -6,6 +6,9 @@ include 'framework/framework.php';
  * TODO: Integrated Mode mit weniger Scriptlaufzeit und Speichernutzung
  * TODO: User-Attribute prüfen
  * TODO: Map auf Divs mit absoluten Positionen umstellen
+ * TODO: Spielleiter soll Reload der Seite erzwingen können
+ * TODO: Jeder Spieler soll ein eigenes Kontingent bekommen
+ * TODO: Man sollte die Kampfphase vorkonfigurieren und mit einem Button dem Spieler die Runde geben können
  * */
 
 

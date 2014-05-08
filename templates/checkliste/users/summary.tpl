@@ -24,7 +24,7 @@
                 <td>{$user['group']}</td>
                 <td>
                     <!--<a href="{$page}?site=useradmin_task"><span class="glyphicon glyphicon-tag" title="Aufgabe zuteilen"></span></a>-->
-                    <!--<a href="{$page}?site=tasks_summary&user="><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>-->
+                    <a href="{$page}?site=statistics&mode=admin&user={$user['id']}"><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>
                     <!--<a href="tel:{$user['phone']}"><span class="glyphicon glyphicon-earphone" title="anrufen"></span></a>-->
                     <!--<a href="tel:{$user['email']}"><span class="glyphicon glyphicon-comment" title="E-Mail schreiben"></span></a>-->
                     <!--<a href="#"><span class="glyphicon glyphicon-retweet" title="{$user['firstname']} soll sich bei mir melden"></span></a>-->
