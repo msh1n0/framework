@@ -37,11 +37,11 @@ if($framework->users->isLoggedIn()){
     $currentUser= $framework->users->getUserByAttribute('id',$_SESSION['user_id']);
     $framework->template->setTemplateArray('currentuser',$currentUser);
     if($currentUser['group']=='27'){
-        $framework->template->setTemplateVariables(array('isAdmin',true));
+        $framework->template->setTemplateVariables(array('isadmin',true));
         $_SESSION['admin']=true;
     }
     else{
-        $framework->template->setTemplateVariables(array('isAdmin',false));
+        $framework->template->setTemplateVariables(array('isadmin',false));
         $_SESSION['admin']=false;
     }
 

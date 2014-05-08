@@ -37,7 +37,7 @@
                             <li><a href="{$page}?site=logout"><span class="glyphicon glyphicon-log-out" title="Aufgabe abschließen"></span>&nbsp;&nbsp;ABMELDEN</a></li>
                         </ul>
                     </li>
-                    {if $isAdmin}
+                    {if $isadmin}
                         <li><a data-toggle="dropdown" href="#">Administration</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{$page}?site=useradmin_summary">Benutzer verwalten</a></li>
