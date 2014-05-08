@@ -80,33 +80,7 @@ class externalContent{
     }
 
     /**
-     * TODO: funktioniert aktuell noch nicht
-     * @param $site
-     * @return array
-     */
-    public function danbooru($site){
-        switch($site){
-            case 'yande.re':
-                $images=array();
-                $position=0;
-                $count=0;
-                while(true){
-                    $position=(strpos($this->content,'directlink',$position));
-                    if($position=='') break;
-
-                    $position=(strpos($this->content,'http',$position+10));
-                    $to=strpos($this->content,'"',$position+10);
-                    $images[$count]=substr($this->content,$position, ($to-$position));
-                    $position=$to;
-                    $count++;
-                }
-                return $images;
-                break;
-        }
-    }
-
-    /**
-     * Kernfunktion, um die Links aufrufbar machen
+     * Kernfunktion, um die Links aufrufbar zu machen
      * @param $link
      * @return string
      */

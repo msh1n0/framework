@@ -7,6 +7,10 @@ include 'framework/framework.php';
  * TODO: Navigationspunkt refresh
  * TODO: Navipunkt Übesicht raus
  * TODO: Navipunkt Benutzer, nicht für jeden, mit Benutzerübersicht
+ * TODO: Feed einrichten, wer wann welche Aufgabe geholt hat
+ * TODO: Für Aufgaben Personenanzahl verfügbar machen
+ * TODO: "Bitte melden bei..."
+ * TODO:
  * */
 
 /*
