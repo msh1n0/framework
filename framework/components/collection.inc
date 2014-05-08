@@ -1,5 +1,4 @@
 <?php
-
 include 'collections/users.inc';
 
 /**
@@ -40,6 +39,7 @@ class collection{
         }
     }
 
+
     /**
      * @param array $input
      * @throws ElementDupeException
@@ -49,16 +49,16 @@ class collection{
         if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
         elseif($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
         else{
-            if(!$this->config['db_mode']){
-                $this->elements[]=$input;
-                $this->saveDB();
-            }
-            else{
+            if($this->config['db_mode']){
                 try{
                     $this->database->save($input);
                 }catch (mysqli_sql_exception $e){
                     $_SESSION['error']=$e->getMessage();
                 }
+            }
+            else{
+                $this->elements[]=$input;
+                $this->saveDB();
             }
         }
     }
@@ -135,7 +135,7 @@ class collection{
                 return $element;
             }
         }
-        return '';
+        return false;
     }
 
     /**
@@ -146,9 +146,9 @@ class collection{
     public function getElementsByAttribute($attribute,$value){
         $output=array();
         foreach($this->elements as $element){
-            if($element[$attribute]==$value){
-                return $output[]=$element;
-            }
+           if($element[$attribute]==$value){
+                $output[]=$element;
+           }
         }
         return $output;
     }
@@ -179,10 +179,25 @@ class collection{
     }
 
     /**
-     *
+     * @param string $attribute Attribut, nach dem sortiert werden soll
      */
-    public function sort(){
-        sort($this->elements);
+    public function sort($attribute){
+        $sort=array();
+        foreach($this->elements as $task){ //Liste anlegen
+            $sort[]=$task[$attribute];
+        }
+        $sort=array_unique($sort); //Doppelte Einträge beseitigen
+        natcasesort($sort);
+
+
+        $temp=array();
+        foreach($sort as $element){
+            foreach($this->getElementsByAttribute($attribute,$element) as $item){
+                $temp[]=$item;
+            }
+        }
+        unset($this->elements);
+        $this->elements=$temp;
     }
 
     /**
@@ -223,16 +238,7 @@ class collection{
      */
     protected function checkForDupe($input){
         $this->importElementData();
-        foreach($this->elements as $element){
-            $found=false;
-            if($input['id']==$element['id']) return true;
-            foreach($this->attributes as $attribute){
-                if($attribute=='id')break;
-                if($element[$attribute]!=$input[$attribute])$found=false;
-                else $found=true;
-            }
-            if($found==true)return true;
-        }
+        if($this->getElementByAttribute('id',$input['id'])) return true;
         return false;
     }
 }

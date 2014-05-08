@@ -1,12 +1,13 @@
 <?php
 
 /**
+ * Klasse zur Benutzerverwaltung
  * Class users
  */
 class users extends collection{
 
     /**
-     *
+     * vereinfachter Konstuktor; ruft die config auf
      */
     function __construct(){
         $this->config=configuration::loadConfig('users');
@@ -21,8 +22,8 @@ class users extends collection{
         }
     }
 
-
     /**
+     * Legt einen neuen Nutzer an. Konvention: array('id'=>id,'attribut'=>attribute)
      * @param array $input
      * @throws ElementDupeException
      * @throws InputErrorException
@@ -47,6 +48,7 @@ class users extends collection{
     }
 
     /**
+     * Startet die Session und erstellt die Session-Attribute
      * @param $id
      * @param $password
      * @return bool
@@ -68,13 +70,14 @@ class users extends collection{
     }
 
     /**
-     *
+     * löscht die Session
      */
     public function logOut(){
         session_destroy();
     }
 
     /**
+     * prüft anhand der Session, ob ei Nutzer eingeloggt ist
      * @return bool
      */
     public function isLoggedIn(){
@@ -87,6 +90,7 @@ class users extends collection{
     }
 
     /**
+     *  Löscht einen Nutzer
      * @param $value
      */
     public function deleteUser($value){
@@ -94,6 +98,7 @@ class users extends collection{
     }
 
     /**
+     * Ändert einen Nutzen und speichert die Änderungen ab
      * @param array $new
      */
     public function editUser($new=array()){
@@ -120,6 +125,7 @@ class users extends collection{
     }
 
     /**
+     * Gibt alle Nutzer als Aray zurück
      * @return array
      */
     public function getAllUsers(){
@@ -127,7 +133,8 @@ class users extends collection{
     }
 
     /**
-     * @param $attribute
+     * Ruft ein Attribut das aktuell eingeloggten Nutzers ab
+     * @param string $attribute
      * @return bool
      */
     public function currentUser($attribute){
@@ -140,17 +147,19 @@ class users extends collection{
     }
 
     /**
-     * @param $username
-     * @return string
+     * Gibt das Element mit der entsprechenden ID zurück
+     * @param string $username Benutzername(interne ID)
+     * @return array
      */
     public function getUser($username){
         return parent::getElementByAttribute('id',$username);
     }
 
     /**
-     * @param $attribute
-     * @param $value
-     * @return string
+     * Gibt das erstbeste Element zurück, auf das die Kriterien zutreffen
+     * @param string $attribute Such-Attribut
+     * @param string $value
+     * @return array
      */
     public function getUserByAttribute($attribute,$value){
         return parent::getElementByAttribute($attribute,$value);
