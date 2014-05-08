@@ -30,7 +30,7 @@ if($framework->users->currentUser('userlevel')>60){
     $isadmin=true;
 }
 else $isadmin=false;
-$mapSaveFile= new element(false);
+$mapSaveFile= new collection(false);
 $mapSaveFile->setupFile('data/pathfinder_map.db',array('mapname','cols','rows'));
 $mapSave=$mapSaveFile->getAllElements();
 $mapDirectory=new files();

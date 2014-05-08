@@ -27,20 +27,20 @@ class collection{
     protected $attributes;
 
     /**
-     *
+     * Beim DB Modus muss
      */
     function __construct($db_mode){
         $this->config['db_mode']=$db_mode;
-        if(!$this->config['db_mode']){ //Datei-Modus
-            $this->document = new document();
-            $this->importElementData();
-        }else{
+        if($this->config['db_mode']){
             $this->database = new database();
+        }else{ //Datei-Modus
+            $this->document = new document();
         }
     }
 
 
     /**
+     * Legt ein neues Element an
      * @param array $input
      * @throws ElementDupeException
      * @throws InputErrorException
@@ -63,13 +63,14 @@ class collection{
         }
     }
     /**
-     *
+     * Gibt die eingerichteten Attribute zurück
      */
     public function getAttributes(){
         return $this->attributes;
     }
 
     /**
+     * Löscht das Element anhand der ID
      * @param $id
      */
     public function deleteElement($id){
@@ -87,6 +88,7 @@ class collection{
     }
 
     /**
+     * Ändert ein Element, identifiziert an der ID
      * @param array $new
      */
     public function editElement($new=array()){
@@ -105,6 +107,7 @@ class collection{
     }
 
     /**
+     * Gibt alle Datensätze zurück
      * @return array
      */
     public function getAllElements(){
@@ -112,19 +115,7 @@ class collection{
     }
 
     /**
-     * @param $attribute
-     * @return bool
-     */
-    public function currentElement($attribute){
-        foreach($this->elements as $element){
-            if($element['id']==$_SESSION['id']){
-                return $element[$attribute];
-            }
-        }
-        return false;
-    }
-
-    /**
+     * Gib ein Element zurück, auf das das Kriterium zutrifft
      * @param $attribute
      * @param $value
      * @return string
@@ -139,6 +130,7 @@ class collection{
     }
 
     /**
+     * Gibt alle Datensätze, zurück auf die das Kriterium zutrifft
      * @param $attribute
      * @param $value
      * @return array
@@ -154,6 +146,7 @@ class collection{
     }
 
     /**
+     * richtet die Datenbanktabelle ein
      * @param $db_table
      */
     public function setDBTable($db_table){
@@ -161,17 +154,21 @@ class collection{
     }
 
     /**
+     * konfiguriert die Datei
      * @param $filename
+     * @param $attributes
      */
-    public function setFile($filename){
-        $this->config['file']=$filename;
+    public function setupFile($filename,$attributes=array()){
+        $this->document->setDocument($filename);
+        $this->setAttributes($attributes);
     }
 
     /**
+     * konfiguriert die Datenbank
      * @param $db_table
      * @param array $attributes
      */
-    public function setupDatabase($db_table,$attributes= array()){
+    public function setupDatabase($db_table,$attributes=array()){
         $this->setAttributes($attributes);
         $this->database->setAttributes($this->attributes);
         $this->database->setTable($db_table);
@@ -179,6 +176,7 @@ class collection{
     }
 
     /**
+     * Sortiert das Collection-Array nach einem Attribut
      * @param string $attribute Attribut, nach dem sortiert werden soll
      */
     public function sort($attribute){
@@ -201,6 +199,7 @@ class collection{
     }
 
     /**
+     * Attribute einrichten
      * @param $attributes
      */
     protected function setAttributes($attributes){
@@ -216,7 +215,7 @@ class collection{
     }
 
     /**
-     *
+     * Kompletten Datenbestand einlesen
      */
     protected function importElementData(){
         if(!$this->config['db_mode'])$this->elements=unserialize($this->document->getFileAsString());
@@ -226,13 +225,14 @@ class collection{
     }
 
     /**
-     *
+     * Datei-basierte Datenbank speichern
      */
     protected function saveDB(){
         $this->document->writeDB(serialize($this->elements));
     }
 
     /**
+     * Anhand der ID prüfen, ob der Datensatz bereits existiert
      * @param $input
      * @return bool
      */
