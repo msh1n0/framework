@@ -1,6 +1,6 @@
 <h1>Runden</h1>
 {foreach item=user from=$users}
-    {if !$user['hidden']==true}
+    {if $user['hidden']=='false'}
         <form action="{$page}?site=useradmin&action=edituser&user={$user['id']}&from=wuerfel" method="post">
             <input type="hidden" value="{$user['id']}" id="user[id]" name="user[id]" >
             <div class="row">
@@ -8,7 +8,7 @@
                     <label class="form-control">Spieler:</label>
                 </div>
                 <div class="col-lg-2">
-                    <input type="text" disabled="disabled" class="form-control" value="{$user['id']} {if !$user['playable']}(NPC){/if}">
+                    <input type="text" disabled="disabled" class="form-control" value="{$user['id']} {if $user['playable']=='false'}(NPC){/if}">
                 </div>
             </div>
             {if $isadmin}

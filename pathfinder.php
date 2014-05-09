@@ -16,11 +16,12 @@ $framework = new framework('pathfinder');
 $content='';
 $framework->template->setTemplate('pathfinder');
 
-if(!$framework->users->isLoggedIn()){
+if($framework->users->isLoggedIn()){
     $framework->template->setTemplateVariables(array('isLoggedIn',true));
     $currentUser= $framework->users->getUserByAttribute('id',$_SESSION['user_id']);
     $framework->template->setTemplateArray('currentuser',$currentUser);
-    if($currentUser['userlevel']!=50){
+
+    if($currentUser['userlevel']>50){
         $framework->template->setTemplateVariables(array('isadmin',true));
         $_SESSION['admin']=true;
     }
@@ -28,9 +29,10 @@ if(!$framework->users->isLoggedIn()){
         $framework->template->setTemplateVariables(array('isadmin',false));
         $_SESSION['admin']=false;
     }
-    $site=$_GET['site'];
 }
+if(isset($_GET['site'])) $site=$_GET['site'];
 else $site='login';
+
 $page='pathfinder.php';
 
 
@@ -124,14 +126,13 @@ switch($site){
             if($_POST){
                 if($_GET['action']=='edituser'){
                     if(isset($_GET['from']) && $_GET['from']=='wuerfel'){
-                        var_dump($_POST['playable']);
                         $framework->users->editUser($_POST['user']);
                         $save['timestamp']=time();
                         $saveGame->editElement($save);
                         header('Location:'.$page.'?site=wuerfel');
                     }
                     else{
-                        $framework->users->editUser($_POST);
+                        $framework->users->editUser($_POST['user']);
                         header('Location:'.$page.'?site=useradmin');
                     }
                 }
