@@ -113,6 +113,16 @@ function getTurn(){
         }
     });
 }
+function setDice(slot,wert){
+    $.get('pathfinder.php?site=wuerfel&action=setdice&slot='+slot+'&value='+wert, function (data) {
+    });
+}function flushDice(){
+    $.get('pathfinder.php?site=wuerfel&action=flushdice', function (data) {
+    });
+}
+
+//###################################################################
+
 function setEffect(phase,player){
     $('#fullscreenEffect').removeClass('effectDanger');
     $('#fullscreenEffect').removeClass('effectWarning');
@@ -127,20 +137,31 @@ function setEffect(phase,player){
         else $('#fullscreenEffect').addClass('effectDanger');
     }
 }
-function setDice(slot,wert){
-    $.get('pathfinder.php?site=wuerfel&action=setdice&slot='+slot+'&value='+wert, function (data) {
-    });
-}function flushDice(){
-    $.get('pathfinder.php?site=wuerfel&action=flushdice', function (data) {
+
+function refreshPhase(){
+    var savegame;
+    $.get('pathfinder.php?site=ajax&action=phase', function (data) {
+        savegame=data.split('|');
+        $("#currentplayer").val(savegame[0]);
+        $("#currentphase").val(savegame[1]);
+        setEffect(savegame[1],savegame[0]);
     });
 }
-function checkRound(){
-    getDice();
-    getTurn();
-
+function refreshTurn(){
+    $('#turns').load('pathfinder.php?site=ajax&action=turns');
+}
+function pulse(){
+    var savegame;
+    $.get('pathfinder.php?site=ajax&action=pulse', function (data) {
+        savegame=data.split('|');
+        if($('#timestamp').val()!=savegame[0]){
+            $('#timestamp').val(savegame[0]);
+            refreshPhase();
+            refreshTurn();
+        }
+    });
 }
 $(document).ready(function() {
-    disableButtons();
-    checkRound();
-    setInterval(checkRound,500);
+    pulse();
+    //setInterval(checkRound,500);
 });

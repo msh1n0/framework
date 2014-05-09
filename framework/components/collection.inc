@@ -98,7 +98,12 @@ class collection{
         else{
             $output=array();
             foreach($this->elements as $element){
-                if($new['id']===$element['id']) $output[]=$new;
+                if($new['id']===$element['id']){
+                    foreach($this->attributes as $attribute){
+                        if(!isset($new[$attribute]))$new[$attribute]=$element[$attribute];
+                    }
+                    $output[]=$new;
+                }
                 else $output[]=$element;
             }
             $this->elements=$output;
@@ -121,6 +126,7 @@ class collection{
      * @return string
      */
     public function getElementByAttribute($attribute,$value){
+        if(!empty($this->elements))
         foreach($this->elements as $element){
             if($element[$attribute]==$value){
                 return $element;
@@ -146,21 +152,23 @@ class collection{
     }
 
     /**
-     * richtet die Datenbanktabelle ein
+     * richtet die Datenbanktabelle ein,
      * @param $db_table
      */
     public function setDBTable($db_table){
         $this->database->setTable($db_table);
+        $this->importElementData();
     }
 
     /**
-     * konfiguriert die Datei
+     * konfiguriert die Datei und liest den aktuellen Stand ein
      * @param $filename
      * @param $attributes
      */
     public function setupFile($filename,$attributes=array()){
         $this->document->setDocument($filename);
         $this->setAttributes($attributes);
+        $this->importElementData();
     }
 
     /**

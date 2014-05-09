@@ -20,16 +20,16 @@ include 'framework/framework.php';
 $framework = new framework('checkliste');
 $framework->template->setTemplate('checkliste');
 if(!empty($_SESSION['error'])){
-    $framework->template->setTemplateVariables(array('error','<div class="alert alert-danger">'.$_SESSION['error'].'</div>'));
+    $framework->template->setTemplateVariables(array('error',$_SESSION['error']));
     $framework->template->setTemplateVariables(array('has-error','has-error'));
     unset($_SESSION['error']);
 }
 if(!empty($_SESSION['success'])){
-    $framework->template->setTemplateVariables(array('success','<div class="alert alert-success">'.$_SESSION['success'].'</div>'));
+    $framework->template->setTemplateVariables(array('success',$_SESSION['success']));
     unset($_SESSION['success']);
 }
 if(!empty($_SESSION['message'])){
-    $framework->template->setTemplateVariables(array('error','<div class="alert alert-info">'.$_SESSION['message'].'</div>'));
+    $framework->template->setTemplateVariables(array('error',$_SESSION['message']));
     unset($_SESSION['message']);
 }
 if($framework->users->isLoggedIn()){
@@ -44,9 +44,6 @@ if($framework->users->isLoggedIn()){
         $framework->template->setTemplateVariables(array('isadmin',false));
         $_SESSION['admin']=false;
     }
-
-
-
 }
 $page='checkliste.php';
 $framework->template->setTemplateVariables(array('page',$page));
@@ -85,7 +82,7 @@ switch($site){
                 header('Location:'.$page.'?site=statistics');
                 exit;
             }
-            $framework->template->setTemplateVariables(array('error','<div class="alert alert-danger">Einloggen fehlgeschlagen</div>'));
+            $framework->template->setTemplateVariables(array('error','Einloggen fehlgeschlagen'));
             $framework->template->setTemplateVariables(array('has_error','has-error'));
         }
         break;

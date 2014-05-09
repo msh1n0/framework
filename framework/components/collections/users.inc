@@ -111,7 +111,10 @@ class users extends collection{
             $output=array();
             foreach($this->elements as $element){
                 if($new['id']===$element['id']){
-                    if(empty($new['password']))$new['password']=$element['password'];
+                    foreach($this->attributes as $attribute){
+                        if(empty($new['password']))$new['password']=$element['password'];
+                        if(!isset($new[$attribute]))$new[$attribute]=$element[$attribute];
+                    }
                     $output[]=$new;
                 }
                 else $output[]=$element;

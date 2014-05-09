@@ -14,19 +14,18 @@
 <body>
 <div id="fullscreenEffect"></div>
 {block name=navigation_top}
-    {include "templates/pathfinder/elements/navigation_top.tpl"}
+    {include "templates/pathfinder/_elements/navigation_top.tpl"}
 {/block}
 
 <div class="container">
+    {if isset($success)}
+        {$success}
+    {/if}
     {if isset($message)}
-        <div class="alert alert-success">
-            {$message}
-        </div>
+        {$message}
     {/if}
     {if isset($warning)}
-        <div class="alert alert-danger">
-            {$warning}
-        </div>
+        {$warning}
     {/if}
     {block name=content}
         <div class="alert alert-info">
@@ -34,7 +33,7 @@
         </div>
 
     {/block}
-    {if !isset($id)}
+    {if !$isLoggedIn}
         <div class="alert alert-info">
             Zum Mitspielen bitte <a href="{$index}?site=login">anmelden</a>
         </div>
