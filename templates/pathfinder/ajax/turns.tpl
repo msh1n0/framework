@@ -7,7 +7,7 @@
                 <div class="col-lg-2">
                     <label class="form-control">Spieler:</label>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <input type="text" disabled="disabled" class="form-control" value="{$user['id']} {if $user['playable']=='false'}(NPC){/if}">
                 </div>
             </div>
@@ -113,19 +113,19 @@
                         <label class="form-control">TP:</label>
                     </div>
                     <div class="col-lg-1">
-                        <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[tp]" name="user[tp]" value="{if !$user['playable']}?{else}{$user['tp']}{/if}">
+                        <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[tp]" name="user[tp]" value="{if $user['playable']=='false'}?{else}{$user['tp']}{/if}">
                     </div>
                     <div class="col-lg-2">
                         <label class="form-control">Schaden tödlich:</label>
                     </div>
                     <div class="col-lg-1">
-                        <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgd]" name="user[dmgd]" value="{if !$user['playable']}?{else}{$user['dmgd']}{/if}">
+                        <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgd]" name="user[dmgd]" value="{if $user['playable']=='false'}?{else}{$user['dmgd']}{/if}">
                     </div>
                     <div class="col-lg-2">
                         <label class="form-control">Schaden normal:</label>
                     </div>
                     <div class="col-lg-1">
-                        <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgnd]" name="user[dmgnd]" value="{if !$user['playable']}?{else}{$user['dmgnd']}{/if}">
+                        <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgnd]" name="user[dmgnd]" value="{if $user['playable']=='false'}?{else}{$user['dmgnd']}{/if}">
                     </div>
                     <div class="col-lg-2">
                         <label class="form-control">Initiative:</label>

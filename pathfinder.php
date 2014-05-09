@@ -1,14 +1,23 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Basisdefinitionen überarbeiten
- * TODO: Strukturlogik in Template auslagern
- * TODO: Integrated Mode mit weniger Scriptlaufzeit und Speichernutzung
- * TODO: User-Attribute prüfen
  * TODO: Map auf Divs mit absoluten Positionen umstellen
- * TODO: Spielleiter soll Reload der Seite erzwingen können
- * TODO: Jeder Spieler soll ein eigenes Kontingent bekommen
- * TODO: Man sollte die Kampfphase vorkonfigurieren und mit einem Button dem Spieler die Runde geben können
+ * TODO: Wuerfel - phasenblock - Buttons für Phasenwechsel
+ * TODO: Wuerfel - Rundenblock - Würfelrechte geben
+ * TODO: Wuerfel - Rundenblock - Würfelrechte entziehen
+ * TODO: Wuerfel - Eigene Stats anzeigen (nur Spieler)
+ * TODO: Karte - Phasenanzeige
+ * TODO: Karte - karte fixen
+ * TODO: Karte - Spielerposition und Markerfarbe im User speichern
+ * TODO: Kartenverwaltung - Funktion wie vorher
+ * TODO: Useradmin - Übersicht reduzieren
+ * TODO: Useradmin - Batch-anlegen
+ * TODO: Useradmin - Create braucht alle Optionen
+ * TODO: Useradmin - Create und Edit - Markerfarbe direkt bei Charerstellung
+ * TODO: Karte - Farbauswahl auf Rot, Dunkelrot und schwarz eingrenzen
+ * TODO: Karte - NPCs mit anderen Markern
+ * TODO: Javascript - Timestamp-Funktionen
+ * TODO:
  * */
 
 
