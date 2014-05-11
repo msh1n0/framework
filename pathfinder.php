@@ -2,10 +2,6 @@
 include 'framework/framework.php';
 /*
  * TODO: Map auf Divs mit absoluten Positionen umstellen
- * TODO: Karte - Phasenanzeige
- * TODO: Karte - karte fixen
- * TODO: Karte - Spielerposition und Markerfarbe im User speichern
- * TODO: Kartenverwaltung - Funktion wie vorher
  * TODO: Karte - Farbauswahl auf Rot, Dunkelrot und schwarz eingrenzen
  * TODO: Karte - NPCs mit anderen Markern
  * TODO: Karte - Pointer ändern in Pfeile mit Blickrichtungen
@@ -14,6 +10,7 @@ include 'framework/framework.php';
  * TODO: Würfel - Initiative nach würfeln automatisch eintragen
  * TODO: Würfel - Automatikwürfeln
  * TODO: MAPADMIN - width und height in die config schreiben
+ * TODO: Useradmin - Password ändern
  * TODO:
  * */
 
