@@ -1,19 +1,19 @@
 <h2>{$currentuser['id']}</h2>
 <table class="table table-responsive">
     <tr>
-        <th>Grundangriffsbonus</th>
-        <th>Initiativbonus</th>
-        <th>Rüstungsklasse</th>
-        <th>TP</th>
-        <th>Schaden tödlich</th>
-        <th>Schaden normal</th>
+        <th class="text-center">Grundangriffsbonus</th>
+        <th class="text-center">Initiativbonus</th>
+        <th class="text-center">Rüstungsklasse</th>
+        <th class="text-center">TP</th>
+        <th class="text-center">Schaden tödlich</th>
+        <th class="text-center">Schaden normal</th>
     </tr>
     <tr>
-        <th>{$currentuser['gab']}</th>
-        <th>{$currentuser['init']}</th>
-        <th>{$currentuser['rk']}</th>
-        <th>{$currentuser['tp']}</th>
-        <th>{$currentuser['dmgd']}</th>
-        <th>{$currentuser['dmgnd']}</th>
+        <td class="text-center">{$currentuser['gab']}</td>
+        <td class="text-center">{$currentuser['init']}</td>
+        <td class="text-center">{$currentuser['rk']}</td>
+        <td class="text-center">{$currentuser['tp']}</td>
+        <td class="text-center">{$currentuser['dmgd']}</td>
+        <td class="text-center">{$currentuser['dmgnd']}</td>
     </tr>
 </table>

@@ -52,6 +52,10 @@ function setTurn(player){
     $.get('pathfinder.php?site=ajax&action=setturn&value='+player, function (data) {
     });
 }
+function setTurn2(player){
+    $.get('pathfinder.php?site=ajax&action=setturn2&value='+player, function (data) {
+    });
+}
 function setSingleDice(dice,player){
     $.get('pathfinder.php?site=ajax&action=setsingledice&value='+dice+'&user='+player, function (data) {
     });
@@ -115,6 +119,10 @@ function refreshCharinfo(){
 }
 function refreshTurn(){
     $('#turns').load('pathfinder.php?site=ajax&action=turns');
+    refreshPhase();
+}
+function refreshTurn2(){
+    $('#turns').load('pathfinder.php?site=ajax&action=turns2');
     refreshPhase();
 }
 function startInitiative(){

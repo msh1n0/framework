@@ -101,7 +101,7 @@ $("#btn-w100").click(function(){wuerfeln(100);});
 
 function pulse(){
     var savegame;
-    $.get('pathfinder.php?site=ajax&action=timestamps', function (data) {
+    $.get('pathfinder.php?site=ajax&action=pulse', function (data) {
         savegame=data.split('|');
         if($('#timestamp').val()!=savegame[0]){
             $('#timestamp').val(savegame[0]);

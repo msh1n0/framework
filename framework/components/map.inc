@@ -2,6 +2,13 @@
 
 /**
  * Class map
+ * TODO: getmap() - Karte in HTML generieren
+ * TODO: setPointer(col,row) - Pointer im Objekt anmelden
+ * TODO: getwidth()
+ * TODO: getHeight()
+ * TODO: getPointers() - alle Pointer ausgeben (ajax)
+ * TODO: hiddenmode() - Karte schwarz und Pointer tragen die Karte
+ * TODO:
  */
 class map{
     /**
@@ -34,7 +41,12 @@ class map{
         }
         return array(array('mapboard',$this->generateMapGrid($cols, $rows)),array('mapboard_css',$this->generateMapGridCSS()));
     }
+    /*
+     * TODO
+     * */
+    public function getMap(){
 
+    }
     /**
      * @param $cols
      * @param $rows
