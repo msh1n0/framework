@@ -2,21 +2,17 @@
 include 'framework/framework.php';
 /*
  * TODO: Map auf Divs mit absoluten Positionen umstellen
- * TODO: Wuerfel - phasenblock - Buttons für Phasenwechsel
- * TODO: Wuerfel - Rundenblock - Würfelrechte geben
- * TODO: Wuerfel - Rundenblock - Würfelrechte entziehen
- * TODO: Wuerfel - Eigene Stats anzeigen (nur Spieler)
  * TODO: Karte - Phasenanzeige
  * TODO: Karte - karte fixen
  * TODO: Karte - Spielerposition und Markerfarbe im User speichern
  * TODO: Kartenverwaltung - Funktion wie vorher
- * TODO: Useradmin - Übersicht reduzieren
- * TODO: Useradmin - Batch-anlegen
- * TODO: Useradmin - Create braucht alle Optionen
- * TODO: Useradmin - Create und Edit - Markerfarbe direkt bei Charerstellung
  * TODO: Karte - Farbauswahl auf Rot, Dunkelrot und schwarz eingrenzen
  * TODO: Karte - NPCs mit anderen Markern
- * TODO: Javascript - Timestamp-Funktionen
+ * TODO: Karte - Pointer ändern in Pfeile mit Blickrichtungen
+ * TODO: Karte - Monster mit speziellen Boss-Pointern
+ * TODO: Karte - Karte verdunkeln, was man nicht sehen kann (Idee:Spieler kriegen eine Sichweite, je nach Wahrnehmung/Skill wird sie größer, div mit der Karte als Hintergrund, angepasst an position)
+ * TODO: Würfel - Initiative nach würfeln automatisch eintragen
+ * TODO: Würfel - Automatikwürfeln
  * TODO:
  * */
 
@@ -38,9 +34,9 @@ if($framework->users->isLoggedIn()){
         $framework->template->setTemplateVariables(array('isadmin',false));
         $_SESSION['admin']=false;
     }
-}
-if(isset($_GET['site'])) $site=$_GET['site'];
-else $site='login';
+    if(isset($_GET['site'])) $site=$_GET['site'];
+}else $site='login';
+
 
 $page='pathfinder.php';
 
@@ -49,7 +45,8 @@ $page='pathfinder.php';
  * Datenobjekte
  * */
 $saveGame = new collection(false);
-$saveGame->setupFile('data/pathfinder_game.db',array('currentplayer','phase','map'));
+$saveGame->setupFile('data/pathfinder_game.db',array('currentplayer','phase','timestamp','timestamp_phase','timestamp_turns','timestamp_dice','timestamp_map','auto'));
+$save=$saveGame->getElementByAttribute('id','1');
 
 $mapDirectory=new files();
 $maps=$mapDirectory->DirectoryContents('contents/pathfinder/images/maps');
@@ -64,18 +61,172 @@ $maps=$mapDirectory->DirectoryContents('contents/pathfinder/images/maps');
  * */
 if(!empty($_GET['site']) && $_GET['site']=='ajax'){
     switch($_GET['action']){
-        case 'pulse':
-            $save=$saveGame->getElementByAttribute('id','1');
-            echo $save['timestamp'];
+        case 'charinfo':
+            $framework->template->setTemplateFile('ajax/charinfo');
+            $framework->template->setTemplateVariables(array('users',$framework->users->getElementByAttribute('currentuser',$_SESSION['user_id'])));
+            $framework->template->disableCaching();
+            $framework->template->display();
+            break;
+        case 'flushdice':
+            $save['w4']='';
+            $save['w6']='';
+            $save['w8']='';
+            $save['w10']='';
+            $save['w12']='';
+            $save['w20']='';
+            $save['w100']='';
+            $save['timestamp_dice']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'getcontingent':
+            $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
+            echo $user['w4'];
+            echo '|';
+            echo $user['w6'];
+            echo '|';
+            echo $user['w8'];
+            echo '|';
+            echo $user['w10'];
+            echo '|';
+            echo $user['w12'];
+            echo '|';
+            echo $user['w20'];
+            echo '|';
+            echo $user['w100'];
+            break;
+        case 'getdice':
+            echo $save['w4'];
+            echo '|';
+            echo $save['w6'];
+            echo '|';
+            echo $save['w8'];
+            echo '|';
+            echo $save['w10'];
+            echo '|';
+            echo $save['w12'];
+            echo '|';
+            echo $save['w20'];
+            echo '|';
+            echo $save['w100'];
+            break;
+        case 'hideplayer':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $user['hidden']='true';
+            $framework->users->editElement($user);
+            $save['timestamp_turns']=time();
+            $saveGame->editElement($save);
+            header('Location:'.$page.'?site=useradmin');
             break;
         case 'phase':
-            $save=$saveGame->getElementByAttribute('id','1');
-            echo $save['currentplayer'].'|'.$save['phase'];
+            $user=$framework->users->getElementByAttribute('id',$save['currentplayer']);
+            echo $save['currentplayer'].'|'.$save['phase'].'|'.$user['playable'];
+            break;
+        case 'setcombat':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $save['w4']='';
+            $save['w6']='';
+            $save['w8']='';
+            $save['w10']='';
+            $save['w12']='';
+            $save['w20']='';
+            $save['w100']='';
+            $user['w4']=$user['cw4'];
+            $user['w6']=$user['cw6'];
+            $user['w8']=$user['cw8'];
+            $user['w10']=$user['cw10'];
+            $user['w12']=$user['cw12'];
+            $user['w20']=$user['cw20'];
+            $user['w100']=$user['cw100'];
+            $framework->users->editUser($user);
+            $save['currentplayer']=$_GET['value'];
+            $save['timestamp']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'setdice':
+            if(empty($save[$_GET['dice']])) $save[$_GET['dice']]=$_GET['value'];
+            else $save[$_GET['dice']]=$save[$_GET['dice']].', '.$_GET['value'];
+            $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
+            $user[$_GET['dice']]=$user[$_GET['dice']]-1;
+            $framework->users->editElement($user);
+
+            $save['timestamp_dice']=time();
+            $save['timestamp_turns']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'setphase':
+            $save['phase']=$_GET['value'];
+            $save['timestamp_phase']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'setsingledice':
+            $user=$framework->users->getElementByAttribute('id',$_GET['user']);
+            $save['w4']='';
+            $save['w6']='';
+            $save['w8']='';
+            $save['w10']='';
+            $save['w12']='';
+            $save['w20']='';
+            $save['w100']='';
+            $save['timestamp_dice']=time();
+            $user['w4']='';
+            $user['w6']='';
+            $user['w8']='';
+            $user['w10']='';
+            $user['w12']='';
+            $user['w20']='';
+            $user['w100']='';
+            $user['w'.$_GET['value']]=1;
+            $framework->users->editUser($user);
+            $save['currentplayer']=$_GET['user'];
+            $save['timestamp']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'setturn':
+            $save['w4']='';
+            $save['w6']='';
+            $save['w8']='';
+            $save['w10']='';
+            $save['w12']='';
+            $save['w20']='';
+            $save['w100']='';
+            $save['timestamp_dice']=time();
+            $save['currentplayer']=$_GET['value'];
+            $save['timestamp_turns']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'showplayer':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $user['hidden']='false';
+            $framework->users->editElement($user);
+            $save['timestamp_turns']=time();
+            $saveGame->editElement($save);
+            header('Location:'.$page.'?site=useradmin');
+            break;
+        case 'startautoinitiative':
+            $save['phase']="Initiativ-Phase";
+            foreach($framework->users->getAllUsers() as $user){
+                $user['auto']=true;
+            }
+            $user=$framework->users->getElementByAttribute('auto',true);
+
+            break;
+        case 'timestamps':
+            echo $save['timestamp'];
+            echo '|';
+            echo $save['timestamp_phase'];
+            echo '|';
+            echo $save['timestamp_turns'];
+            echo '|';
+            echo $save['timestamp_dice'];
+            echo '|';
+            echo $save['timestamp_map'];
             break;
         case 'turns':
             $framework->users->sort('id');
             $framework->template->setTemplateFile('ajax/turns');
+            $framework->users->sort('initiative',true);
             $framework->template->setTemplateVariables(array('users',$framework->users->getAllElements()));
+            $framework->template->setTemplateVariables(array('activeplayer',$framework->users->getElementByAttribute('id',$save['currentplayer'])));
             $framework->template->disableCaching();
             $framework->template->display();
             break;
@@ -138,15 +289,29 @@ switch($site){
                         $framework->users->editUser($_POST['user']);
                         $save['timestamp']=time();
                         $saveGame->editElement($save);
-                        header('Location:'.$page.'?site=wuerfel');
+                        header('Location:'.$page.'?site=wuerfel#'.$_POST['user']['id']);
                     }
                     else{
                         $framework->users->editUser($_POST['user']);
+                        $save['timestamp']=time();
+                        $saveGame->editElement($save);
                         header('Location:'.$page.'?site=useradmin');
                     }
                 }
                 elseif($_GET['action']=='createuser'){
-                    $framework->users->createUser($_POST);
+                    $framework->users->createUser($_POST['user']);
+                    $save['timestamp']=time();
+                    $saveGame->editElement($save);
+                    header('Location:'.$page.'?site=useradmin');
+                }
+                elseif($_GET['action']=='batchcreateuser'){
+                    $newuser=$_POST['user'];
+                    for($i=1;$i<=$_POST['count'];$i++){
+                        $newuser['id']=$_POST['user']['id'].$i;
+                        $framework->users->createUser($newuser);
+                    }
+                    $save['timestamp']=time();
+                    $saveGame->editElement($save);
                     header('Location:'.$page.'?site=useradmin');
                 }
             }
@@ -157,15 +322,17 @@ switch($site){
             elseif($_GET['action']=='createuser'){
                 $framework->template->setTemplateFile('users/create');
             }
+            elseif($_GET['action']=='batchcreateuser'){
+                $framework->template->setTemplateFile('users/batchcreate');
+            }
             elseif($_GET['action']=='deleteuser'){
                 $framework->users->deleteUser($_GET['user']);
+                $save['timestamp']=time();
+                $saveGame->editElement($save);
                 header('Location:'.$page.'?site=useradmin');
             }
         }
         else $framework->template->setTemplateArray('users',$framework->users->getAllUsers());
-        break;
-    case 'combatadmin':
-
         break;
     case 'wuerfel':
         $framework->template->setTemplateFile('wuerfel/index');

@@ -187,15 +187,14 @@ class collection{
      * Sortiert das Collection-Array nach einem Attribut
      * @param string $attribute Attribut, nach dem sortiert werden soll
      */
-    public function sort($attribute){
+    public function sort($attribute, $reverse=false){
         $sort=array();
         foreach($this->elements as $task){ //Liste anlegen
             $sort[]=$task[$attribute];
         }
         $sort=array_unique($sort); //Doppelte Einträge beseitigen
         natcasesort($sort);
-
-
+        if($reverse)$sort=array_reverse($sort);
         $temp=array();
         foreach($sort as $element){
             foreach($this->getElementsByAttribute($attribute,$element) as $item){

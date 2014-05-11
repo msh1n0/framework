@@ -14,3 +14,4 @@
 .effectInfo{
     box-shadow:inset 0 0 100px #00f;
 }
+a,button,input{outline:none !important;}

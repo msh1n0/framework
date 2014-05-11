@@ -44,6 +44,7 @@
     {$jquery}
     {$bootstrap_js}
     {$swipe_js}
+    <script src="templates/pathfinder/_resources/js/functions.js"></script>
 {/block}
 </body>
 </html>

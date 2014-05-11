@@ -1,43 +1,10 @@
-$("#btn-w4").click(function(){wuerfeln(4);});
-$("#btn-w6").click(function(){wuerfeln(6);});
-$("#btn-w8").click(function(){wuerfeln(8);});
-$("#btn-w10").click(function(){wuerfeln(10);});
-$("#btn-w12").click(function(){wuerfeln(12);});
-$("#btn-w20").click(function(){wuerfeln(20);});
-$("#btn-w100").click(function(){wuerfeln(100);});
+
+/*
 $("#btn-clean-all").click(function(){
     flush();
     flushDice()
 });
-function wuerfeln(modus){
-    var value;
-    switch(modus){
-        case 4:
-            value=randomRange(1,4);
-            break;
-        case 6:
-            value=randomRange(1,6);
-            break;
-        case 8:
-            value=randomRange(1,8);
-            break;
-        case 10:
-            value=(randomRange(1,10)-1);
-            break;
-        case 12:
-            value=randomRange(1,12);
-            break;
-        case 20:
-            value=randomRange(1,20);
-            break;
-        case 100:
-            value=(randomRange(1,10)*10);
-            break;
-    }
-    disable('w'+modus);
-    setValue(modus,value);
-    setDice(modus,$('#w'+modus).val());
-}
+
 function randomRange (min, max) {
     return Math.round(Math.random() * (max - min) + min);
 }
@@ -121,47 +88,50 @@ function setDice(slot,wert){
     });
 }
 
+*/
 //###################################################################
 
-function setEffect(phase,player){
-    $('#fullscreenEffect').removeClass('effectDanger');
-    $('#fullscreenEffect').removeClass('effectWarning');
-    $('#fullscreenEffect').removeClass('effectAttention');
-    $('#fullscreenEffect').removeClass('effectInfo');
-    if(phase=='Initiativ-Phase'){
-        if(player==$('#activeplayer').val())  $('#fullscreenEffect').addClass('effectInfo');
-        else $('#fullscreenEffect').addClass('effectWarning');
-    }
-    else if(phase=='Kampf-Phase'){
-        if(player==$('#activeplayer').val())  $('#fullscreenEffect').addClass('effectAttention');
-        else $('#fullscreenEffect').addClass('effectDanger');
-    }
-}
+$("#btn-w4").click(function(){wuerfeln(4);});
+$("#btn-w6").click(function(){wuerfeln(6);});
+$("#btn-w8").click(function(){wuerfeln(8);});
+$("#btn-w10").click(function(){wuerfeln(10);});
+$("#btn-w12").click(function(){wuerfeln(12);});
+$("#btn-w20").click(function(){wuerfeln(20);});
+$("#btn-w100").click(function(){wuerfeln(100);});
 
-function refreshPhase(){
-    var savegame;
-    $.get('pathfinder.php?site=ajax&action=phase', function (data) {
-        savegame=data.split('|');
-        $("#currentplayer").val(savegame[0]);
-        $("#currentphase").val(savegame[1]);
-        setEffect(savegame[1],savegame[0]);
-    });
-}
-function refreshTurn(){
-    $('#turns').load('pathfinder.php?site=ajax&action=turns');
-}
 function pulse(){
     var savegame;
-    $.get('pathfinder.php?site=ajax&action=pulse', function (data) {
+    $.get('pathfinder.php?site=ajax&action=timestamps', function (data) {
         savegame=data.split('|');
         if($('#timestamp').val()!=savegame[0]){
             $('#timestamp').val(savegame[0]);
-            refreshPhase();
+            $('#timestamp_phase').val(savegame[1]);
+            $('#timestamp_turns').val(savegame[2]);
+            $('#timestamp_dice').val(savegame[3]);
+            $('#timestamp_map').val(savegame[4]);
             refreshTurn();
+            refreshDice();
+            if($('#userlevel').val()<50) refreshCharinfo();
+        }
+        else if($('#timestamp_phase').val()!=savegame[1]){
+            $('#timestamp_phase').val(savegame[1]);
+            refreshPhase();
+        }
+        else if($('#timestamp_turns').val()!=savegame[2]){
+            $('#timestamp_turns').val(savegame[2]);
+            refreshTurn();
+        }
+        else if($('#timestamp_dice').val()!=savegame[3]){
+            $('#timestamp_dice').val(savegame[3]);
+            refreshDice();
+        }
+        else if($('#timestamp_map').val()!=savegame[4]){
+            $('#timestamp_map').val(savegame[4]);
+            //refreshMap();
         }
     });
 }
 $(document).ready(function() {
     pulse();
-    //setInterval(checkRound,500);
+    setInterval(pulse,500);
 });

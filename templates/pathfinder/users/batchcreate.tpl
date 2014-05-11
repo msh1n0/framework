@@ -2,15 +2,15 @@
 {block name=content}
     <div class="alert alert-info">
         <h1>Spieler anlegen</h1>
-        <form action="{$index}?site=useradmin&action=createuser" method="post">
+        <form action="{$index}?site=useradmin&action=batchcreateuser" method="post">
             <div class="form-group disabled">
                 <div class="form-group">
                     <label for="userid">Name:</label>
                     <input type="text" name="user[id]" id="userid" value="{$user['id']}" class="form-control">
                 </div>
                 <div class="form-group">
-                    <label for="userpassword">Password:</label>
-                    <input type="password" name="user[password]" id="userpassword" value="" class="form-control">
+                    <label for="count">Anzahl:</label>
+                    <input type="text" name="count" id="count" value="" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="userlevel">Userlevel:</label>
