@@ -409,6 +409,9 @@ switch($site){
             $framework->template->setTemplateFile('map/admin');
         }
         break;
+    case 'combi':
+        $framework->template->setTemplateFile('combi/index');
+        break;
     default:
         $framework->template->setTemplateFile('index');
         break;
