@@ -42,6 +42,6 @@
             <p>&nbsp;</p>
         {/if}
         <p>&nbsp;</p>
-        <a href="{$page}?site=tasks_summary"><p><span class="glyphicon glyphicon-arrow-left"></span> Zurück</p></a>
+        <a href="{$backlink}"><p><span class="glyphicon glyphicon-arrow-left"></span> Zurück</p></a>
     </div>
 {/block}

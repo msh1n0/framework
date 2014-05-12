@@ -15,6 +15,14 @@
                 </div>
                 <div class="row">
                     <div class="col-md-3">
+                        <label for="admin" class="label-default form-control">Verwaltungsrecht</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="checkbox" id="admin" name="admin" class="checkbox form-control"{if $group['admin']==true} checked="checked"{/if} value="1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
                     </div>
                     <div class="col-md-9">
                         <input type="submit" class="btn btn-default form-control" value="speichern">

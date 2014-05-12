@@ -184,8 +184,8 @@ class collection{
     }
 
     /**
-     * Sortiert das Collection-Array nach einem Attribut
-     * @param string $attribute Attribut, nach dem sortiert werden soll
+     * @param $attribute
+     * @param bool $reverse
      */
     public function sort($attribute, $reverse=false){
         $sort=array();
@@ -205,6 +205,12 @@ class collection{
         $this->elements=$temp;
     }
 
+    /**
+     * @param bool $status
+     */
+    public function debugging($status){
+        $this->database->debugging($status);
+    }
     /**
      * Attribute einrichten
      * @param $attributes

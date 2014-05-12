@@ -143,9 +143,11 @@ class database {
         $this->disconnect();
     }
 
+    /**
+     * @param $enable
+     */
     public function debugging($enable){
-        if($enable===true)$this->debug=true;
-        else $this->debug=false;
+        $this->debug=$enable;
     }
 
     /**

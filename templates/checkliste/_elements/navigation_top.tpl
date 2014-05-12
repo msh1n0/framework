@@ -16,7 +16,6 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 {if $isLoggedIn}
-                    <li><a href="{$page}?site=checklist">Checkliste</a></li>
                     <li><a data-toggle="dropdown" href="#">Aufgaben</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=own"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Verfügbare Aufgaben</a></li>
@@ -38,7 +37,7 @@
                         </ul>
                     </li>
                     {if $isadmin}
-                        <li><a data-toggle="dropdown" href="#">Administration</a>
+                        <li><a data-toggle="dropdown" href="#">Mitarbeiter</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{$page}?site=useradmin_summary">Benutzer verwalten</a></li>
                                 <li><a href="{$page}?site=useradmin_usergroups">Benutzergruppen verwalten</a></li>

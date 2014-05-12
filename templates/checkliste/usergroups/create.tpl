@@ -15,6 +15,14 @@
                 </div>
                 <div class="row">
                     <div class="col-md-3">
+                        <label for="admin" class="label-default form-control">Administration erlauben</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" id="admin" name="admin" class="form-control" value="1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
                     </div>
                     <div class="col-md-9">
                         <input type="submit" class="btn btn-default form-control" value="speichern">
