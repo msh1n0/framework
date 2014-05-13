@@ -18,7 +18,8 @@
                 {if $isLoggedIn}
                     <li><a data-toggle="dropdown" href="#">Aufgaben</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=own"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Verfügbare Aufgaben</a></li>
+                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=own"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Offene Aufgaben</a></li>
+                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=outlook"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Verfügbare Aufgaben</a></li>
                             <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=1&mode=own"><span class="glyphicon glyphicon-ok-circle"></span>&nbsp;&nbsp;fertige Aufgaben</a></li>
                             {if $isadmin}
                                 <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=all"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;offene Aufgaben Gesamt</a></li>

@@ -1,7 +1,7 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Bei Aufgaben Problem melden, Hilfe nötig, Aufgabe wieder freigeben
+ * TODO: Bei eigenen Aufgaben Problem melden, Hilfe nötig, Aufgabe wieder freigeben
  * TODO: Hallenplan
  * TODO: Navipunkt Mitarbeiter für alle, nur mit eigener Gruppe, bei Admins alle online-Mitarbeiter
  * TODO: Log einrichten, wer wann welche Aufgabe geholt hat
@@ -52,14 +52,18 @@ $framework->template->setTemplateVariables(array('page',$page));
 if($framework->users->isLoggedIn()) $currentUser=$framework->users->getUser($_SESSION['user_id']);
 else  $currentUser='';
 
+
 $usergroups=new collection(true);
 $usergroups->setupDatabase('usergroups',array('name','admin'));
+#$usergroups->setupFile('data/checkliste_usergroups.db',array('name','admin'));
 
 $tasks = new collection(true);
 $tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
+#$tasks->setupFile('data/checkliste_tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
 
 $task_Users = new collection(true);
 $task_Users->setupDatabase('tasks_users',array('taskid','userid'));
+#$task_Users->setupFile('data/checkliste_tasks_users.db',array('taskid','userid'));
 
 
 /*
@@ -534,7 +538,7 @@ switch($site){
         break;
     case 'useradmin_usergroups_create':
         if($_POST){
-            $usergroups->createElement(array('name'=>$_POST['name']));
+            $usergroups->createElement(array('name'=>$_POST['name'],'admin'=>$_POST['admin']));
             header('Location:'.$page.'?site=useradmin_usergroups_summary');
         }
         $framework->template->setTemplateFile('usergroups/create');
@@ -549,10 +553,6 @@ switch($site){
             $newgroup['name']=$_POST['name'];
             $newgroup['admin']=$_POST['admin'];
             $usergroups->editElement($newgroup);
-            $usergroups->debugging(true);
-            var_dump($newgroup);
-            echo '###';
-            var_dump($usergroups->getElementByAttribute('id',$_POST['id']));
         }
         if($_GET['confirm']==true){
 

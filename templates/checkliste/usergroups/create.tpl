@@ -9,16 +9,15 @@
                         <label for="name" class="label-default form-control">Gruppenname</label>
                     </div>
                     <div class="col-md-9">
-                        <input type="hidden" id="id" name="id" value="">
                         <input type="text" id="name" name="name" class="form-control" value="{$name}">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-3">
-                        <label for="admin" class="label-default form-control">Administration erlauben</label>
+                        <label for="admin" class="label-default form-control">Verwaltungsrecht</label>
                     </div>
                     <div class="col-md-9">
-                        <input type="text" id="admin" name="admin" class="form-control" value="1">
+                        <input type="checkbox" id="admin" name="admin" class="checkbox form-control"{if $group['admin']==true} checked="checked"{/if} value="1">
                     </div>
                 </div>
                 <div class="row">
