@@ -409,7 +409,7 @@ switch($site){
             }
         }
         else{
-            $mapDirectory=new files();
+            $mapDirectory=new filemanager();
             $framework->template->setTemplateArray('maps',$mapDirectory->DirectoryContents('contents/pathfinder/images/maps'));
             $framework->template->setTemplateVariables(array('activemap',$save['map']));
             $framework->template->setTemplateFile('map/admin');
@@ -427,43 +427,3 @@ switch($site){
 $framework->template->setupScript('bootstrap');
 $framework->template->disableCaching();
 $framework->template->display();
-
-
-/*
-
-        case 'activatemap':
-            if($_GET['confirm']==true){
-                $mapSave['mapname']=$_GET['mapname'];
-                $mapSave['cols']=$_POST['cols'];
-                $mapSave['rows']=$_POST['rows'];
-                $mapSaveFile->writeDB(serialize($mapSave));
-                header('Location:'.$page.'?site=mapadmin');
-            }
-            else{
-                $framework->template->setTemplateVariables(array('mapname',$_GET['mapname']));
-                $framework->template->setTemplateFile('mapadmin_activate');
-            }
-            break;
-        case 'deletefile':
-            unlink('content/pathfinder/images/maps/'.$_GET['value']);
-            $save['timestamp_map']=time();
-            $saveGame->editElement($save);
-            break;
-        case 'uploadmap':
-            if($_GET['confirm']==true){
-                $uploaddir = 'content/pathfinder/images/maps/';
-                $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
-                if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-                    $_SESSION['message']='Datei-Upload erfolgreich';
-                } else {
-                    $_SESSION['error']='Datei-Upload fehlgeschlagen';
-                }
-                header('Location:'.$page.'?site=mapadmin');
-            }
-            else{
-                $framework->template->setTemplateFile('mapadmin_upload');
-            }
-            break;
-
-
- */
