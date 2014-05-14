@@ -36,7 +36,7 @@ class contentpool{
         $this->config=configuration::loadConfig('contentpool');
         $this->sourceType=$this->config['sourcetype'];
         $this->document=new document();
-        $this->files= new files();
+        $this->files= new filemanager();
     }
 
     /**

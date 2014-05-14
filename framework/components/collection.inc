@@ -1,5 +1,5 @@
 <?php
-include 'collections/users.inc';
+include 'users.inc';
 
 /**
  * Class elements

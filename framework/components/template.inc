@@ -67,7 +67,7 @@ class template{
      */
     function __construct(){
         $this->document= new document();
-        $this->files= new files();
+        $this->files= new filemanager();
         $this->config=configuration::loadConfig('template');
         $this->setTemplate($this->config['template']);
         $this->smarty = new Smarty();

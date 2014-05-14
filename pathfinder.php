@@ -47,7 +47,7 @@ $saveGame = new collection(false);
 $saveGame->setupFile('data/pathfinder_game.db',array('currentplayer','phase','timestamp','timestamp_phase','timestamp_turns','timestamp_dice','timestamp_map','timestamp_pointers','auto','map','mapcols','mapwidth','mapheight'));
 $save=$saveGame->getElementByAttribute('id','1');
 
-$mapDirectory=new files();
+$mapDirectory=new filemanager();
 $maps=$mapDirectory->DirectoryContents('contents/pathfinder/images/maps');
 /*
  * Datenobjekte

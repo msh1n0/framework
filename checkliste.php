@@ -310,6 +310,7 @@ switch($site){
         $framework->template->setTemplateArray('groups',$groups);
         $framework->template->setTemplateArray('task',$task);
         if($_GET['backlink']=='')$framework->template->setTemplateVariables(array('backlink',$page.'?site=statistics'));
+        elseif($_GET['backlink']=='summary') $framework->template->setTemplateVariables(array('backlink',$page.'?site=tasks_summary&filter=finish_status&value=0&mode=own'));
         else $framework->template->setTemplateVariables(array('backlink',$page.'?site='.$_GET['backlink']));
         $framework->template->setTemplateFile('tasks/details');
         break;
@@ -343,52 +344,58 @@ switch($site){
         break;
     case 'tasks_summary':
         $framework->template->setTemplateFile('tasks/summary');
-        if(isset($_GET['filter'])) $_SESSION['task_summary_filter']=$_GET['filter'];
-        elseif(empty($_SESSION['task_summary_filter'])) $_SESSION['task_summary_filter'] ='';
+        if(isset($_GET['filter'])) $task_summary_filter =$_GET['filter'];
+        elseif(empty($_SESSION['task_summary_filter'])) $task_summary_filter ='';
+        else $_SESSION['task_summary_filter'] ='finish_status';
 
-        if(isset($_GET['value'])) $_SESSION['task_summary_value']=$_GET['value'];
-        elseif(empty($_SESSION['task_summary_value'])) $_SESSION['task_summary_value'] ='';
+        if(isset($_GET['value'])) $task_summary_value=$_GET['value'];
+        elseif(empty($_SESSION['task_summary_value'])) $task_summary_value ='';
+        else $_SESSION['task_summary_value'] ='0';
 
-        if(isset($_GET['mode'])) $_SESSION['task_summary_mode']=$_GET['mode'];
-        elseif(empty($_SESSION['task_summary_mode'])) $_SESSION['task_summary_mode'] ='';
+        if(isset($_GET['mode'])) $task_summary_mode=$_GET['mode'];
+        elseif(empty($_SESSION['task_summary_mode'])) $task_summary_mode ='';
+        else $_SESSION['task_summary_mode'] ='own';
 
         $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
 
 
         $tasks->sort('headline');
         foreach($tasks->getAllElements() as $task){                  //Sortiert Datensätze laden
-            if($_SESSION['task_summary_value']==$task[$_SESSION['task_summary_filter']]){       //Filter prüfen
+            if($task_summary_value==$task[$task_summary_filter]){       //Filter prüfen
                 $temp=$framework->users->getElementByAttribute('id',$task['finished_by']);
                 $task['finished_by']=$temp['firstname'].' '.$temp['surname'];
-                if($_SESSION['task_summary_mode']=='own'){
+                if($task_summary_mode=='outlook'){
                     foreach(explode(',',$task['suitable_groups']) as $group){
                         if($group==$currentUser['group'])$overview[]=$task;
+                    }
+                }elseif($task_summary_mode=='own'){
+                    foreach($task_Users->getElementsByAttribute('userid',$_SESSION['user_id']) as $element){
+                        if($task['id']==$element['taskid'])$overview[]=$task;
                     }
                 }else{
                     $overview[]=$task;
                 }
             }
         }
-        $mode='own';
-        if($_SESSION['task_summary_filter']=='finish_status'){
-            if($_SESSION['task_summary_value']==0){
+        if($task_summary_filter=='finish_status'){
+            if($task_summary_value==0){
                 $headline.='Offene Aufgaben';
                 $mode='own';
             }
-            elseif($_SESSION['task_summary_value']==1){
+            elseif($task_summary_value==1){
                 $headline.='Fertige Aufgaben';
             }
-            elseif($_SESSION['task_summary_value']==2){
+            elseif($task_summary_value==2){
                 $headline.='Entfernte Aufgaben';
             }
         }
-        if($_SESSION['task_summary_mode']=='all') $headline.=' Gesamt';
+        if($task_summary_mode=='all') $headline.=' Gesamt';
 
         $framework->template->setTemplateVariables(array('backlink','summary'));
         $framework->template->setTemplateArray('headline',$headline);
         $framework->template->setTemplateArray('mode',$mode);
         $framework->template->setTemplateArray('overview',$overview);
-        $framework->template->setTemplateVariables(array('finishstatus',$_SESSION['task_summary_value']));
+        $framework->template->setTemplateVariables(array('finishstatus',$task_summary_value));
 
         break;
     case 'tasks_take':
@@ -411,6 +418,7 @@ switch($site){
         $currentTask{'time_finished'}=date('d.m. H:i',time());
         $currentTask{'finished_by'}=$_SESSION['user_id'];
         $tasks->editElement($currentTask);
+        $_SESSION['success']='Die Aufgabe wurde abgeschlossen';
         header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
         break;
     case 'tasks_cancel':
@@ -419,12 +427,14 @@ switch($site){
         $currentTask{'time_finished'}=date('d.m. H:i',time());
         $currentTask{'finished_by'}=$_SESSION['user_id'];
         $tasks->editElement($currentTask);
+        $_SESSION['message']='Die Aufgabe wurde abgebrochen';
         header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
         break;
     case 'tasks_restart':
         $currentTask=$tasks->getElementByAttribute('id',$_GET['id']);
         $currentTask['finish_status']=0;
         $tasks->editElement($currentTask);
+        $_SESSION['message']='Die Aufgabe wurde zurückgesetzt';
         header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
         break;
     case 'useradmin':
@@ -510,16 +520,12 @@ switch($site){
             }
             $_SESSION['success']='Benutzer \''.$_POST['id'].'\' wurde erfolgreich bearbeitet';
             header('Location:'.$page.'?site=useradmin_summary');
-
-
         }
         else{
             $user=$framework->users->getElementByAttribute('id',$_GET['id']);
-
             $framework->template->setTemplateArray('groups',$usergroups->getAllElements());
             $framework->template->setTemplateArray('user',$user);
         }
-
         $framework->template->setTemplateFile('users/edit');
         break;
     case 'useradmin_summary':
@@ -539,6 +545,7 @@ switch($site){
     case 'useradmin_usergroups_create':
         if($_POST){
             $usergroups->createElement(array('name'=>$_POST['name'],'admin'=>$_POST['admin']));
+            $_SESSION['message']='Die Benutzergruppe wurde erfolgreich angelegt';
             header('Location:'.$page.'?site=useradmin_usergroups_summary');
         }
         $framework->template->setTemplateFile('usergroups/create');
@@ -546,6 +553,7 @@ switch($site){
     case 'useradmin_usergroups_delete':
         $usergroups->deleteElement($_GET['id']);
         header('Location:'.$page.'?site=useradmin_usergroups_summary');
+        $_SESSION['message']='Die Benutzergruppe wurde gelöscht';
         break;
     case 'useradmin_usergroups_edit':
         if($_POST){
@@ -555,7 +563,7 @@ switch($site){
             $usergroups->editElement($newgroup);
         }
         if($_GET['confirm']==true){
-
+            $_SESSION['message']='Die Benutzergruppe wurde geändert';
             header('Location:'.$page.'?site=useradmin_usergroups');
         }
         $framework->template->setTemplateArray('group',$usergroups->getElementByAttribute('id',$_GET['id']));

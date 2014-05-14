@@ -6,7 +6,7 @@
  * Verwaltungsklasse für Ordner und Dateien
  * TODO Zip-Handling
  */
-class files{
+class filemanager{
     /**
      * @param string $directory Pfad
      * @return array
