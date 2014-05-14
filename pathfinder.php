@@ -368,6 +368,12 @@ switch($site){
         $framework->template->setTemplateFile('wuerfel/index');
         break;
     case 'karte':
+
+        $map = new map('contents/pathfinder/images/maps/'.$save['map']);
+        $map->resizeMap(970);
+
+        $framework->template->setTemplateVariables(array('map',$map->getMap(50)));
+        $framework->template->setTemplateArray('users',$framework->users->getElementsByAttribute('hidden','false'));
         $framework->template->setTemplateFile('map/index');
         break;
     case 'mapadmin':

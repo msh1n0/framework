@@ -38,3 +38,8 @@ a,button,input{outline:none !important;}
     -webkit-transform:none;
     transform:none;
 }
+
+.map-container{
+    width:1000px;
+    margin:0 auto;
+}

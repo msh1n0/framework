@@ -8,7 +8,7 @@ include 'components/document.inc';
 include 'components/exceptions.inc';
 include 'components/ext/mobile-detect/mobile_detect.php';
 include 'components/externalcontent.inc';
-include 'components/files.inc';
+include 'components/filemanager.inc';
 include 'components/image.inc';
 include 'components/map.inc';
 include 'components/template.inc';
