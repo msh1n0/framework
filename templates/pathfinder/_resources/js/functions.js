@@ -141,7 +141,6 @@ function mapInvisible(player){
     });
 }
 function setPointer(player, pointerx,pointery){
-    alert(player+pointerx+pointery);
     $.get('pathfinder.php?site=ajax&action=setpointer&value='+player+'&x='+pointerx+'&y='+pointery, function (data) {
     });
 }

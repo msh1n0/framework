@@ -16,6 +16,7 @@ class map{
      */
     private $image;
     private $cols;
+    private $hidden=false;
 
     /**
      * @param $imagePath
@@ -27,20 +28,30 @@ class map{
     public function setCols($cols){
         $this->cols=$cols;
     }
+    public function setHiddenMode($input){
+        $this->hidden=$input;
+    }
     public function resizeMap($width){
         if($this->image->getWidth()!=$width) $this->image->resampleImage($width,'','resize',array(0,0,0));
     }
     public function generatePointers($input,$xattr, $yattr){
         $pointers='';
+        $pxPerCol=round($this->image->getWidth()/$this->cols);
+        $x='';
+        $y='';
         foreach($input as $user){
-           # $positionx=(int)round($this->image->getWidth()/$this->cols)*$user['pointerx'];
-           $pointers.='<div class="pointer">'.$user[$xattr].'-'.$user[$yattr].'</div>';
+            $x=($pxPerCol*$user['pointerx'])-$pxPerCol;
+            $y=($pxPerCol*$user['pointery'])-$pxPerCol;
+            $bgpos='';
+            if($this->hidden==true)$bgpos='background:url('.$this->image->getFilename().');background-position:-'.$x.'px -'.$y.'px;';
+            $pointers.='<div class="pointer" style="position:absolute;z-index:10;width:'.$pxPerCol.';height:'.$pxPerCol.';margin:'.$y.'px 0 0 '.$x.'px;'.$bgpos.'"><img src="templates/system/_resources/images/map/marker_'.$user['color'].'.png"></div>';
 
         }
         return $pointers;
     }
     public function getMap(){
-        return $this->generateMapGrid($this->cols).'<img id=""map" src="'.$this->image->getFilename().'" style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;position:absolute;z-index:5"><div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;"></div>';
+        if($this->hidden) return $this->generateMapGrid($this->cols).'<div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;background:#000;"></div>';
+        else return $this->generateMapGrid($this->cols).'<img id="map" src="'.$this->image->getFilename().'" style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;position:absolute;z-index:5"><div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;"></div>';
     }
     private function generateMapGrid(){
 

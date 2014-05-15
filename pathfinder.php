@@ -1,12 +1,8 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Map auf Divs mit absoluten Positionen umstellen
- * TODO: Karte - Farbauswahl auf Rot, Dunkelrot und schwarz eingrenzen
- * TODO: Karte - NPCs mit anderen Markern
  * TODO: Karte - Pointer ändern in Pfeile mit Blickrichtungen
  * TODO: Karte - Monster mit speziellen Boss-Pointern
- * TODO: Karte - Karte verdunkeln, was man nicht sehen kann (Idee:Spieler kriegen eine Sichweite, je nach Wahrnehmung/Skill wird sie größer, div mit der Karte als Hintergrund, angepasst an position)
  * TODO: Würfel - Initiative nach würfeln automatisch eintragen
  * TODO: Würfel - Automatikwürfeln
  * TODO: MAPADMIN - width und height in die config schreiben
@@ -14,7 +10,8 @@ include 'framework/framework.php';
  * TODO: karte - Spielausgeblendete Chars auch von der Karte ausschließen
  * TODO: Karte - Pointer anlegen, auch wenn Das Monster gerad enicht angezeigt wird
  * TODO: Karte - Batchanlegen von Monster
- * TODO: Covergrid für die Karte
+ * TODO: Karte - Blickfeld für Spieler anpassen und Größe der pointer ändern
+ *
  * */
 
 
@@ -138,9 +135,11 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
         case 'map':
             $framework->template->setTemplateFile('ajax/map');
             $framework->template->setTemplateVariables(array('currentplayer',$framework->users->getElementByAttribute('id',$_SESSION['user_id'])));
+            $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
             $map = new map('contents/pathfinder/images/maps/'.$save['map']);
             $map->resizeMap(970);
             $map->setCols($save['mapcols']);
+            if($user['userlevel']<50)$map->setHiddenMode(true);
             $framework->template->setTemplateVariables(array('pointers',$map->generatePointers($framework->users->getElementsByAttribute('mapvisible','true'),'pointerx','pointery')));
             $framework->template->setTemplateVariables(array('map',$map->getMap()));
             $framework->template->setTemplateArray('users',$framework->users->getElementsByAttribute('hidden','false'));

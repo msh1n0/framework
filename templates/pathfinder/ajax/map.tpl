@@ -16,4 +16,5 @@
     </div>
 {/if}
 {$pointers}
+
 {$map}
