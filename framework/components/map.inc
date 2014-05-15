@@ -15,6 +15,7 @@ class map{
      * @var image
      */
     private $image;
+    private $cols;
 
     /**
      * @param $imagePath
@@ -23,22 +24,33 @@ class map{
         $this->image=new image();
         $this->image->setFile($imagePath);
     }
-
+    public function setCols($cols){
+        $this->cols=$cols;
+    }
     public function resizeMap($width){
         if($this->image->getWidth()!=$width) $this->image->resampleImage($width,'','resize',array(0,0,0));
     }
-    public function getMap($cols){
+    public function generatePointers($input,$xattr, $yattr){
+        $pointers='';
+        foreach($input as $user){
+           # $positionx=(int)round($this->image->getWidth()/$this->cols)*$user['pointerx'];
+           $pointers.='<div class="pointer">'.$user[$xattr].'-'.$user[$yattr].'</div>';
 
-        return $this->generateMapGrid($cols).'<img id=""map" src="'.$this->image->getFilename().'" style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;position:absolute;z-index:5"><div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;"></div>';
+        }
+        return $pointers;
     }
-    private function generateMapGrid($cols){
-            if($cols=='') throw new InputErrorException('Bitte Gridgröße angeben');
-            $rows=round($this->image->getHeight()/($this->image->getWidth()/$cols));
+    public function getMap(){
+        return $this->generateMapGrid($this->cols).'<img id=""map" src="'.$this->image->getFilename().'" style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;position:absolute;z-index:5"><div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;"></div>';
+    }
+    private function generateMapGrid(){
+
+            if($this->cols=='') throw new InputErrorException('Bitte Gridgröße angeben');
+            $rows=round($this->image->getHeight()/($this->image->getWidth()/$this->cols));
         $output='<table class="mapboard" cellpadding="0" cellspacing="0" style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;position:absolute;z-index:15">';
         for($row=1;$row<=$rows;$row++){
             $output.='<tr>';
-            for($col=1;$col<=$cols;$col++){
-                $output.='<td id="cell_'.$row.'_'.$col.'" class="cell"><div></div></td>';
+            for($col=1;$col<=$this->cols;$col++){
+                $output.='<td id="cell_'.$row.'_'.$col.'" class="cell" onclick="setPointer(\''.$_SESSION['user_id'].'\','.$col.','.$row.')"><div></div></td>';
             }
             $output.='</tr>';
         }

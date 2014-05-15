@@ -11,7 +11,10 @@ include 'framework/framework.php';
  * TODO: Würfel - Automatikwürfeln
  * TODO: MAPADMIN - width und height in die config schreiben
  * TODO: Useradmin - Password ändern
- * TODO:
+ * TODO: karte - Spielausgeblendete Chars auch von der Karte ausschließen
+ * TODO: Karte - Pointer anlegen, auch wenn Das Monster gerad enicht angezeigt wird
+ * TODO: Karte - Batchanlegen von Monster
+ * TODO: Covergrid für die Karte
  * */
 
 
@@ -116,6 +119,34 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $saveGame->editElement($save);
             header('Location:'.$page.'?site=useradmin');
             break;
+        case 'mapvisible':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $user['mapvisible']='true';
+            $framework->users->editElement($user);
+            $save['timestamp_turns']=time();
+            $save['timestamp_map']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'mapinvisible':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $user['mapvisible']='false';
+            $framework->users->editElement($user);
+            $save['timestamp_turns']=time();
+            $save['timestamp_map']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'map':
+            $framework->template->setTemplateFile('ajax/map');
+            $framework->template->setTemplateVariables(array('currentplayer',$framework->users->getElementByAttribute('id',$_SESSION['user_id'])));
+            $map = new map('contents/pathfinder/images/maps/'.$save['map']);
+            $map->resizeMap(970);
+            $map->setCols($save['mapcols']);
+            $framework->template->setTemplateVariables(array('pointers',$map->generatePointers($framework->users->getElementsByAttribute('mapvisible','true'),'pointerx','pointery')));
+            $framework->template->setTemplateVariables(array('map',$map->getMap()));
+            $framework->template->setTemplateArray('users',$framework->users->getElementsByAttribute('hidden','false'));
+            $framework->template->disableCaching();
+            $framework->template->display();
+            break;
         case 'phase':
             $user=$framework->users->getElementByAttribute('id',$save['currentplayer']);
             echo $save['currentplayer'].'|'.$save['phase'].'|'.$user['playable'];
@@ -168,6 +199,14 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
         case 'setphase':
             $save['phase']=$_GET['value'];
             $save['timestamp_phase']=time();
+            $saveGame->editElement($save);
+            break;
+        case 'setpointer':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $user['pointerx']=$_GET['x'];
+            $user['pointery']=$_GET['y'];
+            $framework->users->editElement($user);
+            $save['timestamp_map']=time();
             $saveGame->editElement($save);
             break;
         case 'setsingledice':
@@ -368,12 +407,6 @@ switch($site){
         $framework->template->setTemplateFile('wuerfel/index');
         break;
     case 'karte':
-
-        $map = new map('contents/pathfinder/images/maps/'.$save['map']);
-        $map->resizeMap(970);
-
-        $framework->template->setTemplateVariables(array('map',$map->getMap(50)));
-        $framework->template->setTemplateArray('users',$framework->users->getElementsByAttribute('hidden','false'));
         $framework->template->setTemplateFile('map/index');
         break;
     case 'mapadmin':
