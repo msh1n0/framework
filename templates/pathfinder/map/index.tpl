@@ -20,37 +20,7 @@
         <div class="alert alert-info map-container" id="charinfo">
         </div>
     {/if}
-    <div class="alert alert-info map-container">
-        <h1>Karte</h1>
-        <div class="form-group">
-            <div class="row">
-                <div class="col-xs-3">
-                    <label for="name" class="form-control">Spieler</label>
-                </div>
-                <div class="col-xs-9">
-                    <select id="name" name="name" class="form-control">
-                        {foreach item=user from=$users}
-                        <option value="{$user['id']}">{$user['id']}</option>
-                        {/foreach}
-                    </select>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-3">
-                </div>
-                <div class="col-xs-9">
-                    <input type="button" class="btn btn-default form-control" id="btn-deletemarker" value="Marker von Karte entfernen">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-3">
-                </div>
-                <div class="col-xs-9">
-                    <input type="button" class="btn btn-default form-control" id="btn-deleteallmarkers" value="Alle Marker löschen">
-                </div>
-            </div>
-        </div>
-        {$map}
+    <div class="alert alert-info map-container" id="map-container">
     </div>
 {/block}
 {block name="scriptblock_unten" append}

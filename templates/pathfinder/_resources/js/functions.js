@@ -117,6 +117,9 @@ function refreshPhase(){
 function refreshCharinfo(){
     $('#charinfo').load('pathfinder.php?site=ajax&action=charinfo');
 }
+function refreshMap(){
+    $('#map-container').load('pathfinder.php?site=ajax&action=map');
+}
 function refreshTurn(){
     $('#turns').load('pathfinder.php?site=ajax&action=turns');
     refreshPhase();
@@ -128,4 +131,17 @@ function refreshTurn2(){
 function startInitiative(){
     //Automatische Initiative
     setPhase('Initiative');
+}
+function mapVisible(player){
+    $.get('pathfinder.php?site=ajax&action=mapvisible&value='+player, function (data) {
+    });
+}
+function mapInvisible(player){
+    $.get('pathfinder.php?site=ajax&action=mapinvisible&value='+player, function (data) {
+    });
+}
+function setPointer(player, pointerx,pointery){
+    alert(player+pointerx+pointery);
+    $.get('pathfinder.php?site=ajax&action=setpointer&value='+player+'&x='+pointerx+'&y='+pointery, function (data) {
+    });
 }
