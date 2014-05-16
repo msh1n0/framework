@@ -18,13 +18,14 @@
                 {if $isLoggedIn}
                     <li><a data-toggle="dropdown" href="#">Aufgaben</a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=own"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Offene Aufgaben</a></li>
-                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=outlook"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Verfügbare Aufgaben</a></li>
+                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=own"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;Meine Aufgaben</a></li>
+                            <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=group"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;verfügbare Aufgaben</a></li>
+                            <li><a href="{$page}?site=tasks_create"><span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp;Aufgabe anlegen</a></li>
                             <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=1&mode=own"><span class="glyphicon glyphicon-ok-circle"></span>&nbsp;&nbsp;fertige Aufgaben</a></li>
                             {if $isadmin}
                                 <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=0&mode=all"><span class="glyphicon glyphicon-search"></span>&nbsp;&nbsp;offene Aufgaben Gesamt</a></li>
                                 <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=1&mode=all"><span class="glyphicon glyphicon-ok-circle"></span>&nbsp;&nbsp;fertige Aufgaben Gesamt</a></li>
-                                <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=2&mode=all"><span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;entfernte Aufgaben</a></li>
+                                <li><a href="{$page}?site=tasks_summary&filter=finish_status&value=2&mode=all"><span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;gelöschte Aufgaben</a></li>
                             {/if}
                         </ul>
                     </li>
@@ -38,7 +39,7 @@
                         </ul>
                     </li>
                     {if $isadmin}
-                        <li><a data-toggle="dropdown" href="#">Mitarbeiter</a>
+                        <li><a data-toggle="dropdown" href="#">Administration</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{$page}?site=useradmin_summary">Benutzer verwalten</a></li>
                                 <li><a href="{$page}?site=useradmin_usergroups">Benutzergruppen verwalten</a></li>

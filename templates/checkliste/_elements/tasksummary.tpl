@@ -5,9 +5,9 @@
             <th>Aufgabe</th>
             <th>Ort</th>
             <th>Deadline</th>
-            <th></th>
-            {if $task['finish_status']!=0}
+            <th>Besetzung</th>
                 <th></th>
+            {if $finish_status!=0}
                 <th></th>
             {/if}
         </tr>
@@ -16,13 +16,22 @@
                 <td>{$task['headline']}</td>
                 <td>{$task['place']}</td>
                 <td>{$task['deadline']}</td>
+                <td>
+                    {$usercount=0}
+                    {foreach item=link from=$user_tasks}
+                        {if $link['taskid']==$task['id']}
+                            {math assign="usercount" equation=$usercount+1}
+                        {/if}
+                    {/foreach}
+                    {$usercount}/{$task['participants_max']}
+                </td>
                 {if $task['finish_status']!=0}
                 <td>
                     {if $task['finish_status']==1}
                         abgeschlossen
                     {/if}
                     {if $task['finish_status']==2}
-                        entfernt
+                        gelöscht
                     {/if}
                     {$task['time_finished']} von {$task['finished_by']}
                 </td>
@@ -55,6 +64,7 @@
         {/foreach}
         {if $finishstatus==0}
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

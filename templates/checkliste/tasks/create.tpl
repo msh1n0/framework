@@ -13,7 +13,7 @@
                     <label for="headline" class="form-control label-default">Überschrift:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="headline" name="headline">
+                    <input type="text" class="form-control" id="headline" name="headline" value="{$task['headline']}">
                 </div>
             </div>
         </div>
@@ -23,7 +23,17 @@
                     <label for="task" class="form-control label-default">Aufgabe:</label>
                 </div>
                 <div class="col-md-9">
-                    <textarea class="form-control" id="task" name="task"></textarea>
+                    <textarea class="form-control" id="task" name="task">{$task['task']}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="place" class="form-control label-default">Personen:</label>
+                </div>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" id="participants_min" name="participants_min" value="{$task['participants_min']}">
                 </div>
             </div>
         </div>
@@ -33,7 +43,7 @@
                     <label for="place" class="form-control label-default">Ort:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="place" name="place">
+                    <input type="text" class="form-control" id="place" name="place" value="{$task['place']}">
                 </div>
             </div>
         </div>
@@ -43,8 +53,22 @@
                     <label for="suitable_groups" class="form-control label-default">Freigeben für:</label>
                 </div>
                 <div class="col-md-9">
-                    <div class="form-control">
-                        {$suitable_groups}
+                    <div class="form-control" style="height:auto !important;">
+                        {foreach item=group from=$usergroups}
+                            <div class="checkbox-inline">
+                                <label>
+                                    {if $isadmin}
+                                        <input type="checkbox" name="suitable_groups[]" value="{$group['id']}"
+                                        {foreach item=suitable_group from=$suitable_groups}
+                                            {if $suitable_group==$group['id']} checked="checked"{/if}
+                                        {/foreach}
+                                        >{$group['name']}
+                                    {else}
+                                        <input type="checkbox" name="suitable_groups[]" value="{$group['id']}" disabled="disabled" {if $group['id']==$user['group']} checked="checked"{/if}>{$group['name']}
+                                    {/if}
+                                </label>
+                            </div>
+                        {/foreach}
                     </div>
                 </div>
             </div>
@@ -55,7 +79,7 @@
                     <label for="deadline" class="form-control label-default">Deadline:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="deadline" name="deadline">
+                    <input type="text" class="form-control" id="deadline" name="deadline" value="{$task['deadline']}">
                 </div>
             </div>
         </div>
@@ -76,7 +100,7 @@
     <script type="text/javascript">
         $('#deadline').datetimepicker({
             format:'d.m. H:i',
-            inline:true,
+            inline:false,
             lang:'de'
         });
     </script>

@@ -1,1 +1,11 @@
 label.label-default{color:#fff;}
+.checkbox-inline{
+    margin:0;
+    padding:0 0 0 10px;
+}
+.checkbox-inline:nth-child(1){
+    padding:0 0 0 20px;
+}
+.checkbox-inline label{
+    margin:0 20px 0 0;
+}

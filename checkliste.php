@@ -7,9 +7,6 @@ include 'framework/framework.php';
  * TODO: Log einrichten, wer wann welche Aufgabe geholt hat
  * TODO: Für Aufgaben Personenanzahl verfügbar machen
  * TODO: FIX: Offene Aufgaben werden bei einem Nicht-Admin noch nicht richtig gefiltert
- * TODO: Anlegen einer Aufgabe als normaler Nutzer: Freigeben für automatisch setzen
- * TODO: Anlegen einer Aufgabe: Deadline Kalender defekt
- * TODO: Von der Statistik-Seite meine eigenen Aufgaben > Eigener Menüpunkt
  * TODO: Aufgaben-Details - Zuweisungen für einen Nutzer können doppelt angelegt werden
  * TODO:
  * TODO:
@@ -58,7 +55,7 @@ $usergroups->setupDatabase('usergroups',array('name','admin'));
 #$usergroups->setupFile('data/checkliste_usergroups.db',array('name','admin'));
 
 $tasks = new collection(true);
-$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
+$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status','participants_min'));
 #$tasks->setupFile('data/checkliste_tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
 
 $task_Users = new collection(true);
@@ -187,27 +184,9 @@ switch($site){
         }
         break;
     case 'tasks':
-        header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+        header('Location:'.$page.'?site=tasks_summary');
         break;
     case 'tasks_create':
-        $suitable_groups='';
-        foreach($usergroups->getAllElements() as $group){
-            $checked='';
-            if($_POST['suitable_groups']){
-                foreach($_POST['suitable_groups'] as $element){
-                    if($element==$group['id']) $checked=' checked="checked"';
-                }
-            }
-            $suitable_groups.='
-            <div class="checkbox-inline">
-                <label>
-                    <input type="checkbox" name="suitable_groups[]" value="'.$group['id'].'"'.$checked.'>
-                    '.$group['name'].'
-                </label>
-            </div>
-            ';
-        }
-
         if($_POST){
             $suitable_groups_new='';
             $first=true;
@@ -221,43 +200,30 @@ switch($site){
                 'headline'=>$_POST['headline'],
                 'task'=>$_POST['task'],
                 'place'=>$_POST['place'],
+                'participants_min'=>$_POST['participants_min'],
                 'suitable_groups'=>$suitable_groups_new,
                 'deadline'=>$_POST['deadline']
             );
-            $tasks->createElement($newtask);
-            header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+            if($newtask['headline']==''){
+                $_SESSION['error']='Es muss eine Überschrift angegeben werden';
+                $framework->template->setTemplateArray('suitable_groups',explode(',',$suitable_groups_new));
+                $framework->template->setTemplateArray('task',$newtask);
+            }
+            else{
+                $tasks->createElement($newtask);
+                header('Location:'.$page.'?site=tasks_summary');
+            }
         }
 
 
-        $framework->template->setTemplateVariables(array('suitable_groups',$suitable_groups));
+        $framework->template->setTemplateArray('user',$framework->users->getElementByAttribute('id',$_SESSION['user_id']));
+        $framework->template->setTemplateVariables(array('usergroups',$usergroups->getAllElements()));
         $framework->template->setTemplateFile('tasks/create');
         break;
     case 'tasks_edit':
-        $currentTask=$tasks->getElementByAttribute('id',$_GET['id']);
-
-        $suitable_groups='';
-        foreach($usergroups->getAllElements() as $group){
-            $checked='';
-            if($_POST['suitable_groups']){
-                foreach($_POST['suitable_groups'] as $element){
-                    if($element==$group['id']) $checked=' checked="checked"';
-                }
-            }else{
-                foreach(explode(',',$currentTask['suitable_groups']) as $element){
-                    if($element==$group['id']) $checked=' checked="checked"';
-                }
-            }
-            $suitable_groups.='
-            <div class="checkbox-inline">
-                <label>
-                    <input type="checkbox" name="suitable_groups[]" value="'.$group['id'].'"'.$checked.'>
-                    '.$group['name'].'
-                </label>
-            </div>
-            ';
-        }
 
         if($_POST){
+            $newtask=$tasks->getElementByAttribute('id',$_POST['id']);
             $suitable_groups_new='';
             $first=true;
             if(!empty($_POST['suitable_groups'])){
@@ -266,19 +232,31 @@ switch($site){
                     else $suitable_groups_new.=','.$element;
                 }
             }
-            $newtask=array(
-                'id'=>$_POST['id'],
-                'headline'=>$_POST['headline'],
-                'task'=>$_POST['task'],
-                'place'=>$_POST['place'],
-                'suitable_groups'=>$suitable_groups_new,
-                'deadline'=>$_POST['deadline']
-            );
-            $tasks->editElement($newtask);
-            header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+
+            $newtask['headline']=$_POST['headline'];
+            $newtask['task']=$_POST['task'];
+            $newtask['place']=$_POST['place'];
+            $newtask['participants_min']=$_POST['participants_min'];
+            $newtask['suitable_groups']=$suitable_groups_new;
+            $newtask['deadline']=$_POST['deadline'];
+
+            if($newtask['headline']==''){
+                $_SESSION['error']='Es muss eine Überschrift angegeben werden';
+                $framework->template->setTemplateArray('suitable_groups',explode(',',$suitable_groups_new));
+                $framework->template->setTemplateArray('task',$newtask);
+            }
+            else{
+                $tasks->editElement($newtask);
+                header('Location:'.$page.'?site=tasks_summary');
+            }
+        }else{
+            $newtask=$tasks->getElementByAttribute('id',$_GET['id']);
         }
-        $framework->template->setTemplateArray('task',$currentTask);
-        $framework->template->setTemplateVariables(array('suitable_groups',$suitable_groups));
+
+
+        $framework->template->setTemplateArray('task',$newtask);
+        $framework->template->setTemplateArray('user',$framework->users->getElementByAttribute('id',$_SESSION['user_id']));
+        $framework->template->setTemplateVariables(array('usergroups',$usergroups->getAllElements()));
         $framework->template->setTemplateFile('tasks/edit');
         break;
     case 'tasks_details':
@@ -316,16 +294,18 @@ switch($site){
         break;
     case 'tasks_give_user':
         if($_POST){
-            try{
-                $task_Users->createElement(array(
-                    'taskid'=>$_POST['taskid'],
-                    'userid'=>$_POST['user']
-                ));
-            }catch(ElementDupeException $e){
-                $_SESSION['error']='Die Aufgabe wurde dem Nutzer bereits zugewiesen';
-                header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
+            $newEntry=array('taskid'=>$_POST['taskid'],'userid'=>$_POST['user']);
+            $success=true;
+
+            foreach($task_Users->getElementsByAttribute('taskid',$newEntry['taskid']) as $task){
+                if($task['userid']==$newEntry['userid']){
+                    $success=false;
+                    break;
+                }
             }
 
+            if($success) $task_Users->createElement($newEntry);
+            else $_SESSION['error']='Die Aufgabe wurde dem Nutzer bereits zugewiesen';
             header('Location:'.$page.'?site=tasks_details&id='.$_POST['taskid']);
         }
         else{
@@ -345,55 +325,60 @@ switch($site){
     case 'tasks_summary':
         $framework->template->setTemplateFile('tasks/summary');
         if(isset($_GET['filter'])) $task_summary_filter =$_GET['filter'];
-        elseif(empty($_SESSION['task_summary_filter'])) $task_summary_filter ='';
-        else $_SESSION['task_summary_filter'] ='finish_status';
+        else $task_summary_filter ='finish_status';
 
         if(isset($_GET['value'])) $task_summary_value=$_GET['value'];
-        elseif(empty($_SESSION['task_summary_value'])) $task_summary_value ='';
-        else $_SESSION['task_summary_value'] ='0';
+        else $task_summary_value ='0';
 
         if(isset($_GET['mode'])) $task_summary_mode=$_GET['mode'];
-        elseif(empty($_SESSION['task_summary_mode'])) $task_summary_mode ='';
-        else $_SESSION['task_summary_mode'] ='own';
+        else $task_summary_mode ='own';
 
         $currentUser=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
 
-
+        $overview=array();
         $tasks->sort('headline');
-        foreach($tasks->getAllElements() as $task){                  //Sortiert Datensätze laden
-            if($task_summary_value==$task[$task_summary_filter]){       //Filter prüfen
-                $temp=$framework->users->getElementByAttribute('id',$task['finished_by']);
-                $task['finished_by']=$temp['firstname'].' '.$temp['surname'];
-                if($task_summary_mode=='outlook'){
-                    foreach(explode(',',$task['suitable_groups']) as $group){
-                        if($group==$currentUser['group'])$overview[]=$task;
+
+        foreach($tasks->getElementsByAttribute($task_summary_filter, $task_summary_value) as $task){
+            if($task_summary_mode=='group'){
+                foreach(explode(',',$task['suitable_groups']) as $group){
+                    if($group==$currentUser['group']){
+                        $found=false;
+                        foreach($task_Users->getElementsByAttribute('userid',$_SESSION['user_id']) as $element){
+                            if($element['taskid']==$task['id'])$found=true;
+                        }
+                        if($found==false)$overview[]=$task;
                     }
-                }elseif($task_summary_mode=='own'){
-                    foreach($task_Users->getElementsByAttribute('userid',$_SESSION['user_id']) as $element){
-                        if($task['id']==$element['taskid'])$overview[]=$task;
-                    }
-                }else{
-                    $overview[]=$task;
                 }
             }
+            elseif($task_summary_mode=='own'){
+                $found=false;
+                foreach($task_Users->getElementsByAttribute('userid',$_SESSION['user_id']) as $element){
+                    if($element['taskid']==$task['id'])$found=true;
+                }
+                if($found==true)$overview[]=$task;
+            }
+            elseif($task_summary_mode=='all')$overview[]=$task;
         }
+
         if($task_summary_filter=='finish_status'){
             if($task_summary_value==0){
                 $headline.='Offene Aufgaben';
-                $mode='own';
             }
             elseif($task_summary_value==1){
                 $headline.='Fertige Aufgaben';
             }
             elseif($task_summary_value==2){
-                $headline.='Entfernte Aufgaben';
+                $headline.='Gelöschte Aufgaben';
             }
         }
+
         if($task_summary_mode=='all') $headline.=' Gesamt';
 
         $framework->template->setTemplateVariables(array('backlink','summary'));
-        $framework->template->setTemplateArray('headline',$headline);
-        $framework->template->setTemplateArray('mode',$mode);
+        $framework->template->setTemplateVariables(array('headline',$headline));
+        $framework->template->setTemplateArray('finish_status',$task_summary_value);
+        $framework->template->setTemplateArray('user_tasks',$task_Users->getAllElements());
+        $framework->template->setTemplateArray('mode',$task_summary_mode);
         $framework->template->setTemplateArray('overview',$overview);
         $framework->template->setTemplateVariables(array('finishstatus',$task_summary_value));
 
@@ -406,11 +391,11 @@ switch($site){
             ));
         }catch(ElementDupeException $e){
             $_SESSION['error']='Die Aufgabe wurde bereits angenommen';
-            header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+            header('Location:'.$page.'?site=tasks_summary');
             exit;
         }
         $_SESSION['message']='Die Aufgabe wurde angenommen';
-        header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+        header('Location:'.$page.'?site=tasks_summary');
         break;
     case 'tasks_close':
         $currentTask=$tasks->getElementByAttribute('id',$_GET['id']);
@@ -419,7 +404,7 @@ switch($site){
         $currentTask{'finished_by'}=$_SESSION['user_id'];
         $tasks->editElement($currentTask);
         $_SESSION['success']='Die Aufgabe wurde abgeschlossen';
-        header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+        header('Location:'.$page.'?site=tasks_summary');
         break;
     case 'tasks_cancel':
         $currentTask=$tasks->getElementByAttribute('id',$_GET['id']);
@@ -428,14 +413,14 @@ switch($site){
         $currentTask{'finished_by'}=$_SESSION['user_id'];
         $tasks->editElement($currentTask);
         $_SESSION['message']='Die Aufgabe wurde abgebrochen';
-        header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+        header('Location:'.$page.'?site=tasks_summary');
         break;
     case 'tasks_restart':
         $currentTask=$tasks->getElementByAttribute('id',$_GET['id']);
         $currentTask['finish_status']=0;
         $tasks->editElement($currentTask);
         $_SESSION['message']='Die Aufgabe wurde zurückgesetzt';
-        header('Location:'.$page.'?site=tasks_summary&filter='.$_SESSION['task_summary_filter'].'&value='.$_SESSION['task_summary_value'].'&mode='.$_SESSION['task_summary_mode']);
+        header('Location:'.$page.'?site=tasks_summary');
         break;
     case 'useradmin':
         header('Location:'.$page.'?site=useradmin_summary');

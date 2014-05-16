@@ -2,7 +2,7 @@
 {block name=content}
     <div class="alert alert-info">
         <h2>Details: {$task['headline']} <a href="{$page}?site=tasks_edit&id={$task['id']}"><span class="glyphicon glyphicon-pencil"></span></a></h2>
-        <p>{$task['task']}</p>
+        <h4>{$task['task']}</h4>
         <p>&nbsp;</p>
         <h4>Status:</h4>
         <p>{if $task['finish_status']==0}
@@ -10,7 +10,7 @@
             {elseif $task['finish_status']==1}
                 <span class="glyphicon glyphicon-lock"></span> Abgeschlossen
             {elseif $task['finish_status']==2}
-                <span class="glyphicon glyphicon-trash"></span> Abgebrochen
+                <span class="glyphicon glyphicon-trash"></span> Gelöscht
             {/if}
         </p>
         <p>&nbsp;</p>
