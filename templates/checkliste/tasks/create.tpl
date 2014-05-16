@@ -30,10 +30,27 @@
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">
-                    <label for="place" class="form-control label-default">Personen:</label>
+                    <label for="participants_min" class="form-control label-default">Personen:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="participants_min" name="participants_min" value="{$task['participants_min']}">
+                    <select class="form-control" id="participants_min" name="participants_min">
+                        <option{if $task['participants_min']==0} selected="selected"{/if} value="0">-</option>
+                        <option{if $task['participants_min']==1} selected="selected"{/if}>1</option>
+                        <option{if $task['participants_min']==2} selected="selected"{/if}>2</option>
+                        <option{if $task['participants_min']==3} selected="selected"{/if}>3</option>
+                        <option{if $task['participants_min']==4} selected="selected"{/if}>4</option>
+                        <option{if $task['participants_min']==5} selected="selected"{/if}>5</option>
+                        <option{if $task['participants_min']==6} selected="selected"{/if}>6</option>
+                        <option{if $task['participants_min']==7} selected="selected"{/if}>7</option>
+                        <option{if $task['participants_min']==8} selected="selected"{/if}>8</option>
+                        <option{if $task['participants_min']==9} selected="selected"{/if}>9</option>
+                        <option{if $task['participants_min']==10} selected="selected"{/if}>10</option>
+                        <option{if $task['participants_min']==11} selected="selected"{/if}>11</option>
+                        <option{if $task['participants_min']==12} selected="selected"{/if}>12</option>
+                        <option{if $task['participants_min']==13} selected="selected"{/if}>13</option>
+                        <option{if $task['participants_min']==14} selected="selected"{/if}>14</option>
+                        <option{if $task['participants_min']==15} selected="selected"{/if}>15</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -47,6 +64,7 @@
                 </div>
             </div>
         </div>
+        {if $isadmin}
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">
@@ -57,15 +75,12 @@
                         {foreach item=group from=$usergroups}
                             <div class="checkbox-inline">
                                 <label>
-                                    {if $isadmin}
                                         <input type="checkbox" name="suitable_groups[]" value="{$group['id']}"
                                         {foreach item=suitable_group from=$suitable_groups}
                                             {if $suitable_group==$group['id']} checked="checked"{/if}
                                         {/foreach}
                                         >{$group['name']}
-                                    {else}
-                                        <input type="checkbox" name="suitable_groups[]" value="{$group['id']}" disabled="disabled" {if $group['id']==$user['group']} checked="checked"{/if}>{$group['name']}
-                                    {/if}
+
                                 </label>
                             </div>
                         {/foreach}
@@ -73,6 +88,9 @@
                 </div>
             </div>
         </div>
+        {else}
+        <input type="hidden" name="suitable_groups[]" value="{$user['group']}">
+        {/if}
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">

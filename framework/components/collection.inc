@@ -1,5 +1,6 @@
 <?php
 include 'users.inc';
+include 'log.inc';
 
 /**
  * Class elements

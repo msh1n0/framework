@@ -23,7 +23,7 @@
                             {math assign="usercount" equation=$usercount+1}
                         {/if}
                     {/foreach}
-                    {$usercount}/{$task['participants_max']}
+                    {if $usercount==0}-{else}{$usercount}{/if}/{if $task['participants_min']==0}-{else}{$task['participants_min']}{/if}
                 </td>
                 {if $task['finish_status']!=0}
                 <td>
@@ -62,18 +62,15 @@
                 </td>
             </tr>
         {/foreach}
-        {if $finishstatus==0}
+        {if $task['finish_status']==0}
             <tr>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
-            {if $task['finish_status']!=0}
-                <td></td>
-            {/if}
                 <td class="text-right">
-                    {if $mode!='outlook'}
-                    <a href="checkliste.php?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>
+                    {if $mode=='outlook'}
+                        <a href="checkliste.php?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>&nbsp;&nbsp;
                     {/if}
                 </td>
         </tr>{/if}

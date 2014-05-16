@@ -26,7 +26,7 @@
                     <a href="{$page}?site=statistics&mode=admin&user={$user['id']}"><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>&nbsp;
                     <a href="tel:{$user['phone']}"><span class="glyphicon glyphicon-earphone" title="anrufen"></span></a>&nbsp;
                     <a href="mailto:{$user['email']}"><span class="glyphicon glyphicon-comment" title="E-Mail schreiben"></span></a>&nbsp;
-                    <a href="{$page}?site=useradmin_callback&id={$user['id']}"><span class="glyphicon glyphicon-retweet" title="{$user['firstname']} soll sich bei mir melden"></span></a>&nbsp;
+                    <a href="{$page}?site=useradmin_callback&id={$user['id']}"><span class="glyphicon glyphicon-bell" title="{$user['firstname']} soll sich bei mir melden"></span></a>&nbsp;
                     <a href="{$page}?site=useradmin_edit&id={$user['id']}"><span class="glyphicon glyphicon-pencil" title="User bearbeiten"></span></a>&nbsp;
                     <a href="{$page}?site=useradmin_delete&id={$user['id']}"><span class="glyphicon glyphicon-remove" title="User entfernen"></span></a>
                 </td>

@@ -14,5 +14,4 @@
     </div>
     {include 'templates/checkliste/_elements/tasksummary.tpl' overview=$mytasks headline='Aktuelle Aufgaben' mode='own'}
     {include 'templates/checkliste/_elements/tasksummary.tpl' overview=$opentasks headline='Verfügbare Aufgaben' mode='outlook'}
-    {include 'templates/checkliste/_elements/tasksummary.tpl' overview=$closedtasks headline='Abgeschlossene Aufgaben'}
 {/block}
