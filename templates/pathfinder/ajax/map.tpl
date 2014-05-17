@@ -15,6 +15,7 @@
         </div>
     </div>
 {/if}
+<div id="mappointers">
 {$pointers}
-
+</div>
 {$map}

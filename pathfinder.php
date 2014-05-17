@@ -2,15 +2,9 @@
 include 'framework/framework.php';
 /*
  * TODO: Karte - Pointer ändern in Pfeile mit Blickrichtungen
- * TODO: Karte - Monster mit speziellen Boss-Pointern
- * TODO: Würfel - Initiative nach würfeln automatisch eintragen
- * TODO: Würfel - Automatikwürfeln
- * TODO: MAPADMIN - width und height in die config schreiben
+ * TODO: Würfel - Automatik-Initiative
  * TODO: Useradmin - Password ändern
- * TODO: karte - Spielausgeblendete Chars auch von der Karte ausschließen
- * TODO: Karte - Pointer anlegen, auch wenn Das Monster gerad enicht angezeigt wird
  * TODO: Karte - Batchanlegen von Monster
- * TODO: Karte - Blickfeld für Spieler anpassen und Größe der pointer ändern
  *
  * */
 
@@ -40,6 +34,7 @@ if($framework->users->isLoggedIn()){
 $page='pathfinder.php';
 
 
+
 /*
  * Datenobjekte
  * */
@@ -65,6 +60,14 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $framework->template->setTemplateVariables(array('users',$framework->users->getElementByAttribute('currentuser',$_SESSION['user_id'])));
             $framework->template->disableCaching();
             $framework->template->display();
+            break;
+        case 'expandview':
+            $currentUser=$framework->users->getElementByAttribute('id',$_GET['user']);
+            $currentUser['mapsight']=$_GET['value'];
+            $save['timestamp_pointers']=time();
+            $save['timestamp_turns']=time();
+            $saveGame->editElement($save);
+            $framework->users->editElement($currentUser);
             break;
         case 'flushdice':
             $save['w4']='';
@@ -108,6 +111,19 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             echo '|';
             echo $save['w100'];
             break;
+        case 'getpointers':
+            $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
+            $map = new map('contents/pathfinder/images/maps/'.$save['map']);
+            $map->resizeMap(970);
+            $map->setCols($save['mapcols']);
+            if($user['userlevel']<50){
+                echo $map->generatePointers($framework->users->getElementsByAttribute('mapvisible','true'));
+                echo $map->generatePointers($framework->users->getElementsByAttribute('id','ZIEL'));
+            }
+            else{
+                echo $map->generatePointers($framework->users->getAllUsers());
+            }
+            break;
         case 'hideplayer':
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
             $user['hidden']='true';
@@ -139,12 +155,14 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $map = new map('contents/pathfinder/images/maps/'.$save['map']);
             $map->resizeMap(970);
             $map->setCols($save['mapcols']);
-            if($user['userlevel']<50)$map->setHiddenMode(true);
-            $framework->template->setTemplateVariables(array('pointers',$map->generatePointers($framework->users->getElementsByAttribute('mapvisible','true'),'pointerx','pointery')));
+            if($user['userlevel']<50)
+                $map->setHiddenMode(true);
             $framework->template->setTemplateVariables(array('map',$map->getMap()));
             $framework->template->setTemplateArray('users',$framework->users->getElementsByAttribute('hidden','false'));
             $framework->template->disableCaching();
             $framework->template->display();
+            $save['timestamp_pointers']=time();
+            $saveGame->editElement($save);
             break;
         case 'phase':
             $user=$framework->users->getElementByAttribute('id',$save['currentplayer']);
@@ -195,6 +213,13 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
             break;
+        case 'setmarker':
+            $user=$framework->users->getElementByAttribute('id',$_GET['player']);
+            $user['color']=$_GET['color'];
+            $framework->users->editElement($user);
+            $save['timestamp_pointers']=time();
+            $saveGame->editElement($save);
+            break;
         case 'setphase':
             $save['phase']=$_GET['value'];
             $save['timestamp_phase']=time();
@@ -205,7 +230,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user['pointerx']=$_GET['x'];
             $user['pointery']=$_GET['y'];
             $framework->users->editElement($user);
-            $save['timestamp_map']=time();
+            $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
             break;
         case 'setsingledice':

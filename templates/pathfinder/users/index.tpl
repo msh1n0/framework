@@ -16,6 +16,9 @@
                 <th></th>
             </tr>
         {foreach item=user from=$users}
+            {if $user['id']=='Spielleiter'}
+            {elseif $user['id']=='ZIEL'}
+            {else}
             <tr>
                 <td>{$user['id']}</td>
                 <td>{$user['userlevel']}</td>
@@ -30,6 +33,7 @@
                     <a href="{$page}?site=useradmin&action=deleteuser&user={$user['id']}"><span class="glyphicon glyphicon-remove" title="Spieler löschen"></span></a>
                 </td>
             </tr>
+        {/if}
         {/foreach}
             <tr>
                 <td></td>

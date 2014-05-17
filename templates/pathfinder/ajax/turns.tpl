@@ -46,13 +46,13 @@
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[initiative]" name="user[initiative]" value="{$user['initiative']}">
                     </div>
                     <div class="col-lg-2">
-                        <label for="user[dmgd]" class="form-control">Schaden tödlich:</label>
+                        <label for="user[dmgd]" class="form-control">tdl. Schaden:</label>
                     </div>
                     <div class="col-lg-1">
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgd]" name="user[dmgd]" value="{$user['dmgd']}">
                     </div>
                     <div class="col-lg-2">
-                        <label for="user[dmgnd]" class="form-control">Schaden normal:</label>
+                        <label for="user[dmgnd]" class="form-control">Schaden:</label>
                     </div>
                     <div class="col-lg-1">
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgnd]" name="user[dmgnd]" value="{$user['dmgnd']}">
@@ -64,25 +64,25 @@
                 {if $user['playable']=='true'}
                     <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
                         <div class="col-lg-2">
-                            <label for="user[w4]" class="form-control">Kontingent w4:</label>
+                            <label for="user[w4]" class="form-control">Würfe w4:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w4]" name="user[w4]" value="{$user['w4']}">
                         </div>
                         <div class="col-lg-2">
-                            <label for="user[w6]" class="form-control">Kontingent w6:</label>
+                            <label for="user[w6]" class="form-control">Würfe w6:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w6]" name="user[w6]" value="{$user['w6']}">
                         </div>
                         <div class="col-lg-2">
-                            <label for="user[w8]" class="form-control">Kontingent w8:</label>
+                            <label for="user[w8]" class="form-control">Würfe w8:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w8]" name="user[w8]" value="{$user['w8']}">
                         </div>
                         <div class="col-lg-2">
-                            <label for="user[w10]" class="form-control">Kontingent w10:</label>
+                            <label for="user[w10]" class="form-control">Würfe w10:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w10]" name="user[w10]" value="{$user['w10']}">
@@ -90,19 +90,19 @@
                     </div>
                     <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
                         <div class="col-lg-2">
-                            <label for="user[w12]" class="form-control">Kontingent w12:</label>
+                            <label for="user[w12]" class="form-control">Würfe w12:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w12]" name="user[w12]" value="{$user['w12']}">
                         </div>
                         <div class="col-lg-2">
-                            <label for="user[w20]" class="form-control">Kontingent w20:</label>
+                            <label for="user[w20]" class="form-control">Würfe w20:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w20]" name="user[w20]" value="{$user['w20']}">
                         </div>
                         <div class="col-lg-2">
-                            <label for="user[w100]" class="form-control">Kontingent w100:</label>
+                            <label for="user[w100]" class="form-control">Würfe w100:</label>
                         </div>
                         <div class="col-lg-1">
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w100]" name="user[w100]" value="{$user['w100']}">
@@ -148,13 +148,13 @@
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[tp]" name="user[tp]" value="{if $user['playable']=='false'}?{else}{$user['tp']}{/if}">
                     </div>
                     <div class="col-lg-2">
-                        <label for="user[dmgd]" class="form-control">Schaden tödlich:</label>
+                        <label for="user[dmgd]" class="form-control">tdl. Schaden:</label>
                     </div>
                     <div class="col-lg-1">
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgd]" name="user[dmgd]" value="{if $user['playable']=='false'}?{else}{$user['dmgd']}{/if}">
                     </div>
                     <div class="col-lg-2">
-                        <label for="user[dmgnd]" class="form-control">Schaden normal:</label>
+                        <label for="user[dmgnd]" class="form-control">Schaden:</label>
                     </div>
                     <div class="col-lg-1">
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[dmgnd]" name="user[dmgnd]" value="{if $user['playable']=='false'}?{else}{$user['dmgnd']}{/if}">

@@ -11,6 +11,7 @@ function pulse(){
             $('#timestamp_pointers').val(savegame[5]);
             refreshTurn2();
             refreshMap();
+            refreshPointers();
             if($('#userlevel').val()<50) refreshCharinfo();
         }
         else if($('#timestamp_phase').val()!=savegame[1]){
@@ -24,6 +25,10 @@ function pulse(){
         else if($('#timestamp_map').val()!=savegame[4]){
             $('#timestamp_map').val(savegame[4]);
             refreshMap();
+        }
+        else if($('#timestamp_pointers').val()!=savegame[5]){
+            $('#timestamp_pointers').val(savegame[5]);
+            refreshPointers();
         }
     });
 }

@@ -62,8 +62,8 @@ class image{
     
     public function resampleImage($newWidth, $newHeight, $mode, array $rgb){
         if($mode=='resize'){
-            $ResizeFactor=$newWidth / $this->width;
-            $newHeight=$this->height*$ResizeFactor;
+            $ResizeFactor=$newWidth / $this->getWidth();
+            $newHeight=$this->getHeight()*$ResizeFactor;
         }
         $newImage = imagecreatetruecolor($newWidth,$newHeight);
         imagefill($newImage, 0, 0, imagecolorallocate($newImage,$rgb[0],$rgb[1],$rgb[2]));
