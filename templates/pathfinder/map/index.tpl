@@ -14,7 +14,7 @@
         <h2>Phase:</h2>
         <input disabled="disabled" value="" id="currentphase" class="disabled form-control" type="text">
     </div>
-    <div class="alert alert-info map-container" id="turns">
+    <div class="alert alert-info map-container" id="turns2">
     </div>
     {if !$isadmin}
         <div class="alert alert-info map-container" id="charinfo">

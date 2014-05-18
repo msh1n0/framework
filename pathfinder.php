@@ -1,10 +1,9 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Karte - Pointer ändern in Pfeile mit Blickrichtungen
  * TODO: Würfel - Automatik-Initiative
  * TODO: Useradmin - Password ändern
- * TODO: Karte - Batchanlegen von Monster
+ * TODO: Karte - ZIEL-Pointer löschen
  *
  * */
 
@@ -294,7 +293,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
             $user['hidden']='false';
             $framework->users->editElement($user);
-            $save['timestamp_turns']=time();
+            $save['timestamp']=time();
             $saveGame->editElement($save);
             header('Location:'.$page.'?site=useradmin');
             break;

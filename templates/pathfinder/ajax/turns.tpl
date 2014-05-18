@@ -3,7 +3,7 @@
     {if $user['hidden']=='false'}
         <form action="{$page}?site=useradmin&action=edituser&user={$user['id']}&from=wuerfel" method="post">
             <input type="hidden" value="{$user['id']}" id="user[id]" name="user[id]" >
-            <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
+            <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                 <div class="col-lg-2">
                     <label for="user[id]" class="form-control">Spieler:</label>
                 </div>
@@ -12,7 +12,7 @@
                 </div>
             </div>
             {if $isadmin}
-                <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
+                <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                     <div class="col-lg-2">
                         <label for="user[tp]" class="form-control">TP:</label>
                     </div>
@@ -38,7 +38,7 @@
                         <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[init]" name="user[init]" value="{$user['init']}">
                     </div>
                 </div>
-                <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
+                <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                     <div class="col-lg-2">
                         <label for="user[initiative]" class="form-control">Initiative:</label>
                     </div>
@@ -62,7 +62,7 @@
                     <input type="submit" class="btn form-control">
                 </div>
                 {if $user['playable']=='true'}
-                    <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
+                    <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                         <div class="col-lg-2">
                             <label for="user[w4]" class="form-control">Würfe w4:</label>
                         </div>
@@ -88,7 +88,7 @@
                             <input type="text"{if !$isadmin} disabled="disabled"{/if} class="form-control" id="user[w10]" name="user[w10]" value="{$user['w10']}">
                         </div>
                     </div>
-                    <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
+                    <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                         <div class="col-lg-2">
                             <label for="user[w12]" class="form-control">Würfe w12:</label>
                         </div>
@@ -110,7 +110,7 @@
                     {/if}
                 </div>
                 {if $isadmin}
-                    <div class="row">
+                    <div class="row"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                         <div class="col-lg-3">
                             <input type="button" class="btn btn-warning form-control" value="Kampf-Würfel geben" onclick="setCombat('{$user['id']}')">
                         </div>
@@ -140,7 +140,7 @@
                     </div>
                 {/if}
             {else}
-                <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}">
+                <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                     <div class="col-lg-2">
                         <label for="user[tp]" class="form-control">TP:</label>
                     </div>
@@ -168,7 +168,7 @@
                 </div>
             {/if}
         </form>
-    <div class="row">
+    <div class="row"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
         <div class="col-xs-12">
             <hr>
         </div>
