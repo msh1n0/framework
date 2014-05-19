@@ -48,7 +48,7 @@ class map{
 
                 $bgpos='background:url('.$this->image->getFilename().');background-position:'.($this->image->getWidth()-$x).'px '.($this->image->getHeight()-$y).'px;';
                 if($user['id']!='ZIEL')$pointers.='<div class="pointer" style="position:absolute;z-index:10;width:'.$newsize.'px;height:'.$newsize.'px;margin:'.$y.'px 0 0 '.$x.'px;'.$bgpos.'"></div>';
-                $pointers.='<div class="pointer" style="position:absolute;z-index:20;width:'.$pxPerCol.'px;height:'.$pxPerCol.'px;margin:'.$y.'px 0 0 '.$x.'px;"><img src="templates/system/_resources/images/map/marker_'.$user['color'].'.png" style="width:'.$pxPerCol.'px;height:'.$pxPerCol.'px;margin:'.(($newsize-$pxPerCol)/2).'px 0 0 '.(($newsize-$pxPerCol)/2).'px;" title="'.$user['id'].'"></div>';
+                $pointers.='<div class="pointer" style="position:absolute;z-index:20;width:'.$pxPerCol.'px;height:'.$pxPerCol.'px;margin:'.$y.'px 0 0 '.$x.'px;"><img src="framework/templates/_resources/images/map/marker_'.$user['color'].'.png" style="width:'.$pxPerCol.'px;height:'.$pxPerCol.'px;margin:'.(($newsize-$pxPerCol)/2).'px 0 0 '.(($newsize-$pxPerCol)/2).'px;" title="'.$user['id'].'"></div>';
 
             }
         }

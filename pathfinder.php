@@ -42,7 +42,7 @@ $saveGame->setupFile('data/pathfinder_game.db',array('currentplayer','phase','ti
 $save=$saveGame->getElementByAttribute('id','1');
 
 $mapDirectory=new filemanager();
-$maps=$mapDirectory->DirectoryContents('contents/pathfinder/images/maps');
+$maps=$mapDirectory->DirectoryContents('projects/pathfinder/contents/images/maps');
 /*
  * Datenobjekte
  * */
@@ -112,7 +112,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             break;
         case 'getpointers':
             $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
-            $map = new map('contents/pathfinder/images/maps/'.$save['map']);
+            $map = new map('projects/pathfinder/contents/images/maps/'.$save['map']);
             $map->resizeMap(970);
             $map->setCols($save['mapcols']);
             if($user['userlevel']<50){
@@ -151,7 +151,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $framework->template->setTemplateFile('ajax/map');
             $framework->template->setTemplateVariables(array('currentplayer',$framework->users->getElementByAttribute('id',$_SESSION['user_id'])));
             $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
-            $map = new map('contents/pathfinder/images/maps/'.$save['map']);
+            $map = new map('projects/pathfinder/contents/images/maps/'.$save['map']);
             $map->resizeMap(970);
             $map->setCols($save['mapcols']);
             if($user['userlevel']<50)
@@ -447,7 +447,7 @@ switch($site){
                 }
             }elseif($_GET['action']=='uploadfile'){
                 if($_GET['confirm']==true){
-                    $uploaddir = 'contents/pathfinder/images/maps/';
+                    $uploaddir = 'projects/pathfinder/contents/images/maps/';
                     $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
                     if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
                         $_SESSION['message']='Datei-Upload erfolgreich';
@@ -460,13 +460,13 @@ switch($site){
                     $framework->template->setTemplateFile('map/upload');
                 }
             }elseif($_GET['action']=='deletefile'){
-                unlink('contents/pathfinder/images/maps/'.$_GET['map']);
+                unlink('projects/pathfinder/contents/images/maps/'.$_GET['map']);
                 header('Location:'.$page.'?site=mapadmin');
             }
         }
         else{
             $mapDirectory=new filemanager();
-            $framework->template->setTemplateArray('maps',$mapDirectory->DirectoryContents('contents/pathfinder/images/maps'));
+            $framework->template->setTemplateArray('maps',$mapDirectory->DirectoryContents('projects/pathfinder/contents/images/maps'));
             $framework->template->setTemplateVariables(array('activemap',$save['map']));
             $framework->template->setTemplateFile('map/admin');
         }

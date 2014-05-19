@@ -1,17 +1,7 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Hallenplan
- * TODO: Navipunkt Mitarbeiter für alle, nur mit eigener Gruppe, bei Admins alle online-Mitarbeiter
  * TODO: Plattform auf Dateien umstellen
- * TODO: Aufgaben-Details: fertige Aufgaben nicht editierbar machen
- * TODO: Aufgaben-Details: Zugeteilte Nutzer, Admin soll Nutzer entfernen können, ansonsten jeder sich selbst
- * TODO: Aufgaben-Details: geplante Anzahl Personen anzeigen
- * TODO: Administration: Feierabend
- * TODO: Aufgaben-Übersicht: Schließen und entfernen nur bei mode "own"
- * TODO: Aufgaben-Übersicht: Bei mode "own" Aufgaben zurückweisen
- * TODO: Aufgaben-Übersicht: Bei nicht abgeschlossenen Aufgaben Hilfegesuch mit Bestätigung
- * TODO: Task-Detail, dann Nutzer zuweisen, abbrechen -> falsche Fehlermeldung
  * */
 
 /*
@@ -32,11 +22,36 @@ if(!empty($_SESSION['message'])){
     $framework->template->setTemplateVariables(array('message','<div class="alert alert-info">'.$_SESSION['message'].'</div>'));
     unset($_SESSION['message']);
 }
+
+$usergroups=new collection(false);
+#$usergroups->setupDatabase('usergroups',array('name','admin'));
+$usergroups->setupFile('projects/checkliste/data/usergroups.db',array('name','admin'));
+
+$tasks = new collection(false);
+#$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status','participants_min'));
+$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status',));
+
+$task_Users = new collection(false);
+#$task_Users->setupDatabase('tasks_users',array('taskid','userid'));
+$task_Users->setupFile('projects/checkliste/data/tasks_users.db',array('taskid','userid'));
+
+$log = new log(false);
+$log->setupFile('projects/checkliste/data/log.db',array('action','actor','information'));
+
+$maps=new collection(false);
+$maps->setupFile('projects/checkliste/data/maps.db',array('active'),'');
+$framework->template->setTemplateArray('maps',$maps->getAllElements());
+
 if($framework->users->isLoggedIn()){
-    $framework->template->setTemplateVariables(array('isLoggedIn',true));
     $currentUser= $framework->users->getUserByAttribute('id',$_SESSION['user_id']);
+    if($currentUser['status']==3){
+        $framework->users->logOut();
+        header('Location:'.$page);
+    }
+    $framework->template->setTemplateVariables(array('isLoggedIn',true));
     $framework->template->setTemplateArray('currentuser',$currentUser);
-    if($currentUser['group']=='27'){
+    $currentgroup=$usergroups->getElementByAttribute('id',$currentUser['group']);
+    if($currentgroup['admin']=='1'){
         $framework->template->setTemplateVariables(array('isadmin',true));
         $_SESSION['admin']=true;
     }
@@ -51,30 +66,14 @@ $framework->template->setTemplateVariables(array('page',$page));
 if($framework->users->isLoggedIn()) $currentUser=$framework->users->getUser($_SESSION['user_id']);
 else  $currentUser='';
 
-
-$usergroups=new collection(true);
-$usergroups->setupDatabase('usergroups',array('name','admin'));
-#$usergroups->setupFile('data/checkliste_usergroups.db',array('name','admin'));
-
-$tasks = new collection(true);
-$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status','participants_min'));
-#$tasks->setupFile('data/checkliste_tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
-
-$task_Users = new collection(true);
-$task_Users->setupDatabase('tasks_users',array('taskid','userid'));
-#$task_Users->setupFile('data/checkliste_tasks_users.db',array('taskid','userid'));
-
-$log = new log(false);
-$log->setupFile('data/checkliste_log.db',array('action','actor','information'));
-
-$maps=new collection(false);
-$maps->setupFile('data/checkliste_maps.db',array('active'));
-$framework->template->setTemplateArray('maps',$maps->getAllElements());
-
 /*
- * Basis-Definitionen Ende
+ * /BASIS-DEFINITIONEN
  * */
 
+
+/*
+ * AUFRUFE
+ * */
 if(empty($_GET['site'])) $site='login';
 elseif(!$framework->users->isLoggedIn() && $_GET['site'] != 'login') $site='login';
 else $site=$_GET['site'];
@@ -82,8 +81,19 @@ else $site=$_GET['site'];
 if(!empty($currentUser['callback'])){
     $site='notification';
 }
+/*
+ * /AUFRUFE
+ * */
 
 switch($site){
+    case 'force_logout':
+        foreach($framework->users->getAllUsers() as $user){
+            if($user['status']!=3){
+                $user['status']=3;
+                $framework->users->editElement($user);
+            }
+        }
+        break;
     case 'log':
         if(!isset($_POST['filter'])) $framework->template->setTemplateArray('log',array_reverse($log->getAllElements()));
             elseif($_POST['filter']=='') $framework->template->setTemplateArray('log',array_reverse($log->getAllElements()));
@@ -140,7 +150,7 @@ switch($site){
                 header('Location:'.$page.'?site=map_admin');
             }elseif($_GET['action']=='uploadfile'){
                 if($_GET['confirm']==true){
-                    $uploaddir = 'contents/checkliste/images/maps/';
+                    $uploaddir = 'projects/checkliste/contents/images/maps/';
                     $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
                     if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
                         try{
@@ -148,7 +158,7 @@ switch($site){
                         }catch(ElementDupeException $e){
                         }
                         $log->add('Karte hochgeladen',$_SESSION['user_id'],'Bild '.$_FILES['userfile']['name']);
-                        $_SESSION['message']='Datei-Upload erfolgreich';
+                        $_SESSION['success']='Datei-Upload erfolgreich';
                     } else {
                         $_SESSION['error']='Datei-Upload fehlgeschlagen';
                     }
@@ -159,17 +169,17 @@ switch($site){
 
                 }
             }elseif($_GET['action']=='deletefile'){
-                $_SESSION['message']='Datei gelöscht';
+                $_SESSION['success']='Datei gelöscht';
                 $maps->deleteElement($_GET['map']);
                 $log->add('Karte gelöscht',$_SESSION['user_id'],'Bild '.$_FILES['userfile']['name']);
-                unlink('contents/checkliste/images/maps/'.$_GET['map']);
+                unlink('projects/checkliste/contents/images/maps/'.$_GET['map']);
                 header('Location:'.$page.'?site=map_admin');
             }
         }
         else{
             $mapDirectory=new filemanager();
             $framework->template->setTemplateVariables(array('mapsave',$maps->getAllElements()));
-            $framework->template->setTemplateArray('allmaps',$mapDirectory->DirectoryContents('contents/checkliste/images/maps'));
+            $framework->template->setTemplateArray('allmaps',$mapDirectory->DirectoryContents('projects/checkliste/contents/images/maps'));
             $framework->template->setTemplateFile('map/admin');
         }
         break;
@@ -244,6 +254,7 @@ switch($site){
         $framework->template->setTemplateArray('closedtasks',$closedTasks);
         $framework->template->setTemplateArray('opentasks',$openTasks);
         $framework->template->setTemplateArray('user',$currentUser);
+        $framework->template->setTemplateArray('user_tasks',$task_Users->getAllElements());
         unset($currentUser);
         break;
     case 'status':
@@ -327,24 +338,23 @@ switch($site){
                 }
             }
         }
-        $setUsers='';
+        $setUsers=array();
         foreach($task_Users->getAllElements() as $element){
             if($element['taskid']==$_GET['id']){
                 foreach($framework->users->getAllUsers() as $user){
-                    if($user['id']==$element['userid']) $setUsers.=$user['firstname'].' '.$user['surname'].'<br>';
+                    if($user['id']==$element['userid']) $setUsers[]=$user;
                 }
             }
         }
-        if($task['finished_by']=='0')$task['finished_by']='';
-        if($task['deadline']=='0')$task['deadline']='';
-        if($task['time_finished']=='0')$task['time_finished']='';
+        if($task['finished_by']=='0') $task['finished_by']='';
+        if($task['deadline']=='0') $task['deadline']='';
+        if($task['time_finished']=='0') $task['time_finished']='';
 
         $framework->template->setTemplateArray('setusers',$setUsers);
         $framework->template->setTemplateArray('groups',$groups);
         $framework->template->setTemplateArray('task',$task);
-        if($_GET['backlink']=='')$framework->template->setTemplateVariables(array('backlink',$page.'?site=statistics'));
-        elseif($_GET['backlink']=='summary') $framework->template->setTemplateVariables(array('backlink',$page.'?site=statistics'));
-        else $framework->template->setTemplateVariables(array('backlink',$page.'?site='.$_GET['backlink']));
+        $framework->template->setTemplateArray('users',$framework->users->getAllUsers());
+        $framework->template->setTemplateVariables(array('backlink',$page.'?site='.$_GET['backlink']));
         $framework->template->setTemplateFile('tasks/details');
         break;
     case 'tasks_edit':
@@ -410,7 +420,6 @@ switch($site){
         }
         else{
             $framework->template->setTemplateVariables(array('taskid',$_GET['id']));
-            $_SESSION['error']='Die Aufgabe wurde bereits angenommen';
         }
         $users='<select class="form-control" name="user" >';
         foreach($framework->users->getAllUsers() as $user){
@@ -422,11 +431,21 @@ switch($site){
         $framework->template->setTemplateVariables(array('taskheadline',$task['headline']));;
         $framework->template->setTemplateFile('tasks/give_user');
         break;
+    case 'tasks_resign':
+        $taskusers=$task_Users->getElementsByAttribute('taskid',$_GET['task']);
+        foreach($taskusers as $element){
+            if($element['userid']==$_GET['user']) $task_Users->deleteElement($element['id']);
+        }
+        $task=$tasks->getElementByAttribute('id',$_GET['task']);
+        $user=$framework->users->getElementByAttribute('id',$_GET['user']);
+        $log->add('Aufgabenzuordnung gelöscht',$_SESSION['user_id'],'Aufgabe: '.$task['headline'].', Benutzer: '.$user['firstname'].' '.$user['surname']);
+        header('Location:'.$page.'?site='.$_GET['fromsite'].'&id='.$_GET['task']);
+        break;
     case 'tasks_restart':
         $currentTask=$tasks->getElementByAttribute('id',$_GET['id']);
         $currentTask['finish_status']=0;
         $tasks->editElement($currentTask);
-        $_SESSION['message']='Die Aufgabe wurde zurückgesetzt';
+        $_SESSION['success']='Die Aufgabe wurde zurückgesetzt';
         $log->add('Aufgabe zurückgesetzt',$_SESSION['user_id'],'Aufgabe: '.$currentTask['headline']);
         header('Location:'.$page.'?site=statistics');
         break;
@@ -505,7 +524,7 @@ switch($site){
         if($success){
             $task_Users->createElement($newEntry);
             $task=$tasks->getElementByAttribute('id',$newEntry['taskid']);
-            $_SESSION['message']='Die Aufgabe wurde angenommen';
+            $_SESSION['success']='Die Aufgabe wurde angenommen';
             $log->add('Aufgabe angenommen',$_SESSION['user_id'],'Aufgabe: '.$task['headline']);
         }
         else{
@@ -520,9 +539,9 @@ switch($site){
         $user=$framework->users->getElementByAttribute('id',$_GET['id']);
         $user['callback']=$_SESSION['user_id'];
         $framework->users->editUser($user);
-        $_SESSION['Benachrichtigung erfolgreich gesetzt'];
+        $_SESSION['success']='Benachrichtigung erfolgreich gesetzt';
         $log->add('Rückruf erfragt',$_SESSION['user_id'],'Anfrage an: '.$_GET['id']);
-        header('Location:'.$page.'?site=useradmin_summary');
+        header('Location:'.$page.'?site='.$_GET['fromsite']);
         break;
     case 'useradmin_create':
         if($_POST){
@@ -576,11 +595,11 @@ switch($site){
             $framework->users->deleteUser($_GET['id']);
         }catch(mysqli_sql_exception $e){
             $_SESSION['error']='Löschen fehlgeschlagen';
-            header('Location:'.$page.'?site=useradmin_summary');
+            header('Location:'.$page.'?site='.$_GET['fromsite']);
         }
         $_SESSION['success']='Benutzer wurde gelöscht';
         $log->add('Benutzer gelöscht',$_SESSION['user_id'],$_GET['id']);
-        header('Location:'.$page.'?site=useradmin_summary');
+        header('Location:'.$page.'?site='.$_GET['fromsite']);
         break;
     case 'useradmin_edit':
         if($_POST){
@@ -611,12 +630,14 @@ switch($site){
         break;
     case 'useradmin_summary':
         $userlist=array();
+        $framework->template->setTemplateVariables(array('fromsite','users'));
         foreach($framework->users->getAllUsers() as $user){
             $group=$usergroups->getElementByAttribute('id',$user['group']);
             $user['group']=$group['name'];
             $userlist[]=$user;
         }
 
+        $framework->template->setTemplateVariables(array('fromsite','useradmin_summary'));
         $framework->template->setTemplateFile('users/summary');
         $framework->template->setTemplateArray('userlist',$userlist);
         break;
@@ -626,7 +647,7 @@ switch($site){
     case 'useradmin_usergroups_create':
         if($_POST){
             $usergroups->createElement(array('name'=>$_POST['name'],'admin'=>$_POST['admin']));
-            $_SESSION['message']='Die Benutzergruppe wurde erfolgreich angelegt';
+            $_SESSION['success']='Die Benutzergruppe wurde erfolgreich angelegt';
             $log->add('Benutzergruppe erstellt',$_SESSION['user_id'],$_POST['name']);
             header('Location:'.$page.'?site=useradmin_usergroups_summary');
         }
@@ -634,7 +655,7 @@ switch($site){
         break;
     case 'useradmin_usergroups_delete':
         $usergroups->deleteElement($_GET['id']);
-        $_SESSION['message']='Die Benutzergruppe wurde gelöscht';
+        $_SESSION['success']='Die Benutzergruppe wurde gelöscht';
         $log->add('Benutzergruppe gelöscht',$_SESSION['user_id'],$_POST['name']);
         header('Location:'.$page.'?site=useradmin_usergroups_summary');
         break;
@@ -642,11 +663,13 @@ switch($site){
         if($_POST){
             $newgroup=$usergroups->getElementByAttribute('id',$_POST['id']);
             $newgroup['name']=$_POST['name'];
-            $newgroup['admin']=$_POST['admin'];
+            if(!empty($_POST['admin'])) $newgroup['admin']=$_POST['admin'];
+            else $newgroup['admin']=0;
+
             $usergroups->editElement($newgroup);
         }
         if($_GET['confirm']==true){
-            $_SESSION['message']='Die Benutzergruppe wurde geändert';
+            $_SESSION['success']='Die Benutzergruppe wurde geändert';
             $log->add('Benutzergruppe geändert',$_SESSION['user_id'],$_POST['name']);
             header('Location:'.$page.'?site=useradmin_usergroups');
         }
@@ -657,6 +680,18 @@ switch($site){
         $framework->template->setTemplateArray('usergroups',$usergroups->getAllElements());
         $framework->template->setTemplateFile('usergroups/summary');
         break;
+    case 'users':
+        $userlist=array();
+        foreach($framework->users->getAllUsers() as $user){
+            $group=$usergroups->getElementByAttribute('id',$user['group']);
+            $user['group']=$group['name'];
+            $userlist[]=$user;
+        }
+        $framework->template->setTemplateArray('userlist',$userlist);
+        $framework->template->setTemplateVariables(array('fromsite','users'));
+        $framework->template->setTemplateVariables(array('online_only',true));
+        $framework->template->setTemplateFile('users/summary');
+        break;
     default:
         $framework->template->setTemplateFile('index');
         break;
@@ -664,7 +699,7 @@ switch($site){
 
 
 /*
- * Abschluss
+ * ABSCHLUSS
  * */
 $framework->template->setupScript('bootstrap');
 $framework->template->disableCaching();

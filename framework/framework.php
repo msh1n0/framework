@@ -17,19 +17,16 @@ include 'components/template.inc';
  * Framework Version 0.1
  *
  * Class framework Sammlung Funktionen
- * TODO: Mapgrid braucht noch erkennung für die Bildgröße, damit es keine Fehlkonfiguration gibt
- * TODO: Die Map muss anders gebaut werden, sie funktioniert auf vielen Browsern noch nicht
- * TODO: Collection - Wechsel von Datenbank auf Dateimodus
+ * TODO: Collection/Document: Verschiedene Dateimodi - Serialisiert (Standard), CSV, JSON
  * TODO: Datenbank (einsetzen in document): Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
  * TODO: Contents: mit oder ohne Datenbank
- * TODO: Email: senden von Emails
- * TODO: ExternalContent - Funktioniert noch nicht
+ * TODO: Email: senden von Emails, Newsletter
+ * TODO: ExternalContent: Funktioniert noch nicht
  * TODO: Document: Erstellung von RSS, etc.
  * TODO: Chat: WebChat oder Newsticker-Funktion
  * TODO: Media: Musik, Video, Streaming und so
  * TODO: Kalender: Allgemeiner Kalender mit Terminen, Erinnerungen per Mail
  * TODO: Cronjob: Bezug auf eine Datei im Framework, damit er leicht erweiterbar ist
- * TODO: Einfaches Newsletter-System mit eigener User-Datenbank,
  */
 class framework{
     /**
@@ -45,7 +42,7 @@ class framework{
         if($this->config['enable_users']==1) $this->users = new users();
         if($this->config['enable_contentpool']==1) $this->contentpool = new contentpool();
         if($this->config['enable_externalhtml']==1) $this->externalcontent = new externalContent();
-        if($this->config['enable_template']==1) $this->template = new template();
+        if($this->config['enable_template']==1) $this->template = new template('projects/'.$name.'/templates');
         if($this->config['enable_mobiledetect']==1) $this->mobileDetect = new Mobile_Detect();
     }
 }

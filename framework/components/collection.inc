@@ -58,6 +58,15 @@ class collection{
                 }
             }
             else{
+
+                if(empty($input['id'])){
+                    $newid='';
+                    foreach($this->attributes as $attribute){
+                        $newid.=$input[$attribute];
+                    }
+                    $input['id']=md5($newid);
+                    if($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
+                }
                 $this->elements[]=$input;
                 $this->saveDB();
             }
@@ -98,14 +107,16 @@ class collection{
         }
         else{
             $output=array();
-            foreach($this->elements as $element){
-                if($new['id']===$element['id']){
-                    foreach($this->attributes as $attribute){
-                        if(!isset($new[$attribute]))$new[$attribute]=$element[$attribute];
+            if($this->elements!=false){
+                foreach($this->elements as $element){
+                    if($new['id']===$element['id']){
+                        foreach($this->attributes as $attribute){
+                            if(!isset($new[$attribute]))$new[$attribute]=$element[$attribute];
+                        }
+                        $output[]=$new;
                     }
-                    $output[]=$new;
+                    else $output[]=$element;
                 }
-                else $output[]=$element;
             }
             $this->elements=$output;
             $this->saveDB();
@@ -117,7 +128,10 @@ class collection{
      * @return array
      */
     public function getAllElements(){
-        return $this->elements;
+        if($this->elements!=false){
+            return $this->elements;
+        }
+        return array();
     }
 
     /**
@@ -127,13 +141,14 @@ class collection{
      * @return string
      */
     public function getElementByAttribute($attribute,$value){
-        if(!empty($this->elements))
-        foreach($this->elements as $element){
-            if($element[$attribute]==$value){
-                return $element;
+        if($this->elements!=false){
+            foreach($this->elements as $element){
+                if($element[$attribute]==$value){
+                    return $element;
+                }
             }
         }
-        return false;
+        return array();
     }
 
     /**
@@ -144,10 +159,12 @@ class collection{
      */
     public function getElementsByAttribute($attribute,$value){
         $output=array();
-        foreach($this->elements as $element){
-           if($element[$attribute]==$value){
-                $output[]=$element;
-           }
+        if($this->elements!=false){
+            foreach($this->elements as $element){
+                if($element[$attribute]==$value){
+                    $output[]=$element;
+                }
+            }
         }
         return $output;
     }
@@ -165,8 +182,10 @@ class collection{
      * konfiguriert die Datei und liest den aktuellen Stand ein
      * @param $filename
      * @param $attributes
+     * @throws ConfigurationException
      */
     public function setupFile($filename,$attributes=array()){
+        if($this->config['db_mode']) throw new ConfigurationException('Im Datenbankmodus kann keine Datei eingerichtet werden');
         $this->document->setDocument($filename);
         $this->setAttributes($attributes);
         $this->importElementData();
@@ -188,22 +207,24 @@ class collection{
      * @param $attribute
      * @param bool $reverse
      */
-    public function sort($attribute, $reverse=false){
-        $sort=array();
-        foreach($this->elements as $task){ //Liste anlegen
-            $sort[]=$task[$attribute];
-        }
-        $sort=array_unique($sort); //Doppelte Einträge beseitigen
-        natcasesort($sort);
-        if($reverse)$sort=array_reverse($sort);
-        $temp=array();
-        foreach($sort as $element){
-            foreach($this->getElementsByAttribute($attribute,$element) as $item){
-                $temp[]=$item;
+    public function sort($attribute,$reverse=false){
+        if($this->elements !=false){
+            $sort=array();
+            foreach($this->elements as $task){ //Liste anlegen
+                $sort[]=$task[$attribute];
             }
+            $sort=array_unique($sort); //Doppelte Einträge beseitigen
+            natcasesort($sort);
+            if($reverse)$sort=array_reverse($sort);
+            $temp=array();
+            foreach($sort as $element){
+                foreach($this->getElementsByAttribute($attribute,$element) as $item){
+                    $temp[]=$item;
+                }
+            }
+            unset($this->elements);
+            $this->elements=$temp;
         }
-        unset($this->elements);
-        $this->elements=$temp;
     }
 
     /**
@@ -212,6 +233,7 @@ class collection{
     public function debugging($status){
         $this->database->debugging($status);
     }
+
     /**
      * Attribute einrichten
      * @param $attributes
@@ -232,10 +254,8 @@ class collection{
      * Kompletten Datenbestand einlesen
      */
     protected function importElementData(){
-        if(!$this->config['db_mode'])$this->elements=unserialize($this->document->getFileAsString());
-        else{
-           $this->elements=$this->database->getAll();
-        }
+        if($this->config['db_mode']) $this->elements=$this->database->getAll();
+        else $this->elements=unserialize($this->document->getFileAsString());
     }
 
     /**

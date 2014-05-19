@@ -14,7 +14,7 @@ class template{
     /**
      * @var string
      */
-    private $templatePath='templates';
+    private $templatePath='projects';
     /**
      * @var string
      */
@@ -23,10 +23,6 @@ class template{
      * @var
      */
     private $template;
-    /**
-     * @var string
-     */
-    private $systemTemplate='system';
     /**
      * @var array
      */
@@ -85,8 +81,7 @@ class template{
      */
     public function display(){
         $this->lastCheck();
-        if(is_file($this->templatePath.'/'.$this->template.'/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->template.'/'.$this->templateFile.'.tpl');
-        elseif(is_file($this->templatePath.'/system/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->systemTemplate.'/'.$this->templateFile.'.tpl');
+        if(is_file($this->templatePath.'/'.$this->template.'/templates/'.$this->templateFile.'.tpl')) $this->smarty->display('../'.$this->templatePath.'/'.$this->template.'/templates/'.$this->templateFile.'.tpl');
     }
     /**
      * Setzen der Templatevariablen in Arrayform
