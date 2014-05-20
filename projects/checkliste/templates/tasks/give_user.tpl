@@ -1,8 +1,8 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-<div class="alert alert-info">
     <h1>Aufgabe zuteilen: ("{$taskheadline}")</h1>
-    <form action="{$page}?site=tasks_give_user&id={$taskid}" method="post">
+    <form action="{$page}" method="get">
+        <input type="hidden" name="site" value="tasks_give_user">
         <input type="hidden" name="taskid" value="{$taskid}">
         <div class="form-group">
             <div class="row">
@@ -24,5 +24,4 @@
             </div>
         </div>
     </form>
-</div>
 {/block}

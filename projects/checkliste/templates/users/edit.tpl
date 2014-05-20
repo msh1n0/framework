@@ -1,6 +1,5 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-<div class="alert alert-info">
     <h1>Benutzer bearbeiten</h1>
     <form action="{$page}?site=useradmin_edit" method="post">
         <div class="form-group">
@@ -78,5 +77,4 @@
             </div>
         </div>
     </form>
-</div>
 {/block}

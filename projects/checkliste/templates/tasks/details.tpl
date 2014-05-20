@@ -1,6 +1,5 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <div class="alert alert-info">
         <h2>Details: {$task['headline']} {if $task['finish_status']!=1 && $task['finish_status']!=2}<a href="{$page}?site=tasks_edit&id={$task['id']}"><span class="glyphicon glyphicon-pencil"></span></a>{/if}</h2>
         <h4>{$task['task']}</h4>
         <p>&nbsp;</p>
@@ -27,7 +26,7 @@
                     {$user['firstname']} {$user['surname']}
                     {if $task['finish_status']!=1 && $task['finish_status']!=2}
                         {if $isadmin || $currentuser['id']==$user['id']}
-                            <a href="{$page}?site=tasks_resign&task={$task['id']}&user={$user['id']}&fromsite=tasks_details"><span class="glyphicon glyphicon-minus"></span></a>
+                            <a href="{$page}?site=tasks_resign&taskid={$task['id']}&user={$user['id']}&fromsite=tasks_details"><span class="glyphicon glyphicon-minus"></span></a>
                         {/if}
                     {/if}
                     <br>
@@ -60,7 +59,4 @@
             <p>{$task['time_finished']}</p>
             <p>&nbsp;</p>
         {/if}
-        <p>&nbsp;</p>
-        <a href="{$backlink}"><p><span class="glyphicon glyphicon-arrow-left"></span> Zurück</p></a>
-    </div>
 {/block}

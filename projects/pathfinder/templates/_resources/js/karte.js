@@ -34,5 +34,5 @@ function pulse(){
 }
 $(document).ready(function() {
     pulse();
-    setInterval(pulse,200);
+    setInterval(pulse,500);
 });

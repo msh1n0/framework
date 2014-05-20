@@ -38,7 +38,7 @@ $page='pathfinder.php';
  * Datenobjekte
  * */
 $saveGame = new collection(false);
-$saveGame->setupFile('data/pathfinder_game.db',array('currentplayer','phase','timestamp','timestamp_phase','timestamp_turns','timestamp_dice','timestamp_map','timestamp_pointers','auto','map','mapcols','mapwidth','mapheight'));
+$saveGame->setupFile('projects/pathfinder/data/game.db',array('currentplayer','phase','timestamp','timestamp_phase','timestamp_turns','timestamp_dice','timestamp_map','timestamp_pointers','auto','map','mapcols','mapwidth','mapheight'));
 $save=$saveGame->getElementByAttribute('id','1');
 
 $mapDirectory=new filemanager();
@@ -117,7 +117,6 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $map->setCols($save['mapcols']);
             if($user['userlevel']<50){
                 echo $map->generatePointers($framework->users->getElementsByAttribute('mapvisible','true'));
-                echo $map->generatePointers($framework->users->getElementsByAttribute('id','ZIEL'));
             }
             else{
                 echo $map->generatePointers($framework->users->getAllUsers());
@@ -136,7 +135,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user['mapvisible']='true';
             $framework->users->editElement($user);
             $save['timestamp_turns']=time();
-            $save['timestamp_map']=time();
+            $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
             break;
         case 'mapinvisible':
@@ -144,7 +143,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user['mapvisible']='false';
             $framework->users->editElement($user);
             $save['timestamp_turns']=time();
-            $save['timestamp_map']=time();
+            $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
             break;
         case 'map':
@@ -180,6 +179,14 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             echo '|';
             echo $save['timestamp_pointers'];
             break;
+        case 'resetpointer':
+            $user=$framework->users->getElementByAttribute('id',$_GET['value']);
+            $user['pointerx']='';
+            $user['pointery']='';
+            $save['timestamp_pointers']=time();
+            $saveGame->editElement($save);
+            $framework->users->editUser($user);
+            break;
         case 'setcombat':
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
             $save['w4']='';
@@ -198,7 +205,8 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user['w100']=$user['cw100'];
             $framework->users->editUser($user);
             $save['currentplayer']=$_GET['value'];
-            $save['timestamp']=time();
+            $save['timestamp_dice']=time();
+            $save['timestamp_turns']=time();
             $saveGame->editElement($save);
             break;
         case 'setdice':
@@ -241,7 +249,6 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['w12']='';
             $save['w20']='';
             $save['w100']='';
-            $save['timestamp_dice']=time();
             $user['w4']='';
             $user['w6']='';
             $user['w8']='';
@@ -252,7 +259,8 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user['w'.$_GET['value']]=1;
             $framework->users->editUser($user);
             $save['currentplayer']=$_GET['user'];
-            $save['timestamp']=time();
+            $save['timestamp_dice']=time();
+            $save['timestamp_turns']=time();
             $saveGame->editElement($save);
             break;
         case 'setturn':
@@ -293,7 +301,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
             $user['hidden']='false';
             $framework->users->editElement($user);
-            $save['timestamp']=time();
+            $save['timestamp_turns']=time();
             $saveGame->editElement($save);
             header('Location:'.$page.'?site=useradmin');
             break;
@@ -356,12 +364,17 @@ switch($site){
     case 'login':
         $framework->template->setTemplateFile('login');
         if(!empty($_POST)){
-            if($framework->users->logIn($_POST['id'],$_POST['password'])){
-                $_SESSION['success']='Du bist jetzt eingeloggt';
-                header('Location:'.$page.'?site=wuerfel');
+            $target=$framework->users->getElementByAttribute('id',$_POST['id']);
+            if($target['playable']=='true'){
+                if($framework->users->logIn($_POST['id'],$_POST['password'])){
+                    $_SESSION['success']='Du bist jetzt eingeloggt';
+                    header('Location:'.$page.'?site=wuerfel');
+                }
+                else{
+                    header('Location:'.$page);
+                }
             }
             else{
-                $_SESSION['warning']='Fehler beim Einloggen. Versuche es nochmal plx :3';
                 header('Location:'.$page);
             }
         }
@@ -379,20 +392,20 @@ switch($site){
                 if($_GET['action']=='edituser'){
                     if(isset($_GET['from']) && $_GET['from']=='wuerfel'){
                         $framework->users->editUser($_POST['user']);
-                        $save['timestamp']=time();
+                        $save['timestamp_turns']=time();
                         $saveGame->editElement($save);
                         header('Location:'.$page.'?site=wuerfel#'.$_POST['user']['id']);
                     }
                     else{
                         $framework->users->editUser($_POST['user']);
-                        $save['timestamp']=time();
+                        $save['timestamp_turns']=time();
                         $saveGame->editElement($save);
                         header('Location:'.$page.'?site=useradmin');
                     }
                 }
                 elseif($_GET['action']=='createuser'){
                     $framework->users->createUser($_POST['user']);
-                    $save['timestamp']=time();
+                    $save['timestamp_turns']=time();
                     $saveGame->editElement($save);
                     header('Location:'.$page.'?site=useradmin');
                 }
@@ -402,8 +415,14 @@ switch($site){
                         $newuser['id']=$_POST['user']['id'].$i;
                         $framework->users->createUser($newuser);
                     }
-                    $save['timestamp']=time();
+                    $save['timestamp_turns']=time();
                     $saveGame->editElement($save);
+                    header('Location:'.$page.'?site=useradmin');
+                }
+                elseif($_GET['action']=='changepw'){
+                    $newuser=$_POST['user'];
+                    $newuser['password']=md5($newuser['password']);
+                    $framework->users->editElement($newuser);
                     header('Location:'.$page.'?site=useradmin');
                 }
             }
@@ -417,6 +436,10 @@ switch($site){
             elseif($_GET['action']=='batchcreateuser'){
                 $framework->template->setTemplateFile('users/batchcreate');
             }
+            elseif($_GET['action']=='changepw'){
+                $framework->template->setTemplateArray('user',$framework->users->getElementByAttribute('id',$_GET['value']));
+                $framework->template->setTemplateFile('users/changepw');
+            }
             elseif($_GET['action']=='deleteuser'){
                 $framework->users->deleteUser($_GET['user']);
                 $save['timestamp']=time();
@@ -424,7 +447,10 @@ switch($site){
                 header('Location:'.$page.'?site=useradmin');
             }
         }
-        else $framework->template->setTemplateArray('users',$framework->users->getAllUsers());
+        else{
+            $framework->users->sort('userlevel',true);
+            $framework->template->setTemplateArray('users',$framework->users->getAllUsers());
+        }
         break;
     case 'wuerfel':
         $framework->template->setTemplateFile('wuerfel/index');

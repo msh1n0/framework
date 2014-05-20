@@ -41,10 +41,12 @@ class document{
      * @return string
      */
     public function getFileAsString(){
-        $content = file($this->file);
+        if(is_file($this->file)) $content = file($this->file);
         $text='';
-        foreach($content as $element){
-            $text.=$element;
+        if(!empty($content)){
+            foreach($content as $element){
+                $text.=$element;
+            }
         }
         return $text;
     }

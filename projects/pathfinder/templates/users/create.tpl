@@ -14,7 +14,11 @@
                 </div>
                 <div class="form-group">
                     <label for="userlevel">Userlevel:</label>
-                    <input type="text" name="user[userlevel]" id="userlevel" value="{$user['userlevel']}" class="form-control">
+                    <select name="user[userlevel]" id="userlevel" class="form-control">
+                        <option value="10" {if $user['userlevel']==10}selected="selected"{/if}>Monster</option>
+                        <option value="20" {if $user['userlevel']==20}selected="selected"{/if}>Spieler</option>
+                        <option value="99" {if $user['userlevel']==99}selected="selected"{/if}>Spielleiter</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="gab">Grundangriffsbonus:</label>

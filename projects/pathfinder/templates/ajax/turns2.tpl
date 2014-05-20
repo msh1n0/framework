@@ -12,7 +12,7 @@
         {/if}
     </tr>
 {foreach item=user from=$users}
-    {if $user['hidden']=='false'}
+    {if $user['hidden']=='false' && $user['userlevel']<50}
         <tr{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
             <td>
             {if $isadmin}

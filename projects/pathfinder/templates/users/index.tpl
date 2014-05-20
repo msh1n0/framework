@@ -14,10 +14,10 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
         {foreach item=user from=$users}
-            {if $user['id']=='Spielleiter'}
-            {elseif $user['id']=='ZIEL'}
+            {if $user['id']=='ZIEL'}
             {else}
             <tr>
                 <td>{$user['id']}</td>
@@ -26,8 +26,17 @@
                 <td>{$user['init']}</td>
                 <td>{$user['rk']}</td>
                 <td>{$user['tp']}</td>
-                <td>{if $user['playable']=='true'}<span class="glyphicon glyphicon-user"></span>{else}<span class="glyphicon glyphicon-tower"></span>{/if}</td>
-                <td>{if $user['hidden']=='true'}<a href="{$page}?site=ajax&action=showplayer&value={$user['id']}"><span class="glyphicon glyphicon-eye-close"></span></a>{else}<a href="{$page}?site=ajax&action=hideplayer&value={$user['id']}"><span class="glyphicon glyphicon-eye-open"></span></a>{/if}</td>
+                <td>{if $user['userlevel']<50}
+                        {if $user['playable']=='true'}<span class="glyphicon glyphicon-user"></span>{else}<span class="glyphicon glyphicon-tower"></span>{/if}
+                    {/if}
+                </td>
+                <td>{if $user['userlevel']<50}
+                        {if $user['hidden']=='true'}<a href="{$page}?site=ajax&action=showplayer&value={$user['id']}"><span class="glyphicon glyphicon-eye-close"></span></a>{else}<a href="{$page}?site=ajax&action=hideplayer&value={$user['id']}"><span class="glyphicon glyphicon-eye-open"></span></a>{/if}
+                    {/if}
+                </td>
+                <td>
+                    {if $user['playable']=='true'}<a href="{$page}?site=useradmin&action=changepw&value={$user['id']}" title="Password ändern"><span class="glyphicon glyphicon-cog"></span></a>{/if}
+                </td>
                 <td>
                     <a href="{$page}?site=useradmin&action=edituser&id={$user['id']}"><span class="glyphicon glyphicon-pencil" title="Spieler bearbeiten"></span></a>
                     <a href="{$page}?site=useradmin&action=deleteuser&user={$user['id']}"><span class="glyphicon glyphicon-remove" title="Spieler löschen"></span></a>
@@ -36,6 +45,7 @@
         {/if}
         {/foreach}
             <tr>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>

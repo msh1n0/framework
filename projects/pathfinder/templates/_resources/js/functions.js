@@ -127,6 +127,10 @@ function setPointer(pointerx,pointery){
         });
     }
 }
+function resetPointer(player){
+    $.get('pathfinder.php?site=ajax&action=resetpointer&value='+player, function (data) {
+    });
+}
 function startInitiative(){
     //Automatische Initiative
     setPhase('Initiative');

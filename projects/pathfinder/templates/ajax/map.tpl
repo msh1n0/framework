@@ -13,6 +13,13 @@
                 </select>
             </div>
         </div>
+        <div class="row">
+            <div class="col-xs-3">
+            </div>
+            <div class="col-xs-9">
+                <input type="button" onclick="resetPointer('ZIEL')" class="btn btn-default form-control" value="Zielmarker entfernen">
+            </div>
+        </div>
     </div>
 {/if}
 <div id="mappointers">

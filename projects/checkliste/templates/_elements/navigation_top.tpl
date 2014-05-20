@@ -60,7 +60,7 @@
                         <li><a data-toggle="dropdown" href="#">Administration</a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{$page}?site=useradmin_summary">Benutzer verwalten</a></li>
-                                <li><a href="{$page}?site=useradmin_usergroups">Benutzergruppen verwalten</a></li>
+                                <li><a href="{$page}?site=useradmin_usergroups_summary">Benutzergruppen verwalten</a></li>
                                 <li><a href="{$page}?site=map_admin">Karten verwalten</a></li>
                                 <li><a href="{$page}?site=force_logout">Alle Benutzer abmelden</a></li>
                                 <li><a href="{$page}?site=log">Log-Datei ansehen</a></li>
@@ -68,6 +68,7 @@
                         </li>
                     {/if}
                     <li><a href=""><span class="glyphicon glyphicon-refresh" onclick="window.location.reload()"></span></a></li>
+                    <li><a href="{$page}?site=switchtheme"><span class="glyphicon glyphicon-adjust"></span></a></li>
                 {/if}
             </ul>
         </div>

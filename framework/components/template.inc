@@ -71,8 +71,8 @@ class template{
         $this->smarty->setCompileDir('framework/cache/smarty/compile');
         $this->smarty->caching = true;
         $this->smarty->cache_lifetime = 120;
+        $this->setBootstrapTheme($this->config['bootstrap_theme']);
         $this->smarty->assign('metaCharset','utf-8');
-        $this->bootstrap[0][]='framework/components/ext/bootstrap/themes/'.$this->config['bootstrap_theme'].'.css';
         $this->smarty->assign('templateDirectory',$this->templatePath.'/');
         $this->smarty->assign('index',$this->getIndex());
     }
@@ -162,6 +162,12 @@ class template{
     public function setSwipeDirectory($swipeDirectory){
         $this->swipeDirectory=$swipeDirectory;
         $this->generateSwipe();
+    }
+    /**
+     * @param $theme
+     */
+    public function setBootstrapTheme($theme){
+        $this->bootstrap[0][]='framework/components/ext/bootstrap/themes/'.$theme.'.css';
     }
     /**
      * Letzter Check vor der Initialisierung

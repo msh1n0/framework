@@ -1,6 +1,5 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-<div class="alert alert-info">
     {if isset($online_only) && $online_only==true}
         <h2>Mitarbeiterübersicht</h2>
     {else}
@@ -37,31 +36,34 @@
                     {/if}</td>
                 <td class="visible-md visible-lg">{$user['group']}</td>
                 <td class="text-right">
-                {if $isadmin}
-                    <a href="{$page}?site=statistics&mode=admin&user={$user['id']}"><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>&nbsp;
-                {/if}
-                    <a href="tel:{$user['phone']}"><span class="glyphicon glyphicon-earphone" title="anrufen"></span></a>&nbsp;
-                    <a href="mailto:{$user['email']}"><span class="glyphicon glyphicon-comment" title="E-Mail schreiben"></span></a>&nbsp;
-                {if $isadmin}
-                    <a href="{$page}?site=useradmin_callback&id={$user['id']}&fromsite={$fromsite}"><span class="glyphicon glyphicon-bell" title="{$user['firstname']} soll sich bei mir melden"></span></a>&nbsp;
-                    <a href="{$page}?site=useradmin_edit&id={$user['id']}"><span class="glyphicon glyphicon-pencil" title="User bearbeiten"></span></a>&nbsp;
-                    <a href="{$page}?site=useradmin_delete&id={$user['id']}&fromsite={$fromsite}"><span class="glyphicon glyphicon-remove" title="User entfernen"></span></a>
-                {/if}
+                    {if $currentuser['id']!=$user['id']}
+                        {if $isadmin}
+                            <a href="{$page}?site=statistics&mode=admin&user={$user['id']}"><span class="glyphicon glyphicon-list-alt" title="Aufgaben betrachten"></span></a>&nbsp;
+                        {/if}
+                            <a href="tel:{$user['phone']}"><span class="glyphicon glyphicon-earphone" title="anrufen"></span></a>&nbsp;
+                            <a href="mailto:{$user['email']}"><span class="glyphicon glyphicon-comment" title="E-Mail schreiben"></span></a>&nbsp;
+                        {if $isadmin}
+                            <a href="{$page}?site=useradmin_callback&id={$user['id']}&fromsite={$fromsite}"><span class="glyphicon glyphicon-bell" title="{$user['firstname']} soll sich bei mir melden"></span></a>&nbsp;
+                            <a href="{$page}?site=useradmin_edit&id={$user['id']}"><span class="glyphicon glyphicon-pencil" title="User bearbeiten"></span></a>&nbsp;
+                            <a href="{$page}?site=useradmin_delete&id={$user['id']}&fromsite={$fromsite}"><span class="glyphicon glyphicon-remove" title="User entfernen"></span></a>
+                        {/if}
+                    {/if}
                 </td>
             </tr>
 
             {/if}
         {/foreach}
-        <tr>
-            <td class="visible-lg"></td>
-            <td></td>
-            <td class="visible-md visible-lg"></td>
-            <td class="visible-md visible-lg"></td>
-            <td></td>
-            <td class="visible-md visible-lg"></td>
-            <td class="text-right">
-                <a href="{$page}?site=useradmin_create"><span class="glyphicon glyphicon-plus" title="Neuen Nutzer anlegen"></span></a>
-            </td>
-    </tr></table>
-</div>
+        {if $isadmin}
+            <tr>
+                <td class="visible-lg"></td>
+                <td></td>
+                <td class="visible-md visible-lg"></td>
+                <td class="visible-md visible-lg"></td>
+                <td></td>
+                <td class="visible-md visible-lg"></td>
+                <td class="text-right">
+                    <a href="{$page}?site=useradmin_create"><span class="glyphicon glyphicon-plus" title="Neuen Nutzer anlegen"></span></a>
+                </td>
+            </tr>
+        {/if}</table>
 {/block}

@@ -3,10 +3,10 @@
     <link type="text/css" href="framework/components/ext/datepicker/css/datepicker.css" rel="stylesheet">
 {/block}
 {block name=content}
-<div class="alert alert-info">
     <h1>Aufgabe anlegen</h1>
     <form action="{$page}?site=tasks_create" method="post">
         <input type="hidden" class="form-control" id="id" name="id">
+        <input type="hidden" class="form-control" id="finish_status" name="finish_status" value="0">
         <div class="form-group">
             <div class="row">
                 <div class="col-md-3">
@@ -111,7 +111,6 @@
             </div>
         </div>
     </form>
-    </div>
 {/block}
 {block name=scripts_bottom append}
     <script type="text/javascript" src="framework/components/ext/datepicker/js/datepicker.js"></script>
