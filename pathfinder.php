@@ -2,8 +2,6 @@
 include 'framework/framework.php';
 /*
  * TODO: Würfel - Automatik-Initiative
- * TODO: Useradmin - Password ändern
- * TODO: Karte - ZIEL-Pointer löschen
  *
  * */
 
