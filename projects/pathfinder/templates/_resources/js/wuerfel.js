@@ -15,26 +15,22 @@ function pulse(){
             $('#timestamp_phase').val(savegame[1]);
             $('#timestamp_turns').val(savegame[2]);
             $('#timestamp_dice').val(savegame[3]);
-            $('#timestamp_map').val(savegame[4]);
+            refreshPhase();
             refreshTurn();
             refreshDice();
             if($('#userlevel').val()<50) refreshCharinfo();
         }
-        else if($('#timestamp_phase').val()!=savegame[1]){
+        if($('#timestamp_phase').val()!=savegame[1]){
             $('#timestamp_phase').val(savegame[1]);
             refreshPhase();
         }
-        else if($('#timestamp_turns').val()!=savegame[2]){
+        if($('#timestamp_turns').val()!=savegame[2]){
             $('#timestamp_turns').val(savegame[2]);
             refreshTurn();
         }
-        else if($('#timestamp_dice').val()!=savegame[3]){
+        if($('#timestamp_dice').val()!=savegame[3]){
             $('#timestamp_dice').val(savegame[3]);
             refreshDice();
-        }
-        else if($('#timestamp_map').val()!=savegame[4]){
-            $('#timestamp_map').val(savegame[4]);
-            //refreshMap();
         }
     });
 }

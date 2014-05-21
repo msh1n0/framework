@@ -9,8 +9,8 @@ class users extends collection{
     /**
      * vereinfachter Konstuktor; ruft die config auf
      */
-    function __construct(){
-        $this->config=configuration::loadConfig('users');
+    function __construct($project){
+        $this->config=configuration::loadConfig('users',$project);
         parent::__construct($this->config['db_mode']);
         if($this->config['db_mode']){
             $this->setAttributes($this->config['attributes']);

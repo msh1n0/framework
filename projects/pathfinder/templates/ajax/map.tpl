@@ -7,6 +7,7 @@
             </div>
             <div class="col-xs-9">
                 <select id="name" name="name" class="form-control">
+                    <option value="#">*aktiver Spieler*</option>
                     {foreach item=user from=$users}
                         <option value="{$user['id']}">{$user['id']}</option>
                     {/foreach}

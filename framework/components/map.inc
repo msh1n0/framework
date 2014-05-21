@@ -15,7 +15,13 @@ class map{
      * @var image
      */
     private $image;
+    /**
+     * @var
+     */
     private $cols;
+    /**
+     * @var bool
+     */
     private $hidden=false;
 
     /**
@@ -25,15 +31,32 @@ class map{
         $this->image=new image();
         $this->image->setFile($imagePath);
     }
+
+    /**
+     * @param $cols
+     */
     public function setCols($cols){
         $this->cols=$cols;
     }
+
+    /**
+     * @param $input
+     */
     public function setHiddenMode($input){
         $this->hidden=$input;
     }
+
+    /**
+     * @param $width
+     */
     public function resizeMap($width){
         if($this->image->getWidth()!=$width) $this->image->resampleImage($width,'','resize',array(0,0,0));
     }
+
+    /**
+     * @param $input
+     * @return string
+     */
     public function generatePointers($input){
         $pointers='';
         $pxPerCol=$this->image->getWidth()/$this->cols;
@@ -54,10 +77,19 @@ class map{
         }
         return $pointers;
     }
+
+    /**
+     * @return string
+     */
     public function getMap(){
         if($this->hidden) return $this->generateMapGrid($this->cols).'<div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;background:#000;"></div>';
         else return $this->generateMapGrid($this->cols).'<img id="map" src="'.$this->image->getFilename().'" style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;position:absolute;z-index:5"><div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;background:#000;position:absolute;z-index:7" class="fog"></div><div style="width:'.$this->image->getWidth().'px;height:'.$this->image->getHeight().'px;"></div>';
     }
+
+    /**
+     * @return string
+     * @throws InputErrorException
+     */
     private function generateMapGrid(){
             if($this->cols=='') throw new InputErrorException('Bitte Gridgröße angeben');
             $rows=round($this->image->getHeight()/($this->image->getWidth()/$this->cols));

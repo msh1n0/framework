@@ -1,7 +1,7 @@
 <h2>Runden</h2>
 {foreach item=user from=$users}
     {if $user['hidden']=='false' && $user['userlevel']<50}
-        <form action="{$page}?site=useradmin&action=edituser&user={$user['id']}&from=wuerfel" method="post">
+        <form action="{$page}?site=useradmin&action=edituser&user={$user['id']}&from=wuerfel" method="post"{if $user['mapvisible']!='true'} style="opacity:0.4;"{/if}>
             <input type="hidden" value="{$user['id']}" id="user[id]" name="user[id]" >
             <div class="row{if $activeplayer['id']==$user['id']} has-error{/if}"{if !$isadmin && $user['mapvisible']!='true'} style="display:none;"{/if}>
                 <div class="col-md-2">

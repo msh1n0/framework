@@ -11,13 +11,15 @@ include 'components/externalcontent.inc';
 include 'components/filemanager.inc';
 include 'components/image.inc';
 include 'components/map.inc';
+include 'components/session.inc';
 include 'components/template.inc';
 
 /**
  * Framework Version 0.1
  *
- * Class framework Sammlung Funktionen
+ * Class framework
  * TODO: Collection/Document: Verschiedene Dateimodi - Serialisiert (Standard), CSV, JSON
+ * TODO: Collection: Export und Import-Funktionen (über document)
  * TODO: Datenbank (einsetzen in document): Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
  * TODO: Contents: mit oder ohne Datenbank
  * TODO: Email: senden von Emails, Newsletter
@@ -33,16 +35,17 @@ class framework{
      * @var
      */
     private $config;
+
     /**
-     *
+     * @param $name
      */
     public function __construct($name){
-        $_SESSION['project']=$name;
-        $this->config=configuration::loadConfig('framework');
-        if($this->config['enable_users']==1) $this->users = new users();
+        $this->session=new session($name);
+        $this->config=configuration::loadConfig('framework',$name);
+        if($this->config['enable_users']==1) $this->users = new users($name);
         if($this->config['enable_contentpool']==1) $this->contentpool = new contentpool();
         if($this->config['enable_externalhtml']==1) $this->externalcontent = new externalContent();
-        if($this->config['enable_template']==1) $this->template = new template('projects/'.$name.'/templates');
+        if($this->config['enable_template']==1) $this->template = new template($name);
         if($this->config['enable_mobiledetect']==1) $this->mobileDetect = new Mobile_Detect();
     }
 }

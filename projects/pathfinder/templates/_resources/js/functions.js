@@ -3,17 +3,16 @@ function expandView(player,expand){
     });
 }
 function setEffect(phase,player){
-    $('#fullscreenEffect').removeClass('effectDanger');
-    $('#fullscreenEffect').removeClass('effectWarning');
-    $('#fullscreenEffect').removeClass('effectAttention');
-    $('#fullscreenEffect').removeClass('effectInfo');
-    if(phase=='Initiativ-Phase'){
-        if(player==$('#activeplayer').val())  $('#fullscreenEffect').addClass('effectInfo');
-        else $('#fullscreenEffect').addClass('effectWarning');
+    $('#fullscreenEffect').removeClass('effectYourTurn');
+    $('#fullscreenEffect').removeClass('effectCombat');
+    $('#fullscreenEffect').removeClass('effectInit');
+    if(phase=='Initiative'){
+        if(player==$('#currentuser').val())  $('#fullscreenEffect').addClass('effectYourTurn');
+        else $('#fullscreenEffect').addClass('effectInit');
     }
     else if(phase=='Kampf-Phase'){
-        if(player==$('#activeplayer').val())  $('#fullscreenEffect').addClass('effectAttention');
-        else $('#fullscreenEffect').addClass('effectDanger');
+        if(player==$('#currentuser').val())  $('#fullscreenEffect').addClass('effectYourTurn');
+        else $('#fullscreenEffect').addClass('effectCombat');
     }
 }
 function mapInvisible(player){
@@ -112,15 +111,16 @@ function refreshPointers(){
 }
 function refreshTurn(){
     $('#turns').load('pathfinder.php?site=ajax&action=turns');
-    refreshPhase();
 }
 function refreshTurn2(){
     $('#turns2').load('pathfinder.php?site=ajax&action=turns2');
-    refreshPhase();
 }
 function setPointer(pointerx,pointery){
     if($('#userlevel').val()>50){
-        $.get('pathfinder.php?site=ajax&action=setpointer&value='+$('#name').val()+'&x='+pointerx+'&y='+pointery, function (data) {
+        var player;
+        if($('#name').val()=='#') player=$("#currentplayer").val();
+        else player=$('#name').val();
+        $.get('pathfinder.php?site=ajax&action=setpointer&value='+player+'&x='+pointerx+'&y='+pointery, function (data) {
         });
     }else if($('#currentplayer').val()==$('#currentuser').val()){
         $.get('pathfinder.php?site=ajax&action=setpointer&value=ZIEL&x='+pointerx+'&y='+pointery, function (data) {
@@ -132,8 +132,8 @@ function resetPointer(player){
     });
 }
 function startInitiative(){
-    //Automatische Initiative
-    setPhase('Initiative');
+    $.get('pathfinder.php?site=ajax&action=startautoinitiative', function (data) {
+    });
 }
 function wuerfeln(modus){
     var value;

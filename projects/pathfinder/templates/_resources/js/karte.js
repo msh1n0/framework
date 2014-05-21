@@ -9,24 +9,25 @@ function pulse(){
             $('#timestamp_turns').val(savegame[2]);
             $('#timestamp_map').val(savegame[4]);
             $('#timestamp_pointers').val(savegame[5]);
+            refreshPhase();
             refreshTurn2();
             refreshMap();
             refreshPointers();
             if($('#userlevel').val()<50) refreshCharinfo();
         }
-        else if($('#timestamp_phase').val()!=savegame[1]){
+        if($('#timestamp_phase').val()!=savegame[1]){
             $('#timestamp_phase').val(savegame[1]);
             refreshPhase();
         }
-        else if($('#timestamp_turns').val()!=savegame[2]){
+        if($('#timestamp_turns').val()!=savegame[2]){
             $('#timestamp_turns').val(savegame[2]);
             refreshTurn2();
         }
-        else if($('#timestamp_map').val()!=savegame[4]){
+        if($('#timestamp_map').val()!=savegame[4]){
             $('#timestamp_map').val(savegame[4]);
             refreshMap();
         }
-        else if($('#timestamp_pointers').val()!=savegame[5]){
+        if($('#timestamp_pointers').val()!=savegame[5]){
             $('#timestamp_pointers').val(savegame[5]);
             refreshPointers();
         }

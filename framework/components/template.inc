@@ -61,10 +61,10 @@ class template{
     /**
      *
      */
-    function __construct(){
+    function __construct($project){
         $this->document= new document();
         $this->files= new filemanager();
-        $this->config=configuration::loadConfig('template');
+        $this->config=configuration::loadConfig('template',$project);
         $this->setTemplate($this->config['template']);
         $this->smarty = new Smarty();
         $this->smarty->setCacheDir('framework/cache/smarty');

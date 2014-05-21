@@ -22,7 +22,7 @@
                     <button type="button" class="btn btn-warning form-control" onclick="setPhase('Initiative')">Initiativ-Phase</button>
                 </div>
                 <div class="col-sm-3">
-                    <button type="button" class="btn btn-warning form-control disabled" onclick="startInitiative()">Initiativ-Automatik</button>
+                    <button type="button" class="btn btn-warning form-control" onclick="startInitiative()">Initiativ-Automatik</button>
                 </div>
                 <div class="col-sm-3">
                     <button type="button" class="btn btn-danger form-control" onclick="setPhase('Kampf-Phase')">Kampf-Phase</button>

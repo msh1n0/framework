@@ -2,17 +2,14 @@ a{cursor:pointer;}
 #fullscreenEffect{
     position:fixed;width:100%;height:100%;z-index: -1;
 }
-.effectDanger{
+.effectYourTurn{
+    box-shadow:inset 0 0 100px #0f0;
+}
+.effectCombat{
     box-shadow:inset 0 0 100px #f00;
 }
-.effectWarning{
-    box-shadow:inset 0 0 100px #f60;
-}
-.effectAttention{
+.effectInit{
     box-shadow:inset 0 0 100px #ff0;
-}
-.effectInfo{
-    box-shadow:inset 0 0 100px #00f;
 }
 a,button,input{outline:none !important;}
 .row-fullscreen{

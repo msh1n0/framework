@@ -50,6 +50,7 @@ class image{
         $this->filename=$filename;
         $this->refresh();
     }
+
     /**
      * @param int $newWidth Zielbreite des Bildes
      * @param int $newHeight Zielhöhe des Bildes
@@ -59,7 +60,6 @@ class image{
      * @throws ErrorException
      * @throws BadMethodCallException
      * */
-    
     public function resampleImage($newWidth, $newHeight, $mode, array $rgb){
         if($mode=='resize'){
             $ResizeFactor=$newWidth / $this->getWidth();

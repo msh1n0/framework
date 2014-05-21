@@ -2,7 +2,6 @@
 include 'framework/framework.php';
 /*
  * TODO: Ausführender mit richtigem Namen
- * TODO: statistics im Admin mode nur aufgaben annehmen abgeben
  * TODO:
  * */
 
@@ -737,18 +736,17 @@ switch($site){
     #- Benutzerübersicht
     #-------------------------------------------------------
     case 'useradmin_summary':
-        $userlist=array();
-        $framework->template->setTemplateVariables(array('fromsite','users'));
         $framework->users->sort('id');
+        /*$userlist=array();
         foreach($framework->users->getAllUsers() as $user){
             $group=$usergroups->getElementByAttribute('id',$user['group']);
             $user['group']=$group['name'];
             $userlist[]=$user;
         }
-
+        */
         $framework->template->setTemplateVariables(array('fromsite','useradmin_summary'));
         $framework->template->setTemplateFile('users/summary');
-        $framework->template->setTemplateArray('userlist',$userlist);
+        $framework->template->setTemplateArray('userlist',$framework->users->mergeWithCollection($usergroups,'group','id','name'));
         break;
     #-------------------------------------------------------
     #- Benutzergruppe erstellen

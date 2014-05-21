@@ -11,6 +11,10 @@ class collection{
      */
     protected $elements = array();
     /**
+     * @var array
+     */
+    protected $mergedElements = array();
+    /**
      * @var document
      */
     protected $document;
@@ -38,7 +42,6 @@ class collection{
             $this->document = new document();
         }
     }
-
 
     /**
      * Legt ein neues Element an
@@ -170,7 +173,57 @@ class collection{
     }
 
     /**
-     * richtet die Datenbanktabelle ein,
+     * Gibt alle Datensätze zurück, auf die die Kriterien zutreffen
+     * @param array $filters Schreibweise beachten: filter=>value,filter=>value...
+     * @return array
+     */
+    public function getElementsFiltered($filters=array()){
+        $output=array();
+        if($this->elements!=false){
+            foreach($this->elements as $element){
+                $success=true;
+                foreach($filters as $filter){
+                    if($element[$filter['filter']]!=$filter['value'])$success=false;
+                }
+                if($success)$output[]=$element;
+            }
+        }
+        return $output;
+    }
+
+    /**
+     * Die Collection wird mit einer anderen collection temporär gekoppelt
+     * @param collection $collection Zielcollection
+     * @param string $joinOriginal Identifizierung des Originals (z.B. Usergroup-ID)
+     * @param string $joinTarget Identifizierung des Ziels (z.B. ID)
+     * @param string $outputvalue Feldname, der den Bezugspunkt ersetzen soll
+     * @return array Verbunde Elemente
+     */
+    public function mergeWithCollection(collection $collection,$joinOriginal,$joinTarget,$outputvalue){
+        if($this->elements!=false){}
+        if(empty($this->mergedElements)) $this->mergedElements=$this->elements;
+        $newElements=array();
+        foreach($this->mergedElements as $element){
+            $temp=$collection->getElementByAttribute($joinTarget,$element[$joinOriginal]);
+            $element[$joinOriginal]=$temp[$outputvalue];
+            $newElements[]=$element;
+        }
+        $this->mergedElements=$newElements;
+        return $this->mergedElements;
+    }
+
+    /**
+     * Liefert das Ergebnis der Collection-Verbindung
+     * @return array
+     * @throws BadFunctionCallException
+     */
+    public function getMergedResults(){
+        if(empty($this->mergedElements)) throw new BadFunctionCallException('Es hat noch kein Verbund stattgefunden');
+        else return $this->mergedElements;
+    }
+
+    /**
+     * richtet die Datenbanktabelle ein
      * @param $db_table
      */
     public function setDBTable($db_table){

@@ -81,34 +81,10 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             break;
         case 'getcontingent':
             $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
-            echo $user['w4'];
-            echo '|';
-            echo $user['w6'];
-            echo '|';
-            echo $user['w8'];
-            echo '|';
-            echo $user['w10'];
-            echo '|';
-            echo $user['w12'];
-            echo '|';
-            echo $user['w20'];
-            echo '|';
-            echo $user['w100'];
+            echo $user['w4'].'|'.$user['w6'].'|'.$user['w8'].'|'.$user['w10'].'|'.$user['w12'].'|'.$user['w20'].'|'.$user['w100'];
             break;
         case 'getdice':
-            echo $save['w4'];
-            echo '|';
-            echo $save['w6'];
-            echo '|';
-            echo $save['w8'];
-            echo '|';
-            echo $save['w10'];
-            echo '|';
-            echo $save['w12'];
-            echo '|';
-            echo $save['w20'];
-            echo '|';
-            echo $save['w100'];
+            echo $save['w4'].'|'.$save['w6'].'|'.$save['w8'].'|'.$save['w10'].'|'.$save['w12'].'|'.$save['w20'].'|'.$save['w100'];
             break;
         case 'getpointers':
             $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
@@ -210,15 +186,35 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $saveGame->editElement($save);
             break;
         case 'setdice':
-            if(empty($save[$_GET['dice']])) $save[$_GET['dice']]=$_GET['value'];
-            else $save[$_GET['dice']]=$save[$_GET['dice']].', '.$_GET['value'];
-            $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
-            $user[$_GET['dice']]=$user[$_GET['dice']]-1;
-            $framework->users->editElement($user);
-
-            $save['timestamp_dice']=time();
-            $save['timestamp_turns']=time();
-            $saveGame->editElement($save);
+                if(empty($save[$_GET['dice']])) $save[$_GET['dice']]=$_GET['value'];
+                else $save[$_GET['dice']]=$save[$_GET['dice']].', '.$_GET['value'];
+                $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
+                $user[$_GET['dice']]=$user[$_GET['dice']]-1;
+                if($save['auto']==true){
+                    $user['initiative']=$user['init']+$_GET['value'];
+                    $user['auto']=false;
+                }
+                $framework->users->editElement($user);
+                if($save['auto']==true){
+                    $user['initiative']=$user['init']+$_GET['value'];
+                    $user['auto']=false;
+                    $currentPlayer=$save['currentplayer'];
+                    foreach($framework->users->getElementsByAttribute('mapvisible','true') as $element){
+                        if($element['auto']=='true' && $element['playable']=='true' && $element['userlevel']!='99'){
+                            $save['currentplayer']=$element['id'];
+                        }
+                    }
+                    if($save['currentplayer']==$currentPlayer){
+                        $save['auto']=false;
+                        $save['currentplayer']='';
+                        $save['phase']='Kampf-Phase';
+                    }
+                }
+                $framework->users->editElement($user);
+                $save['timestamp_turns']=time();
+                $save['timestamp_dice']=time();
+                $save['timestamp_phase']=time();
+                $saveGame->editElement($save);
             break;
         case 'setmarker':
             $user=$framework->users->getElementByAttribute('id',$_GET['player']);
@@ -228,6 +224,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $saveGame->editElement($save);
             break;
         case 'setphase':
+            $save['auto']=false;
             $save['phase']=$_GET['value'];
             $save['timestamp_phase']=time();
             $saveGame->editElement($save);
@@ -259,6 +256,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $user['w'.$_GET['value']]=1;
             $framework->users->editUser($user);
             $save['currentplayer']=$_GET['user'];
+            $save['timestamp_phase']=time();
             $save['timestamp_dice']=time();
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
@@ -274,6 +272,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_dice']=time();
             $save['currentplayer']=$_GET['value'];
             $save['timestamp_turns']=time();
+            $save['timestamp_phase']=time();
             $saveGame->editElement($save);
             break;
         case 'setturn2':
@@ -295,6 +294,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_dice']=time();
             $save['currentplayer']=$_GET['value'];
             $save['timestamp_turns']=time();
+            $save['timestamp_phase']=time();
             $saveGame->editElement($save);
             break;
         case 'showplayer':
@@ -305,11 +305,45 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $saveGame->editElement($save);
             header('Location:'.$page.'?site=useradmin');
             break;
-        case 'startautoinitiative':  //#############################################  TODO
-            $save['phase']="Initiativ-Phase";
+        case 'startautoinitiative':
             foreach($framework->users->getAllUsers() as $user){
                 $user['auto']=true;
+                $user['w4']='';
+                $user['w6']='';
+                $user['w8']='';
+                $user['w10']='';
+                $user['w12']='';
+                $user['w20']='1';
+                $user['w100']='';
+                $user['cw4']='';
+                $user['cw6']='';
+                $user['cw8']='';
+                $user['cw10']='';
+                $user['cw12']='';
+                $user['cw20']='';
+                $user['cw100']='';
+                $user['initiative']='';
+                $framework->users->editElement($user);
             }
+            $framework->users->sort('id',true);
+            foreach($framework->users->getElementsByAttribute('mapvisible','true') as $user){
+                if($user['playable']!='true') $user['initiative']=$user['init']+rand(1,20);
+                elseif($user['userlevel']==20)$save['currentplayer']=$user['id'];
+                $framework->users->editElement($user);
+            }
+            $save['phase']="Initiative";
+            $save['auto']=true;
+            $save['w4']='';
+            $save['w6']='';
+            $save['w8']='';
+            $save['w10']='';
+            $save['w12']='';
+            $save['w20']='';
+            $save['w100']='';
+            $save['timestamp_turns']=time();
+            $save['timestamp_phase']=time();
+            $save['timestamp_dice']=time();
+            $saveGame->editElement($save);
             $user=$framework->users->getElementByAttribute('auto',true);
             break;
         case 'turns':
