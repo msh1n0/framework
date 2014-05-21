@@ -1,7 +1,6 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Würfel - Automatik-Initiative
  *
  * */
 
