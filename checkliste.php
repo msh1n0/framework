@@ -2,6 +2,8 @@
 include 'framework/framework.php';
 /*
  * TODO: Ausführender mit richtigem Namen
+ * TODO: Mitarbeiter Status seit wie lange
+ * TODO: Sessions mit cookies
  * TODO:
  * */
 
@@ -737,13 +739,6 @@ switch($site){
     #-------------------------------------------------------
     case 'useradmin_summary':
         $framework->users->sort('id');
-        /*$userlist=array();
-        foreach($framework->users->getAllUsers() as $user){
-            $group=$usergroups->getElementByAttribute('id',$user['group']);
-            $user['group']=$group['name'];
-            $userlist[]=$user;
-        }
-        */
         $framework->template->setTemplateVariables(array('fromsite','useradmin_summary'));
         $framework->template->setTemplateFile('users/summary');
         $framework->template->setTemplateArray('userlist',$framework->users->mergeWithCollection($usergroups,'group','id','name'));
