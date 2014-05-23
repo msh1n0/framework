@@ -17,6 +17,7 @@
                 {if $isLoggedIn}
                     <li><a href="{$index}?site=wuerfel">Würfeln</a></li>
                     <li><a href="{$index}?site=karte">Karte</a></li>
+                    <li><a href="{$index}?site=combi">Combi (Beta!)</a></li>
                     {if $isadmin}
                         <li><a href="{$index}?site=mapadmin">Karten verwalten</a></li>
                         <li><a href="{$index}?site=useradmin">User-Admin</a></li>

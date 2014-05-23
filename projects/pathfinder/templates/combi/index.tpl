@@ -35,13 +35,13 @@
     {block name=content}
         <div class="row form-group">
             <div class="col-xs-4">
-                <input typ="button" onclick="activateBox(1)" value="Würfel" class="btn btn-default form-control">
+                <input type="button" onclick="activateBox(1)" value="Würfel" class="btn btn-default form-control">
             </div>
             <div class="col-xs-4">
-                <input typ="button" onclick="activateBox(2)" value="Karte" class="btn btn-default form-control">
+                <input type="button" onclick="activateBox(2)" value="Karte" class="btn btn-default form-control">
             </div>
             <div class="col-xs-4">
-                <input typ="button" onclick="activateBox(3)" value="Rundeninfo" class="btn btn-default form-control">
+                <input type="button" onclick="activateBox(3)" value="Rundeninfo" class="btn btn-default form-control">
             </div>
         </div>
         <input id="status_box1" type="hidden" value="left">

@@ -1,9 +1,8 @@
 <?php
-include 'framework/framework.php';
+include './framework/framework.php';
 /*
  *
  * */
-
 
 $framework = new framework('pathfinder');
 $content='';
@@ -312,13 +311,6 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
                 $user['w12']='';
                 $user['w20']='1';
                 $user['w100']='';
-                $user['cw4']='';
-                $user['cw6']='';
-                $user['cw8']='';
-                $user['cw10']='';
-                $user['cw12']='';
-                $user['cw20']='';
-                $user['cw100']='';
                 $user['initiative']='';
                 $framework->users->editElement($user);
             }
