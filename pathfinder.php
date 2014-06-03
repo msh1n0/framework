@@ -1,7 +1,9 @@
 <?php
 include './framework/framework.php';
 /*
- * Zum Spielstart alle Spieler ausblenden, mit ANmeldung werden die Spieler eingeblendet
+ * Zum Spielstart alle Spieler ausblenden, mit Anmeldung werden die Spieler eingeblendet
+ * Bei neuer Wahrnehmung neues Sichtfeld
+ * Würfel beeinflussen
  * */
 
 $framework = new framework('pathfinder');
