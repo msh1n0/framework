@@ -200,7 +200,7 @@ class collection{
      * @return array Verbunde Elemente
      */
     public function mergeWithCollection(collection $collection,$joinOriginal,$joinTarget,$outputvalue){
-        if($this->elements!=false){}
+        if(false!=$this->elements){}
         if(empty($this->mergedElements)) $this->mergedElements=$this->elements;
         $newElements=array();
         foreach($this->mergedElements as $element){

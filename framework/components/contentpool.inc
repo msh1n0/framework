@@ -70,7 +70,8 @@ class contentpool{
     public function getContent($element){
         switch($this->sourceType){
             case 'tpl':
-                if(!is_file($this->dataDirectory.'/'.$element.'.'.$this->sourceType))throw new TemplateNotFoundException("Template-Datei konte nicht gefunden werden");
+                if(!is_file($this->dataDirectory.'/'.$element.'.'.$this->sourceType))
+                    throw new TemplateNotFoundException("Template-Datei konte nicht gefunden werden");
                 $this->document->setDocument($this->dataDirectory.'/'.$element.'.'.$this->sourceType);
                 $this->getPages();
                 return $this->document->getFileAsString();

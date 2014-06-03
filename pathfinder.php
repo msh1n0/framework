@@ -1,7 +1,7 @@
 <?php
 include './framework/framework.php';
 /*
- *
+ * Zum Spielstart alle Spieler ausblenden, mit ANmeldung werden die Spieler eingeblendet
  * */
 
 $framework = new framework('pathfinder');
