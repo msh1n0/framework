@@ -81,7 +81,7 @@ class template{
      */
     public function display(){
         $this->lastCheck();
-        if(is_file($this->templatePath.'/'.$this->template.'/templates/'.$this->templateFile.'.tpl')) $this->smarty->display('../'.$this->templatePath.'/'.$this->template.'/templates/'.$this->templateFile.'.tpl');
+        if(is_file($this->templatePath.'/'.$this->template.'/templates/'.$this->templateFile.'.tpl')) $this->smarty->display($this->templatePath.'/'.$this->template.'/templates/'.$this->templateFile.'.tpl');
     }
     /**
      * Setzen der Templatevariablen in Arrayform

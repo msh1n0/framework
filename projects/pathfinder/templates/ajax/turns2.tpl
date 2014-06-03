@@ -35,17 +35,17 @@
             {/if}
             </td>
             <td>{$user['id']}</td>
-            <td>{$user['tp']}</td>
-            <td>{$user['dmgd']}</td>
-            <td>{$user['dmgnd']}</td>
-            <td>{$user['initiative']}</td>
+            <td>{if $isadmin || $user['playable']=='true'}{$user['tp']}{else}?{/if}</td>
+            <td>{if $isadmin || $user['playable']=='true'}{$user['dmgd']}{else}?{/if}</td>
+            <td>{if $isadmin || $user['playable']=='true'}{$user['dmgnd']}{else}?{/if}</td>
+            <td>{if $isadmin || $user['playable']=='true'}{$user['initiative']}{else}?{/if}</td>
             {if $isadmin}
                 <td class="text-right">
                     {if $user['playable']=='false'}
-                        <a onclick="setMarker('{$user['id']}','000')"><span class="glyphicon glyphicon-stop text-success" title="tot"></span></a>&nbsp;
-                        <a onclick="setMarker('{$user['id']}','600')"><span class="glyphicon glyphicon-play text-warning" title="stark angeschlagen"></span></a>&nbsp;
-                        <a onclick="setMarker('{$user['id']}','a00')"><span class="glyphicon glyphicon-forward text-warning" title="leicht angeschlagen"></span></a>&nbsp;
-                        <a onclick="setMarker('{$user['id']}','f00')"><span class="glyphicon glyphicon-fast-forward text-danger" title="fit"></span></a>&nbsp;
+                        <a onclick="setMarker('{$user['id']}','f00')"><span class="glyphicon glyphicon-heart text-success" title="fit"></span></a>&nbsp;
+                        <a onclick="setMarker('{$user['id']}','a00')"><span class="glyphicon glyphicon-ok-circle text-warning" title="leicht angeschlagen"></span></a>&nbsp;
+                        <a onclick="setMarker('{$user['id']}','600')"><span class="glyphicon glyphicon-exclamation-sign text-warning" title="stark angeschlagen"></span></a>&nbsp;
+                        <a onclick="setMarker('{$user['id']}','000')"><span class="glyphicon glyphicon-remove-sign text-danger" title="tot"></span></a>&nbsp;
                     {else}
                         Sichweite {if $user['mapsight']}(aktuell {$user['mapsight']}){/if}:
                         <select>
