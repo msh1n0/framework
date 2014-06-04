@@ -191,6 +191,29 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $value=$_GET['value'];
             $dice=$_GET['dice'];
 
+            $max=str_replace('w','',$dice);
+            switch($save['dicemode']){
+                case '1':
+                    $value='1';
+                    break;
+                case '2':
+                    if($max=='10')$value=rand(0,round($max/2));
+                    elseif($max=='100')$value=rand(1,5)*10;
+                    else $value=rand(1,round($max/2));
+                    break;
+                case '3':
+                    if($max=='100')$value=rand(5,10)*10;
+                    else $value=rand(round($max/2),$max);
+                    break;
+                case '4':
+                    if($value=$max){
+                        if($max=='10')$value=rand(0,9);
+                        elseif($max=='100')$value=rand(1,9)*10;
+                        else $value=rand(1,round($max-1));
+                        break;
+                    }
+                    break;
+            }
             /*
              * Hier kommt die Abfrage nach Würfelmoduse hin
              *
