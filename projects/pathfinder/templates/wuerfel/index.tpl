@@ -17,7 +17,7 @@
             <div class="col-sm-12"><p>&nbsp;</p></div>
         </div>
         {if $isadmin}
-            <div class="row">
+            <div class="row form-group">
                 <div class="col-sm-3">
                     <button type="button" class="btn btn-warning form-control" onclick="setPhase('Initiative')">Initiativ-Phase</button>
                 </div>
@@ -29,6 +29,20 @@
                 </div>
                 <div class="col-sm-3">
                     <button type="button" class="btn btn-info form-control" onclick="setPhase('frei')">frei</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-default form-control" onclick="manipulateDice('1')">Niete</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-default form-control" onclick="manipulateDice('2')">Schlechter Wurf</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-default form-control" onclick="manipulateDice('3')">Guter Wurf</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-default form-control" onclick="manipulateDice('4')">Kein Crit</button>
                 </div>
             </div>
         {/if}

@@ -5,7 +5,7 @@ include './framework/framework.php';
  * Bei neuer Wahrnehmung neues Sichtfeld
  * Würfel beeinflussen
  * */
-
+error_reporting(1);
 $framework = new framework('pathfinder');
 $content='';
 $framework->template->setTemplate('pathfinder');
@@ -36,7 +36,7 @@ $page='pathfinder.php';
  * Datenobjekte
  * */
 $saveGame = new collection(false);
-$saveGame->setupFile('projects/pathfinder/data/game.db',array('currentplayer','phase','timestamp','timestamp_phase','timestamp_turns','timestamp_dice','timestamp_map','timestamp_pointers','auto','map','mapcols','mapwidth','mapheight'));
+$saveGame->setupFile('projects/pathfinder/data/game.db',array('currentplayer','phase','timestamp','timestamp_phase','timestamp_turns','timestamp_dice','timestamp_map','timestamp_pointers','auto','map','mapcols','dicemode','mapwidth','mapheight'));
 $save=$saveGame->getElementByAttribute('id','1');
 
 $mapDirectory=new filemanager();
@@ -103,6 +103,10 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
             header('Location:'.$page.'?site=useradmin');
+            break;
+        case 'manipulatedice':
+            $save['dicemode']=$_GET['value'];
+            $saveGame->editElement($save);
             break;
         case 'mapvisible':
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
@@ -184,17 +188,25 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $saveGame->editElement($save);
             break;
         case 'setdice':
-                if(empty($save[$_GET['dice']])) $save[$_GET['dice']]=$_GET['value'];
-                else $save[$_GET['dice']]=$save[$_GET['dice']].', '.$_GET['value'];
+            $value=$_GET['value'];
+            $dice=$_GET['dice'];
+
+            /*
+             * Hier kommt die Abfrage nach Würfelmoduse hin
+             *
+             * */
+
+                if(empty($save[$dice])) $save[$dice]=$value;
+                else $save[$dice]=$save[$dice].', '.$value;
                 $user=$framework->users->getElementByAttribute('id',$_SESSION['user_id']);
-                $user[$_GET['dice']]=$user[$_GET['dice']]-1;
+                $user[$dice]=$user[$dice]-1;
                 if($save['auto']==true){
-                    $user['initiative']=$user['init']+$_GET['value'];
+                    $user['initiative']=$user['init']+$value;
                     $user['auto']=false;
                 }
                 $framework->users->editElement($user);
                 if($save['auto']==true){
-                    $user['initiative']=$user['init']+$_GET['value'];
+                    $user['initiative']=$user['init']+$value;
                     $user['auto']=false;
                     $currentPlayer=$save['currentplayer'];
                     foreach($framework->users->getElementsByAttribute('mapvisible','true') as $element){

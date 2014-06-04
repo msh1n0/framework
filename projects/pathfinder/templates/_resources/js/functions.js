@@ -164,3 +164,7 @@ function wuerfeln(modus){
     $.get('pathfinder.php?site=ajax&action=setdice&dice=w'+modus+'&value='+value, function (data) {
     });
 }
+function manipulateDice(value){
+    $.get('pathfinder.php?site=ajax&action=manipulatedice&value='+value, function (data) {
+    });
+}
