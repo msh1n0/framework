@@ -214,10 +214,6 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
                     }
                     break;
             }
-            /*
-             * Hier kommt die Abfrage nach Würfelmoduse hin
-             *
-             * */
 
                 if(empty($save[$dice])) $save[$dice]=$value;
                 else $save[$dice]=$save[$dice].', '.$value;
