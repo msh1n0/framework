@@ -9,7 +9,7 @@ include 'framework/framework.php';
 
 $framework = new framework('checkliste');
 $framework->template->setTemplate('checkliste');
-
+$dbconfig=configuration::loadConfig('database','checkliste');
 ############################################################
 ## Vorbereiten der Meldungen
 ############################################################
@@ -36,7 +36,7 @@ $usergroups=new collection(false);
 $usergroups->setupFile('projects/checkliste/data/usergroups.db',array('name','admin'));
 
 $tasks = new collection(false);
-$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status',));
+$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
 
 $task_Users = new collection(false);
 $task_Users->setupFile('projects/checkliste/data/tasks_users.db',array('taskid','userid'));

@@ -34,10 +34,10 @@ class collection{
     /**
      * Beim DB Modus muss
      */
-    function __construct($db_mode){
+    function __construct($db_mode,$dbconfig=NULL){
         $this->config['db_mode']=$db_mode;
         if($this->config['db_mode']){
-            $this->database = new database();
+            $this->database = new database($dbconfig);
         }else{ //Datei-Modus
             $this->document = new document();
         }

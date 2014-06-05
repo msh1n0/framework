@@ -10,7 +10,10 @@ class configuration{
      * @return array
      */
     static public function loadConfig($class,$project){
-        $ini_array = parse_ini_file("projects/".$project."/".$project.".ini", TRUE);
-        return $ini_array[$class];
+        if(is_file("projects/".$project."/".$project.".ini")){
+            $ini_array = parse_ini_file("projects/".$project."/".$project.".ini", TRUE);
+            return $ini_array[$class];
+        }
+        else return false;
     }
 }
