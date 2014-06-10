@@ -3,6 +3,7 @@ session_start();
 include 'components/collection.inc';
 include 'components/configuration.inc';
 include 'components/database.inc';
+include 'components/database_querybuilder.inc';
 include 'components/document.inc';
 include 'components/exceptions.inc';
 include 'components/ext/mobile-detect/mobile_detect.php';
@@ -17,16 +18,6 @@ include 'components/template.inc';
  * Framework Version 0.1
  *
  * Class framework
- * TODO: Collection: Export und Import-Funktionen (über document) als CSV, JSON
- * TODO: Datenbank-Manager: Datenbank auswählen, auslesen, schreiben, bearbeiten, tabellen anlegen, tabellen löschen, Import, Export
- * TODO: Datenbank-QueryBuilder: Erzeugt mit verketteten Funktionen Datenbank-Abfragen, die vom db-adapter ausgeführt werden
- * TODO: Email: senden von Emails
- * TODO: ExternalContent: Auslesen externer Dateien und URLs
- * TODO: Document: Erstellung von RSS,
- * TODO: Chat: WebChat oder Newsticker-Funktion
- * TODO: Media: Musik, Video, Streaming und so
- * TODO: Kalender: Allgemeiner Kalender mit Terminen, Erinnerungen per Mail
- * TODO: Cronjob: Bezug auf eine Datei im Framework, damit er leicht erweiterbar ist, Newsletter-Funktion
  */
 class framework{
     /**

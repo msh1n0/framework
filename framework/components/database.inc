@@ -40,24 +40,77 @@ class database {
      * @var
      */
     private $debug=false;
+    private $queryBuilder;
 
     /**
      *
      */
-    function __construct(){
-        $this->config=configuration::loadConfig('database');
+    function __construct($project){
+        $this->config=configuration::loadConfig('database',$project);
         $this->db_server=$this->config['db_server'];
         $this->db_name=$this->config['db_name'];
         $this->db_login=$this->config['db_login'];
         $this->db_password=$this->config['db_password'];
+        $this->queryBuilder = new databaseQuerybuilder();
+    }
+
+    /**
+     * @param $enable
+     */
+    public function debugging($enable){
+        $this->debug=$enable;
     }
 
     /**
      * @param $table
      */
     public function setTable($table){
-        $this->db_table=$table;
+        $this->queryBuilder->setTable($table);
     }
+
+    /**
+     * @return array
+     */
+    public function getAll(){
+        $this->queryBuilder->select('*');
+        return $this->query($this->queryBuilder->generate());
+    }
+
+
+    public function query($sql){
+        $this->connect();
+
+        if($this->debug)echo $sql;
+
+        $db_erg = mysqli_query( $this->sqlLink, $sql );
+        $output=array();
+        if (!$db_erg) throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
+        else{
+            while ($zeile = mysqli_fetch_array($db_erg, MYSQL_ASSOC))
+            {
+                $output[]=$zeile;
+            }
+        }
+        $this->disconnect();
+        return $output;
+    }
+
+    /**
+     *
+     */
+    private function connect(){
+        $this->sqlLink = mysqli_connect($this->db_server, $this->db_login, $this->db_password,$this->db_name);
+    }
+
+    /**
+     *
+     */
+    private function disconnect(){
+        mysqli_close($this->sqlLink);
+    }
+
+
+    /* ############################################################################################### */
 
     /**
      * @param $attributes
@@ -89,15 +142,6 @@ class database {
         return $result[0][$returnvalue];
     }
 
-    /**
-     * @return array
-     */
-    public function getAll(){
-        $this->connect();
-        $result=$this->select('');
-        $this->disconnect();
-        return $result;
-    }
 
     /**
      * @param $attribute
@@ -143,19 +187,7 @@ class database {
         $this->disconnect();
     }
 
-    /**
-     * @param $enable
-     */
-    public function debugging($enable){
-        $this->debug=$enable;
-    }
 
-    /**
-     *
-     */
-    private function connect(){
-        $this->sqlLink = mysqli_connect($this->db_server, $this->db_login, $this->db_password,$this->db_name);
-    }
 
     /**
      * @param $where
@@ -212,11 +244,5 @@ class database {
         }
     }
 
-    /**
-     *
-     */
-    private function disconnect(){
-        mysqli_close($this->sqlLink);
-    }
 
 } 

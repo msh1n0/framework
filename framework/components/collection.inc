@@ -34,10 +34,10 @@ class collection{
     /**
      * Beim DB Modus muss
      */
-    function __construct($db_mode,$dbconfig=NULL){
+    function __construct($db_mode,$db_configname=NULL){
         $this->config['db_mode']=$db_mode;
         if($this->config['db_mode']){
-            $this->database = new database($dbconfig);
+            $this->database = new database($db_configname);
         }else{ //Datei-Modus
             $this->document = new document();
         }
@@ -61,7 +61,6 @@ class collection{
                 }
             }
             else{
-
                 if(empty($input['id'])){
                     $newid='';
                     foreach($this->attributes as $attribute){
@@ -131,6 +130,7 @@ class collection{
      * @return array
      */
     public function getAllElements(){
+        $this->importElementData();
         if($this->elements!=false){
             return $this->elements;
         }
@@ -307,7 +307,9 @@ class collection{
      * Kompletten Datenbestand einlesen
      */
     protected function importElementData(){
-        if($this->config['db_mode']) $this->elements=$this->database->getAll();
+        if($this->config['db_mode']){
+            $this->elements=$this->database->getAll();
+        }
         else $this->elements=unserialize($this->document->getFileAsString());
     }
 
