@@ -32,17 +32,23 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <button type="button" class="btn btn-default form-control" onclick="manipulateDice('1')">Niete</button>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <button type="button" class="btn btn-default form-control" onclick="manipulateDice('2')">Schlechter Wurf</button>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <button type="button" class="btn btn-default form-control" onclick="manipulateDice('3')">Guter Wurf</button>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <button type="button" class="btn btn-default form-control" onclick="manipulateDice('4')">Kein Crit</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-default form-control" onclick="manipulateDice('5')">Nur Crit</button>
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" class="btn btn-default form-control" onclick="manipulateDice('6')">Standard</button>
                 </div>
             </div>
         {/if}

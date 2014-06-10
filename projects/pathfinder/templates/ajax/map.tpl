@@ -9,7 +9,9 @@
                 <select id="name" name="name" class="form-control">
                     <option value="#">*aktiver Spieler*</option>
                     {foreach item=user from=$users}
-                        <option value="{$user['id']}">{$user['id']}</option>
+                        {if $user['userlevel']!='99' && $user['hidden']!='true'}
+                            <option value="{$user['id']}">{$user['id']}</option>
+                        {/if}
                     {/foreach}
                 </select>
             </div>

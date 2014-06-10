@@ -1,11 +1,6 @@
 <?php
 include './framework/framework.php';
-/*
- * Zum Spielstart alle Spieler ausblenden, mit Anmeldung werden die Spieler eingeblendet
- * Bei neuer Wahrnehmung neues Sichtfeld
- * Würfel beeinflussen
- * */
-error_reporting(1);
+
 $framework = new framework('pathfinder');
 $content='';
 $framework->template->setTemplate('pathfinder');
@@ -41,6 +36,9 @@ $save=$saveGame->getElementByAttribute('id','1');
 
 $mapDirectory=new filemanager();
 $maps=$mapDirectory->DirectoryContents('projects/pathfinder/contents/images/maps');
+
+$log = new log('projects/pathfinder/data/log.db');
+
 /*
  * Datenobjekte
  * */
@@ -65,6 +63,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
             $framework->users->editElement($currentUser);
+            $log->add('Sichtweite verändert',$_SESSION['user_id'],$_GET['user'].' auf '.$_GET['value']);
             break;
         case 'flushdice':
             $save['w4']='';
@@ -93,7 +92,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
                 echo $map->generatePointers($framework->users->getElementsByAttribute('mapvisible','true'));
             }
             else{
-                echo $map->generatePointers($framework->users->getAllUsers());
+                echo $map->generatePointers($framework->users->getElementsByAttribute('hidden','false'));
             }
             break;
         case 'hideplayer':
@@ -102,10 +101,32 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $framework->users->editElement($user);
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
+            $log->add('Spieler ausgeblendet',$_SESSION['user_id'],$_GET['value']);
             header('Location:'.$page.'?site=useradmin');
             break;
         case 'manipulatedice':
             $save['dicemode']=$_GET['value'];
+            switch($save['dicemode']){
+                case '1':
+                    $output='Niete';
+                    break;
+                case '2':
+                    $output='Schlechter Wurf';
+                    break;
+                case '3':
+                    $output='Guter Wurf';
+                    break;
+                case '4':
+                    $output='Kein Crit';
+                    break;
+                case '5':
+                    $output='Nur Crit';
+                    break;
+                case '6':
+                    $output='Standard';
+                    break;
+            }
+            $log->add('Würfelmodus geändert',$_SESSION['user_id'],$output);
             $saveGame->editElement($save);
             break;
         case 'mapvisible':
@@ -115,6 +136,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_turns']=time();
             $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
+            $log->add('Spieler auf Karte eingeblendet',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'mapinvisible':
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
@@ -123,6 +145,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_turns']=time();
             $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
+            $log->add('Spieler auf Karte ausgeblendet',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'map':
             $framework->template->setTemplateFile('ajax/map');
@@ -164,6 +187,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
             $framework->users->editUser($user);
+            $log->add('Pointer Zurückgesetzt',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'setcombat':
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
@@ -186,6 +210,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_dice']=time();
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
+            $log->add('Kampfwürfel gegeben',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'setdice':
             $value=$_GET['value'];
@@ -206,12 +231,15 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
                     else $value=rand(round($max/2),$max);
                     break;
                 case '4':
-                    if($value=$max){
+                    if($value==$max){
                         if($max=='10')$value=rand(0,9);
                         elseif($max=='100')$value=rand(1,9)*10;
                         else $value=rand(1,round($max-1));
                         break;
                     }
+                    break;
+                case '5':
+                    $value=$max;
                     break;
             }
 
@@ -243,6 +271,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
                 $save['timestamp_turns']=time();
                 $save['timestamp_dice']=time();
                 $save['timestamp_phase']=time();
+            $log->add('gewürfelt',$_SESSION['user_id'],$_GET['value'].' mit einem '.$_GET['dice']);
                 $saveGame->editElement($save);
             break;
         case 'setmarker':
@@ -251,12 +280,14 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $framework->users->editElement($user);
             $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
+            $log->add('Marker eingestellt',$_SESSION['user_id'],$_GET['player']);
             break;
         case 'setphase':
             $save['auto']=false;
             $save['phase']=$_GET['value'];
             $save['timestamp_phase']=time();
             $saveGame->editElement($save);
+            $log->add('Phase gesetzt',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'setpointer':
             $user=$framework->users->getElementByAttribute('id',$_GET['value']);
@@ -265,6 +296,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $framework->users->editElement($user);
             $save['timestamp_pointers']=time();
             $saveGame->editElement($save);
+            $log->add('Pointer gesetzt',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'setsingledice':
             $user=$framework->users->getElementByAttribute('id',$_GET['user']);
@@ -289,6 +321,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_dice']=time();
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
+            $log->add('Einzelner Würfel gegeben',$_SESSION['user_id'],'w'.$_GET['value'].' für '.$_GET['user']);
             break;
         case 'setturn':
             $save['w4']='';
@@ -302,6 +335,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['currentplayer']=$_GET['value'];
             $save['timestamp_turns']=time();
             $save['timestamp_phase']=time();
+            $log->add('Runde frei',$_SESSION['user_id'],$_GET['value']);
             $saveGame->editElement($save);
             break;
         case 'setturn2':
@@ -324,6 +358,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['currentplayer']=$_GET['value'];
             $save['timestamp_turns']=time();
             $save['timestamp_phase']=time();
+            $log->add('Runde erteilt',$_SESSION['user_id'],$_GET['value']);
             $saveGame->editElement($save);
             break;
         case 'showplayer':
@@ -332,6 +367,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $framework->users->editElement($user);
             $save['timestamp_turns']=time();
             $saveGame->editElement($save);
+            $log->add('Spieler eingeblendet',$_SESSION['user_id'],$_GET['value']);
             header('Location:'.$page.'?site=useradmin');
             break;
         case 'startautoinitiative':
@@ -367,6 +403,7 @@ if(!empty($_GET['site']) && $_GET['site']=='ajax'){
             $save['timestamp_dice']=time();
             $saveGame->editElement($save);
             $user=$framework->users->getElementByAttribute('auto',true);
+            $log->add('Autoinitiative gestartet',$_SESSION['user_id'],$_GET['value']);
             break;
         case 'turns':
             $framework->users->sort('id');
@@ -423,7 +460,11 @@ switch($site){
             $target=$framework->users->getElementByAttribute('id',$_POST['id']);
             if($target['playable']=='true'){
                 if($framework->users->logIn($_POST['id'],$_POST['password'])){
+                    $currentUser=$framework->users->getElementByAttribute('id',$_POST['id']);
+                    $currentUser['hidden']='false';
+                    $framework->users->editElement($currentUser);
                     $_SESSION['success']='Du bist jetzt eingeloggt';
+                    $log->add('eingeloggt',$_SESSION['user_id'],'');
                     header('Location:'.$page.'?site=wuerfel');
                 }
                 else{
@@ -436,6 +477,7 @@ switch($site){
         }
         break;
     case 'logout':
+        $log->add('ausgeloggt',$_SESSION['user_id'],'');
         $_SESSION['message']='Du bist jetzt ausgeloggt';
         $framework->users->logOut();
         header('Location:'.$page);
@@ -450,12 +492,14 @@ switch($site){
                         $framework->users->editUser($_POST['user']);
                         $save['timestamp_turns']=time();
                         $saveGame->editElement($save);
+                        $log->add('Benutzer editiert',$_SESSION['user_id'],$_POST['user']['id']);
                         header('Location:'.$page.'?site=wuerfel#'.$_POST['user']['id']);
                     }
                     else{
                         $framework->users->editUser($_POST['user']);
                         $save['timestamp_turns']=time();
                         $saveGame->editElement($save);
+                        $log->add('Benutzer editiert',$_SESSION['user_id'],$_POST['user']['id']);
                         header('Location:'.$page.'?site=useradmin');
                     }
                 }
@@ -463,6 +507,7 @@ switch($site){
                     $framework->users->createUser($_POST['user']);
                     $save['timestamp_turns']=time();
                     $saveGame->editElement($save);
+                    $log->add('Benutzer angelegt',$_SESSION['user_id'],$_POST['user']['id']);
                     header('Location:'.$page.'?site=useradmin');
                 }
                 elseif($_GET['action']=='batchcreateuser'){
@@ -470,6 +515,7 @@ switch($site){
                     for($i=1;$i<=$_POST['count'];$i++){
                         $newuser['id']=$_POST['user']['id'].$i;
                         $framework->users->createUser($newuser);
+                        $log->add('Benutzer angelegt',$_SESSION['user_id'],$newuser['id']);
                     }
                     $save['timestamp_turns']=time();
                     $saveGame->editElement($save);
@@ -479,6 +525,7 @@ switch($site){
                     $newuser=$_POST['user'];
                     $newuser['password']=md5($newuser['password']);
                     $framework->users->editElement($newuser);
+                    $log->add('Password geändert',$_SESSION['user_id'],$_POST['user']['id']);
                     header('Location:'.$page.'?site=useradmin');
                 }
             }
@@ -514,6 +561,15 @@ switch($site){
     case 'karte':
         $framework->template->setTemplateFile('map/index');
         break;
+    case 'log':
+        if(!isset($_POST['filter'])) $framework->template->setTemplateArray('log',array_reverse($log->getAllElements()));
+        elseif($_POST['filter']=='') $framework->template->setTemplateArray('log',array_reverse($log->getAllElements()));
+        else{
+            $framework->template->setTemplateArray('log',array_reverse($log->getElementsByAttribute('action',$_POST['filter'])));
+            $framework->template->setTemplateVariables(array('filter',$_POST['filter']));
+        }
+        $framework->template->setTemplateFile('log');
+        break;
     case 'mapadmin':
         if(!empty($_GET['action'])){
             if($_GET['action']=='activatemap'){
@@ -522,6 +578,7 @@ switch($site){
                     $save['mapcols']=$_POST['cols'];
                     $save['timestamp_map']=time();
                     $saveGame->editElement($save);
+                    $log->add('Karte aktiviert',$_SESSION['user_id'],$_GET['mapname']);
                     header('Location:'.$page.'?site=mapadmin');
                 }else{
                     $framework->template->setTemplateVariables(array('map',$_GET['map']));
@@ -533,6 +590,7 @@ switch($site){
                     $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
                     if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
                         $_SESSION['message']='Datei-Upload erfolgreich';
+                        $log->add('Karte hochgeladen',$_SESSION['user_id'],$_FILES['userfile']['name']);
                     } else {
                         $_SESSION['error']='Datei-Upload fehlgeschlagen';
                     }
@@ -543,6 +601,7 @@ switch($site){
                 }
             }elseif($_GET['action']=='deletefile'){
                 unlink('projects/pathfinder/contents/images/maps/'.$_GET['map']);
+                $log->add('Karte gelöscht',$_SESSION['user_id'],$_GET['map']);
                 header('Location:'.$page.'?site=mapadmin');
             }
         }

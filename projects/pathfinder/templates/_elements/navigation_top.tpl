@@ -21,6 +21,7 @@
                     {if $isadmin}
                         <li><a href="{$index}?site=mapadmin">Karten verwalten</a></li>
                         <li><a href="{$index}?site=useradmin">User-Admin</a></li>
+                        <li><a href="{$index}?site=log">Log</a></li>
                     {/if}
                     <li><a href="{$index}?site=logout">Abmelden</a></li>
                 {/if}
