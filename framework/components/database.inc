@@ -23,10 +23,6 @@ class database {
     /**
      * @var
      */
-    private $db_table;
-    /**
-     * @var
-     */
     private $db_login;
     /**
      * @var
@@ -51,7 +47,7 @@ class database {
         $this->db_name=$this->config['db_name'];
         $this->db_login=$this->config['db_login'];
         $this->db_password=$this->config['db_password'];
-        $this->queryBuilder = new databaseQuerybuilder();
+        $this->queryBuilder = new databaseQuerybuilder($this->db_name);
     }
 
     /**
@@ -68,14 +64,6 @@ class database {
         $this->queryBuilder->setTable($table);
     }
 
-    /**
-     * @return array
-     */
-    public function getAll(){
-        $this->queryBuilder->select('*');
-        return $this->query($this->queryBuilder->generate());
-    }
-
 
     public function query($sql){
         $this->connect();
@@ -86,13 +74,74 @@ class database {
         $output=array();
         if (!$db_erg) throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
         else{
-            while ($zeile = mysqli_fetch_array($db_erg, MYSQL_ASSOC))
-            {
-                $output[]=$zeile;
+            if($db_erg!==true && $db_erg!==false){
+                while ($zeile = mysqli_fetch_array($db_erg, MYSQL_ASSOC))
+                {
+                    $output[]=$zeile;
+                }
             }
         }
         $this->disconnect();
         return $output;
+    }
+
+    public function delete($identifier,$value){
+        $this->queryBuilder->delete();
+        $this->queryBuilder->whereIs($identifier,$value);
+        $this->query($this->queryBuilder->generate());
+    }
+    public function edit($editAttributes=array(),$editValues=array(),$filters=array(),$filtervalues=array()){
+        $this->debugging(true);
+        var_dump($editAttributes);
+        $this->queryBuilder->update($editAttributes,$editValues);
+        $count=0;
+        foreach($filters as $filter){
+            $this->queryBuilder->whereIs($filter,$filtervalues[$count]);
+            $count++;
+        }
+    }
+    /**
+     * @param $data
+     */
+    public function save($data){
+        $values=array();
+        foreach($this->attributes as $attribute){
+            $values[]=$data[$attribute];
+        }
+        $this->connect();
+        $this->queryBuilder->insert($this->attributes,$values);
+        $this->query($this->queryBuilder->generate());
+        $this->disconnect();
+    }
+
+    public function get($columns='*',$includes = NULL,$includeValues = NULL,$excludes = NULL,$excludeValues = NULL,$limit=NULL){
+        $this->queryBuilder->select($columns);
+        if(!empty($includes)){
+            $count=0;
+            foreach($includes as $filter){
+                $this->queryBuilder->whereIs($filter,$includeValues[$count]);
+                $count++;
+            }
+        }
+        if(!empty($excludes)){
+            $count=0;
+            foreach($excludes as $filter){
+                $this->queryBuilder->whereIsNot($filter,$excludeValues[$count]);
+                $count++;
+            }
+        }
+        if(!empty($limit)){
+            $this->queryBuilder->limit($limit);
+        }
+        return $this->query($this->queryBuilder->generate());
+    }
+
+    /**
+     * @param $attributes
+     */
+    public function setAttributes($attributes){
+        if(is_array($attributes)) $this->attributes=$attributes;
+        else $this->attributes=explode(',',$attributes);
     }
 
     /**
@@ -108,141 +157,4 @@ class database {
     private function disconnect(){
         mysqli_close($this->sqlLink);
     }
-
-
-    /* ############################################################################################### */
-
-    /**
-     * @param $attributes
-     */
-    public function setAttributes($attributes){
-        if(is_array($attributes)) $this->attributes=$attributes;
-        else $this->attributes=explode(',',$attributes);
-    }
-
-    /**
-     * @param $data
-     */
-    public function save($data){
-        $this->connect();
-        $this->insert($data);
-        $this->disconnect();
-    }
-
-    /**
-     * @param $identifier
-     * @param $value
-     * @param $returnvalue
-     * @return mixed
-     */
-    public function get($identifier,$value,$returnvalue){
-        $this->connect();
-        $result=$this->select($identifier.'='.$value);
-        $this->disconnect();
-        return $result[0][$returnvalue];
-    }
-
-
-    /**
-     * @param $attribute
-     * @param $value
-     * @throws mysqli_sql_exception
-     */
-    public function delete($attribute,$value){
-        $this->connect();
-        $sql='DELETE FROM `'.$this->db_name.'`.`'.$this->db_table.'` WHERE `'.$this->db_table.'`.`'.$attribute.'` = \''.$value.'\'';
-
-        if($this->debug)echo $sql;
-
-        $db_erg = mysqli_query( $this->sqlLink, $sql );
-        if ( ! $db_erg )
-        {
-            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
-        }
-        $this->disconnect();
-    }
-
-    /**
-     * @param array $input
-     * @throws mysqli_sql_exception
-     */
-    public function edit($input=array()){
-        $this->connect();
-        $sql='UPDATE `'.$this->db_name.'`.`'.$this->db_table.'` SET ';
-        $first=true;
-        foreach($this->attributes as $attribute){
-            if($first===false) $sql.=', ';
-            $sql.='`'.$attribute.'` = \''.$input[$attribute].'\'';
-            $first=false;
-        }
-        $sql.=' WHERE `'.$this->db_table.'`.`id` = \''.$input['id'].'\';';
-
-        if($this->debug)echo $sql;
-
-        $db_erg = mysqli_query( $this->sqlLink, $sql );
-        if ( ! $db_erg )
-        {
-            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
-        }
-        $this->disconnect();
-    }
-
-
-
-    /**
-     * @param $where
-     * @return array
-     * @throws mysqli_sql_exception
-     */
-    private function select($where){
-        if($where!='')$where=' WHERE '.$where;
-        $sql = "SELECT * FROM ".$this->db_table.$where.";";
-
-        if($this->debug)echo $sql;
-
-        $db_erg = mysqli_query( $this->sqlLink, $sql );
-        if ( ! $db_erg )
-        {
-            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
-        }
-        $output=array();
-        while ($zeile = mysqli_fetch_array( $db_erg, MYSQL_ASSOC))
-        {
-            $output[]=$zeile;
-        }
-        return $output;
-    }
-
-    /**
-     * @param array $data
-     * @throws mysqli_sql_exception
-     */
-    private function insert($data =array()){
-        $part1='INSERT INTO `'.$this->db_name.'`.`'.$this->db_table.'` ';
-        $part2='(';
-        $part3=' VALUES (';
-        $first=true;
-        foreach($this->attributes as $element){
-            if($first===false){
-                $part2.=', ';
-                $part3.=', ';
-            }
-            $part2.="`$element`";
-            $part3.="'$data[$element]'";
-            $first=false;
-        }
-        $part2.=') ';
-        $part3.=');';
-        $sql = $part1.$part2.$part3;
-
-        if($this->debug)echo $sql;
-
-        $db_erg = mysqli_query( $this->sqlLink, $sql );
-        if ( ! $db_erg )
-        {
-            throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
-        }
-    }
-
-
 } 

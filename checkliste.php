@@ -35,8 +35,9 @@ if(!empty($_SESSION['message'])){
 $usergroups=new collection(false);
 $usergroups->setupFile('projects/checkliste/data/usergroups.db',array('name','admin'));
 
-$tasks = new collection(false);
-$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
+$tasks = new collection(true,'checkliste');
+#$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
+$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
 
 $task_Users = new collection(false);
 $task_Users->setupFile('projects/checkliste/data/tasks_users.db',array('taskid','userid'));
@@ -806,6 +807,18 @@ switch($site){
         $framework->template->setTemplateVariables(array('fromsite','users'));
         $framework->template->setTemplateVariables(array('online_only',true));
         $framework->template->setTemplateFile('users/summary');
+        break;
+    case 'tasks_test':
+        $framework->template->setTemplateFile('tasks/test');
+
+        $task=$tasks->getElementByAttribute('id','38');
+        $task['place']='dort';
+        $tasks->editElement($task);
+
+
+        $framework->template->setTemplateArray('overview',$tasks->getElementsByAttribute('headline','test'));
+        $framework->template->setTemplateVariables(array('finishstatus',$task_summary_value));
+
         break;
     default:
         $framework->template->setTemplateFile('index');

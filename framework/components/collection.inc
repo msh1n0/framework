@@ -50,16 +50,16 @@ class collection{
      * @throws InputErrorException
      */
     public function createElement($input=array()){
-        if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
-        elseif($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
-        else{
-            if($this->config['db_mode']){
-                try{
-                    $this->database->save($input);
-                }catch (mysqli_sql_exception $e){
-                    $_SESSION['error']=$e->getMessage();
-                }
+        if($this->config['db_mode']){
+            try{
+                $this->database->save($input);
+            }catch (mysqli_sql_exception $e){
+                $_SESSION['error']=$e->getMessage();
             }
+        }
+        else{
+            if(!is_array($input)) throw new InputErrorException('Das Feld ist kein Array');
+            elseif($this->checkForDupe($input))throw new ElementDupeException("Das Element existiert bereits");
             else{
                 if(empty($input['id'])){
                     $newid='';
@@ -86,6 +86,7 @@ class collection{
      * @param $id
      */
     public function deleteElement($id){
+        $this->database->debugging(true);
         if($this->config['db_mode']){
             $this->database->delete('id',$id);
         }
@@ -105,7 +106,11 @@ class collection{
      */
     public function editElement($new=array()){
         if($this->config['db_mode']){
-            $this->database->edit($new);
+            $values=array();
+            foreach($this->attributes as $attribute){
+                $values[]=$new[$attribute];
+            }
+            $this->database->edit($this->attributes,$values,array('id'),array($new['id']));
         }
         else{
             $output=array();
@@ -144,14 +149,19 @@ class collection{
      * @return string
      */
     public function getElementByAttribute($attribute,$value){
-        if($this->elements!=false){
-            foreach($this->elements as $element){
-                if($element[$attribute]==$value){
-                    return $element;
+        if($this->config['db_mode']){
+            return $this->database->get('*',array($attribute),array($value),NULL,NULL,1);
+        }
+        else{
+            if($this->elements!=false){
+                foreach($this->elements as $element){
+                    if($element[$attribute]==$value){
+                        return $element;
+                    }
                 }
             }
         }
-        return array();
+        return false;
     }
 
     /**
@@ -162,30 +172,65 @@ class collection{
      */
     public function getElementsByAttribute($attribute,$value){
         $output=array();
-        if($this->elements!=false){
-            foreach($this->elements as $element){
-                if($element[$attribute]==$value){
-                    $output[]=$element;
+        if($this->config['db_mode']){
+            $output=$this->elements=$this->database->get('*',array($attribute),array($value));
+        }
+        else{
+            if($this->elements!=false){
+                foreach($this->elements as $element){
+                    if($element[$attribute]==$value){
+                        $output[]=$element;
+                    }
+                }
+            }
+        }
+        return $output;
+    }
+    /**
+     * Gibt alle Datensätze, zurück auf die das Kriterium nicht zutrifft
+     * @param $attribute
+     * @param $value
+     * @return array
+     */
+    public function getElementsWithout($attribute,$value){
+        $output=array();
+        if($this->config['db_mode']){
+            $output=$this->elements=$this->database->get('*',NULL,NULL,array($attribute),array($value));
+        }
+        else{
+            if($this->elements!=false){
+                foreach($this->elements as $element){
+                    if($element[$attribute]!=$value){
+                        $output[]=$element;
+                    }
                 }
             }
         }
         return $output;
     }
 
-    /**
-     * Gibt alle Datensätze zurück, auf die die Kriterien zutreffen
-     * @param array $filters Schreibweise beachten: filter=>value,filter=>value...
-     * @return array
-     */
-    public function getElementsFiltered($filters=array()){
+    public function getElementsFiltered($includeAttributes=array(),$includeValues=array(), $excludeAttributes=array(),$excludeValues=array()){
         $output=array();
-        if($this->elements!=false){
-            foreach($this->elements as $element){
-                $success=true;
-                foreach($filters as $filter){
-                    if($element[$filter['filter']]!=$filter['value'])$success=false;
+        if($this->config['db_mode']){
+            $output=$this->elements=$this->database->get('*',$includeAttributes,$includeValues,$excludeAttributes,$excludeValues);
+        }
+        else{
+            if($this->elements!=false){
+                foreach($this->elements as $element){
+                    $count=0;
+                    foreach($includeAttributes as $includeAttribute){
+                        if($element[$includeAttribute]==$includeValues[$count]){
+                            $innercount=0;
+                            foreach($excludeAttributes as $excludeAttribute){
+                                if($element[$excludeAttribute]!=$excludeValues[$innercount]){
+                                    $output[]=$element;
+                                }
+                                $innercount++;
+                            }
+                        }
+                        $count++;
+                    }
                 }
-                if($success)$output[]=$element;
             }
         }
         return $output;
@@ -223,15 +268,6 @@ class collection{
     }
 
     /**
-     * richtet die Datenbanktabelle ein
-     * @param $db_table
-     */
-    public function setDBTable($db_table){
-        $this->database->setTable($db_table);
-        $this->importElementData();
-    }
-
-    /**
      * konfiguriert die Datei und liest den aktuellen Stand ein
      * @param $filename
      * @param $attributes
@@ -253,7 +289,6 @@ class collection{
         $this->setAttributes($attributes);
         $this->database->setAttributes($this->attributes);
         $this->database->setTable($db_table);
-        $this->importElementData();
     }
 
     /**
@@ -308,7 +343,7 @@ class collection{
      */
     protected function importElementData(){
         if($this->config['db_mode']){
-            $this->elements=$this->database->getAll();
+            $this->elements=$this->database->get();
         }
         else $this->elements=unserialize($this->document->getFileAsString());
     }

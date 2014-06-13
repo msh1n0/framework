@@ -20,7 +20,10 @@ $framework->template->setTemplateArray('results_session',$sessiontest->run());
 $testcollection = new collection(true,'test');
 $testcollection->setupDatabase('test',array('vorname','nachname'));
 
+
 var_dump($testcollection->getAllElements());
+
+
 
 
 ############################################################
