@@ -23,7 +23,7 @@ class collection{
      */
     protected $config=array();
     /**
-     * @var database
+     * @var db_adapter
      */
     protected $database;
     /**
@@ -37,7 +37,7 @@ class collection{
     function __construct($db_mode,$db_configname=NULL){
         $this->config['db_mode']=$db_mode;
         if($this->config['db_mode']){
-            $this->database = new database($db_configname);
+            $this->database = new db_adapter($db_configname);
         }else{ //Datei-Modus
             $this->document = new document();
         }
@@ -150,7 +150,8 @@ class collection{
      */
     public function getElementByAttribute($attribute,$value){
         if($this->config['db_mode']){
-            return $this->database->get('*',array($attribute),array($value),NULL,NULL,1);
+            $result= $this->database->get('*',array($attribute),array($value),NULL,NULL,1);
+            return $result[0];
         }
         else{
             if($this->elements!=false){

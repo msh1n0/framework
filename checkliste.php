@@ -9,7 +9,7 @@ include 'framework/framework.php';
 
 $framework = new framework('checkliste');
 $framework->template->setTemplate('checkliste');
-$dbconfig=configuration::loadConfig('database','checkliste');
+$dbconfig=configuration::loadConfig('db_adapter','checkliste');
 ############################################################
 ## Vorbereiten der Meldungen
 ############################################################
@@ -816,7 +816,7 @@ switch($site){
         $tasks->editElement($task);
 
 
-        $framework->template->setTemplateArray('overview',$tasks->getElementsByAttribute('headline','test'));
+        #$framework->template->setTemplateArray('overview',$tasks->getElementsByAttribute('headline','test'));
         $framework->template->setTemplateVariables(array('finishstatus',$task_summary_value));
 
         break;

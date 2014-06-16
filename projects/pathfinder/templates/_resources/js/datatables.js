@@ -9285,7 +9285,7 @@
              * As a function, making the Ajax call is left up to yourself allowing
              * complete control of the Ajax request. Indeed, if desired, a method other
              * than Ajax could be used to obtain the required data, such as Web storage
-             * or an AIR database.
+             * or an AIR db_adapter.
              *
              * The function is given four parameters and no return is required. The
              * parameters are:
@@ -10135,7 +10135,7 @@
              * This parameter allows you to override the default function which obtains
              * the data from the server so something more suitable for your application.
              * For example you could use POST data, or pull information from a Gears or
-             * AIR database.
+             * AIR db_adapter.
              *  @type function
              *  @member
              *  @param {string} source HTTP source to obtain the data from (`ajax`)
@@ -10184,7 +10184,7 @@
             /**
              * Load the table state. With this function you can define from where, and how, the
              * state of a table is loaded. By default DataTables will load from `localStorage`
-             * but you might wish to use a server-side database or cookies.
+             * but you might wish to use a server-side db_adapter or cookies.
              *  @type function
              *  @member
              *  @param {object} settings DataTables settings object
@@ -10292,7 +10292,7 @@
             /**
              * Save the table state. This function allows you to define where and how the state
              * information for the table is stored By default DataTables will use `localStorage`
-             * but you might wish to use a server-side database or cookies.
+             * but you might wish to use a server-side db_adapter or cookies.
              *  @type function
              *  @member
              *  @param {object} settings DataTables settings object
@@ -11921,7 +11921,7 @@
             /**
              * This parameter is only used in DataTables' server-side processing. It can
              * be exceptionally useful to know what columns are being displayed on the
-             * client side, and to map these to database fields. When defined, the names
+             * client side, and to map these to db_adapter fields. When defined, the names
              * also allow DataTables to reorder information from the server if it comes
              * back in an unexpected order (i.e. if you switch your columns around on the
              * client-side, your server-side code does not also need updating).
