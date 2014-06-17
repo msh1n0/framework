@@ -35,9 +35,9 @@ if(!empty($_SESSION['message'])){
 $usergroups=new collection(false);
 $usergroups->setupFile('projects/checkliste/data/usergroups.db',array('name','admin'));
 
-$tasks = new collection(true,'checkliste');
-#$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
-$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
+$tasks = new collection(false,'checkliste');
+$tasks->setupFile('projects/checkliste/data/tasks.db',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
+#$tasks->setupDatabase('tasks',array('headline','task','place','map_pointer','suitable_groups','finished_by','deadline','time_finished','finish_status'));
 
 $task_Users = new collection(false);
 $task_Users->setupFile('projects/checkliste/data/tasks_users.db',array('taskid','userid'));
