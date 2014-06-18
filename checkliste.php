@@ -119,6 +119,7 @@ switch($site){
             $framework->template->setTemplateArray('log',array_reverse($log->getElementsByAttribute('action',$_POST['filter'])));
             $framework->template->setTemplateVariables(array('filter',$_POST['filter']));
         }
+        $framework->template->setupScript('bootstrap_datatables');
         $framework->template->setTemplateFile('log/summary');
         break;
     #-------------------------------------------------------

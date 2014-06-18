@@ -45,6 +45,13 @@ class template{
     /**
      * @var array
      */
+    private $bootstrap_datatables=array(
+        array('framework/components/ext/bootstrap_datatables/datatables.css'),
+        array('framework/components/ext/bootstrap_datatables/datatables.js','framework/components/ext/bootstrap_datatables/datatables_init.js')
+    );
+    /**
+     * @var array
+     */
     private $swipe=array(
         array('framework/components/ext/swipe/swipe.css'),
         array('framework/components/ext/swipe/swipe.js',
@@ -132,6 +139,10 @@ class template{
         switch($scriptname){
             case 'bootstrap';
                 $input=$this->bootstrap;
+                $this->jqueryNeeded=true;
+                break;
+            case 'bootstrap_datatables';
+                $input=$this->bootstrap_datatables;
                 $this->jqueryNeeded=true;
                 break;
             case 'swipe';

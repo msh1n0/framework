@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <title>Testumgebung</title>
     {$bootstrap_css}
+    {$bootstrap_datatables_css}
     {$swipe_css}
 </head>
 <body>
@@ -29,6 +30,7 @@
 
 {$jquery}
 {$bootstrap_js}
+{$bootstrap_datatables_js}
 {$swipe_js}
 </body>
 </html>

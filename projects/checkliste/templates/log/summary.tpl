@@ -38,41 +38,43 @@
         </form>
     </div>
     <h4>&nbsp;</h4>
-    <div class="row hidden-xs">
-        <div class="col-sm-2">
-            <b>Zeitstempel</b>
-        </div>
-        <div class="col-sm-3">
-            <b>Aktion</b>
-        </div>
-        <div class="col-sm-2">
-            <b>Ausführender</b>
-        </div>
-        <div class="col-sm-5">
-            <b>Details</b>
-        </div>
-    </div>
-    {$count=0}
-    {foreach item=item from=$log}
-        {math assign="count" equation=$count+1}
-        <div class="row row-activehover">
-            <div class="col-sm-2">
-                {$item['id']|date_format:"%d. %m. - %H:%M:%S"}
-            </div>
-            <div class="col-sm-3 hidden-xs">
-                {$item['action']}
-            </div>
-            <div class="col-sm-2 visible-xs">
-                <b>{$item['action']}</b>
-            </div>
-            <div class="col-sm-2">
-                {$item['actor']}
-            </div>
-            <div class="col-sm-5">
-                {$item['information']}
-            </div>
-        </div>
-        <p class="visible-xs">&nbsp;</p>
-        {if $count>=20}{break}{/if}
-    {/foreach}
+    <table class="table table-responsive" id="log">
+        <thead>
+        <tr>
+            <th>Zeitstempel</th>
+            <th>Aktion</th>
+            <th>Ausführender</th>
+            <th>Details</th>
+        </tr>
+        </thead>
+
+        <tfoot>
+        <tr>
+            <th>Zeitstempel</th>
+            <th>Aktion</th>
+            <th>Ausführender</th>
+            <th>Details</th>
+        </tr>
+        </tfoot>
+        {$count=0}
+        {foreach item=item from=$log}
+            {math assign="count" equation=$count+1}
+            <tr>
+                <td>
+                    {$item['id']|date_format:"%d. %m. - %H:%M:%S"}
+                </td>
+                <td>
+                    {$item['action']}
+                </td>
+                <td>
+                    <b>{$item['actor']}</b>
+                </td>
+                <td>
+                    {$item['information']}
+                </td>
+            </tr>
+            {*if $count>=30}{break}{/if*}
+        {/foreach}
+    </table>
+    <h4>&nbsp;</h4>
 {/block}

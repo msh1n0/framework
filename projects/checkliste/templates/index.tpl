@@ -6,6 +6,7 @@
     <title>Checkliste</title>
     {block name=scripts_top}
         {$bootstrap_css}
+        {$bootstrap_datatables_css}
         {$swipe_css}
         <link href="projects/checkliste/templates/_resources/css/style.css" type="text/css" rel="stylesheet">
     {/block}
@@ -25,6 +26,7 @@
 {block name=scripts_bottom}
     {$jquery}
     {$bootstrap_js}
+    {$bootstrap_datatables_js}
     {$swipe_js}
 {/block}
 </body>
