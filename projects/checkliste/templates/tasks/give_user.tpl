@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <h1>Aufgabe zuteilen: ("{$taskheadline}")</h1>
+    <h3>Aufgabe zuteilen: ("{$taskheadline}")</h3>
     <form action="{$page}" method="get">
         <input type="hidden" name="site" value="tasks_give_user">
         <input type="hidden" name="taskid" value="{$taskid}">

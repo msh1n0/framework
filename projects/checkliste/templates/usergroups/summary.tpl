@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <h1>Benutzergruppen verwalten</h1>
+    <h3>Benutzergruppen verwalten</h3>
     <table class="table table-responsive">
         {foreach item=group from=$usergroups}
             <tr>

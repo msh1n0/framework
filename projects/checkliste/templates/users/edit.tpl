@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <h1>Benutzer bearbeiten</h1>
+    <h3>Benutzer bearbeiten</h3>
     <form action="{$page}?site=useradmin_edit" method="post">
         <div class="form-group">
             <div class="row {$has_error}">

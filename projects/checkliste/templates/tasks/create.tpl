@@ -3,7 +3,7 @@
     <link type="text/css" href="framework/components/ext/datepicker/css/datepicker.css" rel="stylesheet">
 {/block}
 {block name=content}
-    <h1>Aufgabe anlegen</h1>
+    <h3>Aufgabe anlegen</h3>
     <form action="{$page}?site=tasks_create" method="post">
         <input type="hidden" class="form-control" id="id" name="id">
         <input type="hidden" class="form-control" id="finish_status" name="finish_status" value="0">

@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <h1>Benutzergruppe erstellen</h1>
+    <h3>Benutzergruppe erstellen</h3>
     <form action="{$page}?site=useradmin_usergroups_create" method="post">
         <div class="form-group">
             <div class="row">

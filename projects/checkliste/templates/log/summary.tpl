@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <h2>Log</h2>
+    <h3>Log</h3>
     <h4>&nbsp;</h4>
     <h4><label for="filter">Filter:</label></h4>
     <div class="row">

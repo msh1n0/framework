@@ -2,7 +2,7 @@
 
 {block name=content}
     <div class="alert alert-danger">
-        <h2>{$callback['firstname']} bittet um Rückmeldung</h2>
+        <h3>{$callback['firstname']} bittet um Rückmeldung</h3>
         <h4>Telefon: <a href="tel:{$callback['phone']}">{$callback['phone']}</a></h4>
         <h4>Email: <a href="mailto:{$callback['email']}">{$callback['email']}</a></h4>
         <div class="row">

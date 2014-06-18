@@ -1,7 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <div class="alert alert-info">
-        <h1>Kartenverwaltung</h1>
+        <h3>Kartenverwaltung</h3>
 
         <table class="table table-responsive">
             <tr>
@@ -32,5 +31,4 @@
                     <a href="{$page}?site=map_admin&action=uploadfile"><span class="glyphicon glyphicon-plus" title="Neue Karte hochladen"></span></a>
                 </td>
             </tr></table>
-    </div>
 {/block}

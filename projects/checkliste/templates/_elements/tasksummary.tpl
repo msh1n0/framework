@@ -1,5 +1,5 @@
 {block name=content}
-    <h2>{$headline}:</h2>
+    <h3>{$headline}:</h3>
     {foreach key=id item=task from=$overview}
     <div class="row">
         <div class="{if $task['finish_status']!=0}col-md-2 col-sm-3{else}col-md-3 col-sm-4{/if}">
@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-xs-1 text-right">
                     {if $mode=='outlook' && !$adminmode}
-                        <a href="checkliste.php?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>&nbsp;&nbsp;
+                        <a href="{$page}?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>&nbsp;&nbsp;
                     {/if}
                 </div>
             </div>

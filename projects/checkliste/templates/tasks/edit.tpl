@@ -3,7 +3,7 @@
     <link type="text/css" href="framework/components/ext/datepicker/css/datepicker.css" rel="stylesheet">
 {/block}
 {block name=content}
-    <h1>Aufgabe bearbeiten</h1>
+    <h3>Aufgabe bearbeiten</h3>
     <form action="{$page}?site=tasks_edit" method="post">
         <input type="hidden" class="form-control" id="id" name="id" value="{$task['id']}">
         <input type="hidden" class="form-control" id="finish_status" name="finish_status" value="{if !isset($task['id'])}0{else}{$task['id']}{/if}">

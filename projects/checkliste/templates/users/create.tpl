@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-    <h1>Benutzer anlegen</h1>
+    <h3>Benutzer anlegen</h3>
     <form action="{$page}?site=useradmin_create" method="post">
 
         <input type="hidden" id="status" name="status" value="3">

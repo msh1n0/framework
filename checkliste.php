@@ -100,11 +100,9 @@ switch($site){
     #-------------------------------------------------------
     case 'force_logout':
         foreach($framework->users->getAllUsers() as $user){
-            if($user['status']!=3){
-                $user['status']=3;
-                $user['status_since']=date('d.m.y - h:i');
-                $framework->users->editElement($user);
-            }
+            $user['status']=3;
+            $user['status_since']=date('d.m.y - H:i');
+            $framework->users->editElement($user);
         }
         $_SESSION['message']='Alle Benutzer wurden abgemeldet';
         header('Location:'.$page.'?site=login');
@@ -131,7 +129,7 @@ switch($site){
             if($framework->users->logIn($_POST['id'],$_POST['password'])=='1'){
                 $temp=$framework->users->getUserByAttribute('id',$_POST['id']);
                 $temp['status']='0';
-                $temp['status_since']=date('d.m.y - h:i');
+                $temp['status_since']=date('d.m.y - H:i');
                 $framework->users->editUser($temp);
                 $_SESSION['success']='Einloggen erfolgreich';
                 $log->add('eingeloggt',$_POST['id']);
@@ -149,7 +147,7 @@ switch($site){
     case 'logout':
         $temp=$framework->users->getUserByAttribute('id',$thisUser['id']);
         $temp['status']='3';
-        $temp['status_since']=date('d.m.y - h:i');
+        $temp['status_since']=date('d.m.y - H:i');
         $framework->users->editUser($temp);
         $log->add('ausgeloggt',$thisUser['id']);
         $framework->users->logOut();
@@ -304,7 +302,7 @@ switch($site){
         if(isset($_GET['status'])){
             $currentUser=$framework->users->getElementByAttribute('id',$thisUser['id']);
             $currentUser['status']=$_GET['status'];
-            $currentUser['status_since']=date('d.m.y - h:i');
+            $currentUser['status_since']=date('d.m.y - H:i');
             $framework->users->editElement($currentUser);
             $status=array('frei','beschäftigt','Pause');
             $log->add('Status geändert',$thisUser['id'],$status[$_GET['status']]);
@@ -659,7 +657,7 @@ switch($site){
                 'phone'=> $_POST['phone'],
                 'group'=> $_POST['group'],
                 'status'=> $_POST['status'],
-                'status_since'=>date('d.m.y - h:i')
+                'status_since'=>date('d.m.y - H:i')
             );
 
             if(empty($newUser['id'])){
@@ -824,6 +822,25 @@ switch($site){
         #$framework->template->setTemplateArray('overview',$tasks->getElementsByAttribute('headline','test'));
         $framework->template->setTemplateVariables(array('finishstatus',$task_summary_value));
 
+        break;
+    case 'import':
+        $document= new document();
+        $document->setDocument('access.csv');
+        foreach($document->getCSVAsArray() as $user){
+            $row=$user;
+            $element=explode(';',$row);
+
+            $newUser=array(
+                'id'=> $element[0],
+                'password'=> $element[4],
+                'firstname'=> $element[1],
+                'surname'=> $element[2],
+                'email'=> $element[3],
+                'group'=> $element[5]
+            );
+
+            $framework->users->createUser(array('id'=>$element[0], 'firstname'=>$element[1],'surname'=>$element[2], 'email'=>$element[3], 'password'=>$element[4]));
+        }
         break;
     default:
         $framework->template->setTemplateFile('index');

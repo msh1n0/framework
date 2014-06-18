@@ -1,9 +1,9 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
     {if isset($online_only) && $online_only==true}
-        <h2>Mitarbeiterübersicht</h2>
+        <h3>Mitarbeiterübersicht</h3>
     {else}
-        <h2>Benutzeradministration</h2>
+        <h3>Benutzeradministration</h3>
     {/if}
     <table class="table table-responsive">
         <tr>
@@ -12,7 +12,7 @@
             <th class="visible-md visible-lg">E-Mail</th>
             <th class="visible-md visible-lg">Telefon</th>
             <th>Status</th>
-            {if $isadmin}<th>letzte Statusänderung</th>{/if}
+            {if $isadmin}<th>Status seit</th>{/if}
             <th class="visible-md visible-lg">Gruppe</th>
             <th></th>
         </tr>

@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-        <h2>Details: {$task['headline']} {if $task['finish_status']!=1 && $task['finish_status']!=2}<a href="{$page}?site=tasks_edit&id={$task['id']}"><span class="glyphicon glyphicon-pencil"></span></a>{/if}</h2>
+        <h3>Details: {$task['headline']} {if $task['finish_status']!=1 && $task['finish_status']!=2}<a href="{$page}?site=tasks_edit&id={$task['id']}"><span class="glyphicon glyphicon-pencil"></span></a>{/if}</h3>
         <h4>{$task['task']}</h4>
         <p>&nbsp;</p>
         <h4>Status:</h4>
