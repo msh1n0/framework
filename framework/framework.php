@@ -11,16 +11,10 @@ include 'components/externalcontent.inc';
 include 'components/filemanager.inc';
 include 'components/image.inc';
 include 'components/map.inc';
-include 'components/session.inc';
 include 'components/template.inc';
 
 /**
  * MS Framework
- * Schritt 1: allgemein geschriebene Klassen sammeln, die wiederverwendet werden können.
- * Schritt 2: für die bisher aufgetretenen Probleme Klassen zur Verfügung stellen, um die Probleme in Zukunft zu vermeiden.
- * Schritt 3: Vorbereitungen für Sonderanwendungen treffen, um eine Spezialanwendung schneller entwickeln zu können
- * Schritt 4: fertig geschriebene Sonderanwendungen
- * Schritt 5: CMS inkl. Basis-Sicherheitsfunktionen mit Zuschaltbaren Sonderanwendungen
  *
  * Class framework
  */
@@ -34,7 +28,6 @@ class framework{
      * @param $name
      */
     public function __construct($name){
-        $this->session=new session($name);
         $this->config=configuration::loadConfig('framework',$name);
         if($this->config['enable_users']==1) $this->users = new users($name);
         if($this->config['enable_externalhtml']==1) $this->externalcontent = new externalContent();

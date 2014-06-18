@@ -12,6 +12,7 @@
             <th class="visible-md visible-lg">E-Mail</th>
             <th class="visible-md visible-lg">Telefon</th>
             <th>Status</th>
+            {if $isadmin}<th>letzte Statusänderung</th>{/if}
             <th class="visible-md visible-lg">Gruppe</th>
             <th></th>
         </tr>
@@ -33,7 +34,11 @@
                         Pause
                     {elseif $user['status']=='3'}
                         abgemeldet
-                    {/if}</td>
+                    {/if}
+                </td>
+                {if $isadmin}<td>
+                    {$user['status_since']}
+                </td>{/if}
                 <td class="visible-md visible-lg">{$user['group']}</td>
                 <td class="text-right">
                     {if $currentuser['id']!=$user['id']}

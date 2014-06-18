@@ -19,9 +19,9 @@ class collection{
      */
     protected $document;
     /**
-     * @var array
+     * @var boolean
      */
-    protected $config=array();
+    protected $db_mode;
     /**
      * @var db_adapter
      */
@@ -32,25 +32,13 @@ class collection{
     protected $attributes;
 
     /**
-     * Beim DB Modus muss
-     */
-    function __construct($db_mode,$db_configname=NULL){
-        $this->config['db_mode']=$db_mode;
-        if($this->config['db_mode']){
-            $this->database = new db_adapter($db_configname);
-        }else{ //Datei-Modus
-            $this->document = new document();
-        }
-    }
-
-    /**
      * Legt ein neues Element an
      * @param array $input
      * @throws ElementDupeException
      * @throws InputErrorException
      */
     public function createElement($input=array()){
-        if($this->config['db_mode']){
+        if($this->db_mode){
             try{
                 $this->database->save($input);
             }catch (mysqli_sql_exception $e){
@@ -86,8 +74,7 @@ class collection{
      * @param $id
      */
     public function deleteElement($id){
-        $this->database->debugging(true);
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $this->database->delete('id',$id);
         }
         else{
@@ -105,7 +92,7 @@ class collection{
      * @param array $new
      */
     public function editElement($new=array()){
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $values=array();
             foreach($this->attributes as $attribute){
                 $values[]=$new[$attribute];
@@ -149,7 +136,7 @@ class collection{
      * @return string
      */
     public function getElementByAttribute($attribute,$value){
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $result= $this->database->get('*',array($attribute),array($value),NULL,NULL,1);
             return $result[0];
         }
@@ -173,7 +160,7 @@ class collection{
      */
     public function getElementsByAttribute($attribute,$value){
         $output=array();
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $output=$this->elements=$this->database->get('*',array($attribute),array($value));
         }
         else{
@@ -195,7 +182,7 @@ class collection{
      */
     public function getElementsWithout($attribute,$value){
         $output=array();
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $output=$this->elements=$this->database->get('*',NULL,NULL,array($attribute),array($value));
         }
         else{
@@ -212,7 +199,7 @@ class collection{
 
     public function getElementsFiltered($includeAttributes=array(),$includeValues=array(), $excludeAttributes=array(),$excludeValues=array()){
         $output=array();
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $output=$this->elements=$this->database->get('*',$includeAttributes,$includeValues,$excludeAttributes,$excludeValues);
         }
         else{
@@ -275,7 +262,9 @@ class collection{
      * @throws ConfigurationException
      */
     public function setupFile($filename,$attributes=array()){
-        if($this->config['db_mode']) throw new ConfigurationException('Im Datenbankmodus kann keine Datei eingerichtet werden');
+        if($this->db_mode) throw new ConfigurationException('Im Datenbankmodus kann keine Datei eingerichtet werden');
+        $this->db_mode=false;
+        $this->document = new document();
         $this->document->setDocument($filename);
         $this->setAttributes($attributes);
         $this->importElementData();
@@ -283,10 +272,13 @@ class collection{
 
     /**
      * konfiguriert die Datenbank
+     * @param string $db_configname Configfile für den Datenbankzugang (Standardmäßig Projektname)
      * @param $db_table
      * @param array $attributes
      */
-    public function setupDatabase($db_table,$attributes=array()){
+    public function setupDatabase($db_configname,$db_table,$attributes=array()){
+        $this->db_mode=true;
+        $this->database = new db_adapter($db_configname);
         $this->setAttributes($attributes);
         $this->database->setAttributes($this->attributes);
         $this->database->setTable($db_table);
@@ -316,7 +308,7 @@ class collection{
         }
     }
 
-    /**
+    /** Schaltet die Datenbank in Debugging Modus
      * @param bool $status
      */
     public function debugging($status){
@@ -343,7 +335,7 @@ class collection{
      * Kompletten Datenbestand einlesen
      */
     protected function importElementData(){
-        if($this->config['db_mode']){
+        if($this->db_mode){
             $this->elements=$this->database->get();
         }
         else $this->elements=unserialize($this->document->getFileAsString());

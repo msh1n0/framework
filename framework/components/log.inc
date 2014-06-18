@@ -4,24 +4,27 @@
  * Class log
  */
 class log extends collection{
-    /**
-     * @param $action
-     * @param $actor
-     * @param string $information
+    /** Für die Initialisierung einen Dateipfad angeben
+     * @param $file
      */
     function __construct($file){
-        parent::__construct(false,array('action','actor','information'));
-        $this->setupFile($file);
+        $this->setupFile($file,array('action','actor','information'));
     }
-    function add($action,$actor,$information=''){
+
+    /** Anlegen eines Eintrags
+     * @param string $action Was wurde gemacht
+     * @param string $actor Wer hat es gemacht
+     * @param string $information Zusätzliche Informationen
+     */
+    public function add($action,$actor,$information=''){
         $newElement=array('id'=>time(),'action'=>$action,'actor'=>$actor,'information'=>$information);
         $this->createElement($newElement);
     }
 
-    /**
-     * @return bool
+    /** Das Anlegen doppelter Einträge muss nicht verhinter werden
+     * @return bool immer false, da im Log doppelte Einträge erlaubt sind
      */
-    function checkForDupe(){
+    protected function checkForDupe(){
         return false;
     }
 

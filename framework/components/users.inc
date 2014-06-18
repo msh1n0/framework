@@ -5,19 +5,19 @@
  * Class users
  */
 class users extends collection{
+    private $project;
 
     /**
      * vereinfachter Konstuktor; ruft die config auf
      */
     function __construct($project){
         $this->config=configuration::loadConfig('users',$project);
-        parent::__construct($this->config['db_mode']);
+        $this->project=$project;
         if($this->config['db_mode']){
             $this->setAttributes($this->config['attributes']);
             $this->setupDatabase($this->config['db_table'],$this->attributes);
         }else{
-            $this->setAttributes($this->config['attributes']);
-            $this->document->setDocument($this->config['userfile']);
+            $this->setupFile($this->config['userfile'],$this->config['attributes']);
             $this->elements=$this->document->getSerializedFile();
         }
     }
@@ -48,7 +48,7 @@ class users extends collection{
     }
 
     /**
-     * Startet die Session und erstellt die Session-Attribute
+     * Einloggen - Setzen des Cookies mit Hash des Logins
      * @param $id
      * @param $password
      * @return bool
@@ -58,8 +58,8 @@ class users extends collection{
         foreach($this->elements as $user){
             if($user['id']==$id){
                 if($user['password']==md5($password)){
-                    session_start();
-                    $_SESSION['user_id']=$user['id'];
+                    setcookie($this->project."_user_id", $user['id'], time()+(60*60*24*2));
+                    setcookie($this->project."_user_login", md5($password.$user['id']), time()+(60*60*24*2));
                     return true;
                 }
             }
@@ -68,18 +68,19 @@ class users extends collection{
     }
 
     /**
-     * löscht die Session
+     * löscht das Cookie
      */
     public function logOut(){
-        session_destroy();
+        setcookie($this->project."_user_id", '', (time()-1));
+        setcookie($this->project."_user_login", '', (time()-1));
     }
 
     /**
-     * prüft anhand der Session, ob ei Nutzer eingeloggt ist
+     * prüft anhand des Cookies, ob ein Nutzer eingeloggt ist
      * @return bool
      */
     public function isLoggedIn(){
-        if(empty($_SESSION['user_id'])){
+        if(empty($_COOKIE[$this->project.'_user_id'])){
             return false;
         }
         else {
@@ -140,7 +141,7 @@ class users extends collection{
      */
     public function currentUser($attribute){
         foreach($this->elements as $user){
-            if($user['id']==$_SESSION['user_id']){
+            if($user['id']==$_COOKIE[$this->project.'_user_id']){
                 return $user[$attribute];
             }
         }

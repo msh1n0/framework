@@ -13,14 +13,3 @@
 <div id="fullscreenEffect"></div>
 
 <div class="container">
-    {block name=content}
-        {include 'projects/test/templates/_elements/testblock.tpl' headline='Framework -> Session' elements=$results_session}
-    {/block}
-</div>
-
-{block name="scriptblock_unten"}
-    {$jquery}
-    {$bootstrap_js}
-{/block}
-</body>
-</html>
