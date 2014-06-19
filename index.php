@@ -1,7 +1,9 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Statusumschalter auf Startseite
+ * TODO: Useradmin steht bei Mitarbeiterübersicht beim Seitenaufbau
+ * TODO: Zurück mit Button und Swipe
+ * TODO: Unterstützung für PDF etc.
  * */
 
 $framework = new framework('checkliste');
