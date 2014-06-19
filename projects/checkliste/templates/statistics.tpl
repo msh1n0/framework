@@ -5,12 +5,11 @@
         <h3>{$user['firstname']} {$user['surname']}</h3>
         <hr>
     {/if}
-        <h3>Status:
-        {if $user['status']==0}<span class="glyphicon glyphicon-user"></span>&nbsp;frei{/if}
-        {if $user['status']==1}<span class="glyphicon glyphicon-briefcase"></span>&nbsp;beschäftigt{/if}
-        {if $user['status']==2}<span class="glyphicon glyphicon-cutlery"></span>&nbsp;Pause{/if}
-        {if $user['status']==3}<span class="glyphicon glyphicon-log-out"></span>&nbsp;Abgemeldet{/if}
-    </h3>
+        <div class="row">
+            <div class="col-xs-4 text-center"><a href="{$page}?site=status&status=0"><span class="glyphicon glyphicon-user {if $user['status']==0}text-danger{else}text-primary{/if}"></span></a></div>
+            <div class="col-xs-4 text-center"><a href="{$page}?site=status&status=1"><span class="glyphicon glyphicon-briefcase {if $user['status']==1}text-danger{else}text-primary{/if}"></span></a></div>
+            <div class="col-xs-4 text-center"><a href="{$page}?site=status&status=2"><span class="glyphicon glyphicon-cutlery {if $user['status']==2}text-danger{else}text-primary{/if}"></span></a></div>
+        </div>
     <hr>
     {include 'projects/checkliste/templates/_elements/tasksummary.tpl' overview=$mytasks headline='Aktuelle Aufgaben' mode='own'}
     <hr>

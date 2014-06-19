@@ -1,13 +1,13 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Ausführender mit richtigem Namen
- * TODO:
+ * TODO: Statusumschalter auf Startseite
  * */
 
 $framework = new framework('checkliste');
 $framework->template->setTemplate('checkliste');
 $dbconfig=configuration::loadConfig('db_adapter','checkliste');
+$framework->template->setTemplateVariables(array('isMobile',$framework->mobileDetect->isMobile()));
 ############################################################
 ## Vorbereiten der Meldungen
 ############################################################
@@ -72,7 +72,7 @@ if($framework->users->isLoggedIn()){
 else{
     $thisUser['id']='';
 }
-$page='checkliste.php';
+$page='index.php';
 $framework->template->setTemplateVariables(array('page',$page));
 
 if($framework->users->isLoggedIn()) $currentUser=$framework->users->getUser($thisUser['id']);

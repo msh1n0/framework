@@ -57,18 +57,16 @@
             </tr>
 
             {/if}
-        {/foreach}
+        {/foreach}</table>
+
+    {if isset($online_only) && $online_only==true}
+    {else}
         {if $isadmin}
-            <tr>
-                <td class="visible-lg"></td>
-                <td></td>
-                <td class="visible-md visible-lg"></td>
-                <td class="visible-md visible-lg"></td>
-                <td></td>
-                <td class="visible-md visible-lg"></td>
-                <td class="text-right">
-                    <a href="{$page}?site=useradmin_create"><span class="glyphicon glyphicon-plus" title="Neuen Nutzer anlegen"></span></a>
-                </td>
-            </tr>
-        {/if}</table>
+            <div class="row">
+                <div class="col-xs-12">
+                    <a href="{$page}?site=useradmin_create"><button class="btn btn-default form-control text-center"><span class="glyphicon glyphicon-plus" title="Neuen Nutzer anlegen"></span></button></a>
+                </div>
+            </div>
+        {/if}
+    {/if}
 {/block}

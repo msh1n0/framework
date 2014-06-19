@@ -25,10 +25,11 @@
                     </td>
                 </tr>
             {/foreach}
-            <tr>
-                <td></td>
-                <td class="text-right">
-                    <a href="{$page}?site=map_admin&action=uploadfile"><span class="glyphicon glyphicon-plus" title="Neue Karte hochladen"></span></a>
-                </td>
-            </tr></table>
+        </table>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <a href="{$page}?site=map_admin&action=uploadfile"><button class="btn btn-default form-control text-center"><span class="glyphicon glyphicon-plus" title="Neue Karte hochladen"></span></button></a>
+        </div>
+    </div>
 {/block}

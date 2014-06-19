@@ -96,7 +96,7 @@
                     <label for="deadline" class="form-control label-default">Deadline:</label>
                 </div>
                 <div class="col-md-9">
-                    <input type="text" class="form-control" id="deadline" name="deadline" value="{$task['deadline']}">
+                    <input type="datetime-local" class="form-control" id="deadline" name="deadline" value="{$task['deadline']}">
                 </div>
             </div>
         </div>
@@ -112,11 +112,14 @@
     </form>
 {/block}
 {block name=scripts_bottom append}
-    <script type="text/javascript" src="framework/components/ext/datepicker/js/datepicker.js"></script>
-    <script type="text/javascript">
-        $('#deadline').datetimepicker({
-            format:'d.m. H:i',
-            lang:'de'
-        });
-    </script>
+    {if !$isMobile}
+        <script type="text/javascript" src="framework/components/ext/datepicker/js/datepicker.js"></script>
+        <script type="text/javascript">
+            $('#deadline').datetimepicker({
+                format:'d.m. H:i',
+                inline:false,
+                lang:'de'
+            });
+        </script>
+    {/if}
 {/block}

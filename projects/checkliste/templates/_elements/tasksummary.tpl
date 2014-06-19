@@ -76,12 +76,9 @@
         {/foreach}
         {if $task['finish_status']==0}
             <div class="row">
-                <div class="col-xs-11">
-
-                </div>
-                <div class="col-xs-1 text-right">
+                <div class="col-xs-12">
                     {if $mode=='outlook' && !$adminmode}
-                        <a href="{$page}?site=tasks_create"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></a>&nbsp;&nbsp;
+                        <a href="{$page}?site=tasks_create"><button class="btn btn-default form-control text-center"><span class="glyphicon glyphicon-plus" title="Aufgabe anlegen"></span></button></a>&nbsp;&nbsp;
                     {/if}
                 </div>
             </div>

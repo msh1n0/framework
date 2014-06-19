@@ -13,10 +13,11 @@
                 </td>
             </tr>
         {/foreach}
-        <tr>
-            <td></td>
-            <td class="text-right">
-                <a href="{$page}?site=useradmin_usergroups_create"><span class="glyphicon glyphicon-plus" title="Neue Gruppe anlegen"></span></a>
-            </td>
-        </tr></table>
+    </table>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <a href="{$page}?site=useradmin_usergroups_create"><button class="btn btn-default form-control text-center"><span class="glyphicon glyphicon-plus" title="Neue Gruppe anlegen"></span></button></a>
+        </div>
+    </div>
 {/block}

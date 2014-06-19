@@ -9,3 +9,6 @@ label.label-default{color:#fff;}
 .checkbox-inline label{
     margin:0 20px 0 0;
 }
+.table-vertical-center{
+    vertical-align:middle;
+}

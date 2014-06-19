@@ -47,14 +47,6 @@
                         </ul>
                     </li>
                     {/if}
-                    <li><a data-toggle="dropdown" href="#">Mein Status</a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                            <li><a href="{$page}?site=status&status=0"><span class="glyphicon glyphicon-user" title="Aufgabe abschließen"></span>&nbsp;&nbsp;frei</a></li>
-                            <li><a href="{$page}?site=status&status=1"><span class="glyphicon glyphicon-briefcase" title="Aufgabe abschließen"></span>&nbsp;&nbsp;beschäftigt</a></li>
-                            <li><a href="{$page}?site=status&status=2"><span class="glyphicon glyphicon-cutlery" title="Aufgabe abschließen"></span>&nbsp;&nbsp;Pause</a></li>
-                            <li><a href="{$page}?site=logout"><span class="glyphicon glyphicon-log-out" title="Aufgabe abschließen"></span>&nbsp;&nbsp;ABMELDEN</a></li>
-                        </ul>
-                    </li>
                     <li><a href="{$page}?site=users">Mitarbeiter</a></li>
                     {if $isadmin}
                         <li><a data-toggle="dropdown" href="#">Administration</a>
@@ -67,6 +59,14 @@
                             </ul>
                         </li>
                     {/if}
+                    <li><a data-toggle="dropdown" href="#">Mein Status</a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li><a href="{$page}?site=status&status=0"><span class="glyphicon glyphicon-user" title="Aufgabe abschließen"></span>&nbsp;&nbsp;frei</a></li>
+                            <li><a href="{$page}?site=status&status=1"><span class="glyphicon glyphicon-briefcase" title="Aufgabe abschließen"></span>&nbsp;&nbsp;beschäftigt</a></li>
+                            <li><a href="{$page}?site=status&status=2"><span class="glyphicon glyphicon-cutlery" title="Aufgabe abschließen"></span>&nbsp;&nbsp;Pause</a></li>
+                            <li><a href="{$page}?site=logout"><span class="glyphicon glyphicon-log-out" title="Aufgabe abschließen"></span>&nbsp;&nbsp;ABMELDEN</a></li>
+                        </ul>
+                    </li>
                     <li><a href=""><span class="glyphicon glyphicon-refresh" onclick="window.location.reload()"></span></a></li>
                     <li><a href="{$page}?site=switchtheme"><span class="glyphicon glyphicon-adjust"></span></a></li>
                 {/if}

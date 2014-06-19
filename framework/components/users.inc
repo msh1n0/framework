@@ -84,6 +84,10 @@ class users extends collection{
             return false;
         }
         else {
+            if($this->getUser($_COOKIE[$this->project.'_user_id'])==false){
+                $this->logOut();
+                return false;
+            };
             return true;
         }
     }

@@ -14,8 +14,15 @@
     <link rel="apple-touch-icon" sizes="144x144" href="projects/checkliste/templates/_resources/images/icons/apple-touch-icon_144x144.png" />
     <link rel="apple-touch-icon" sizes="114x114" href="projects/checkliste/templates/_resources/images/icons/apple-touch-icon_114x114.png" />
     <link rel="apple-touch-icon"                 href="projects/checkliste/templates/_resources/images/icons/apple-touch-icon-precomposed.png"/>
-
-
+    {if $isMobile}
+        {literal}
+            <style>.glyphicon{font-size:2.0em;margin:0 0.4em 0 0;}</style>
+        {/literal}
+    {else}
+        {literal}
+            <style>.glyphicon{font-size:1.4em;}</style>
+        {/literal}
+    {/if}
 
     <title>Checkliste</title>
     {block name=scripts_top}
@@ -42,6 +49,7 @@
     {$bootstrap_js}
     {$bootstrap_datatables_js}
     {$swipe_js}
+    <script src="projects/checkliste/templates/_resources/js/linkfix.js" type="text/javascript"></script>
 {/block}
 </body>
 </html>
