@@ -34,18 +34,16 @@
                         {if $item['active']=='true'}{math assign="count" equation=$count+1}{/if}
                     {/foreach}
                     {if $count==0}
-                    {elseif $count==1}
-                        <li><a href="{$page}?site=map">Karte</a></li>
                     {else}
-                    <li><a data-toggle="dropdown" href="#">Karten</a>
-                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                        {foreach item=item from=$maps}
-                            {if $item['active']=='true'}
-                                <li><a href="{$page}?site=map&map={$item['id']}">{$item['id']}</a></li>
-                            {/if}
+                        <li><a data-toggle="dropdown" href="#">Dateien</a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                        {foreach item=map from=$maps}
+                            <li><a href="projects/checkliste/contents/images/media/{$map['id']}" target="_blank">
+                                {$map['id']}
+                            </a></li>
                         {/foreach}
-                        </ul>
-                    </li>
+                            </ul>
+                        </li>
                     {/if}
                     <li><a href="{$page}?site=users">Mitarbeiter</a></li>
                     {if $isadmin}
@@ -53,7 +51,7 @@
                             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                                 <li><a href="{$page}?site=useradmin_summary">Benutzer verwalten</a></li>
                                 <li><a href="{$page}?site=useradmin_usergroups_summary">Benutzergruppen verwalten</a></li>
-                                <li><a href="{$page}?site=map_admin">Karten verwalten</a></li>
+                                <li><a href="{$page}?site=map_admin">Dateien verwalten</a></li>
                                 <li><a href="{$page}?site=force_logout">Alle Benutzer abmelden</a></li>
                                 <li><a href="{$page}?site=log">Log-Datei ansehen</a></li>
                             </ul>

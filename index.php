@@ -1,9 +1,6 @@
 <?php
 include 'framework/framework.php';
 /*
- * TODO: Useradmin steht bei Mitarbeiterübersicht beim Seitenaufbau
- * TODO: Zurück mit Button und Swipe
- * TODO: Unterstützung für PDF etc.
  * */
 
 $framework = new framework('checkliste');
@@ -43,8 +40,8 @@ $task_Users->setupFile('projects/checkliste/data/tasks_users.db',array('taskid',
 
 $log = new log('projects/checkliste/data/log.db');
 
-$maps=new collection();
-$maps->setupFile('projects/checkliste/data/maps.db',array('active'),'');
+$media=new collection();
+$media->setupFile('projects/checkliste/data/media.db',array('active'),'');
 
 ############################################################
 ## Login-Verhalten
@@ -53,7 +50,7 @@ $maps->setupFile('projects/checkliste/data/maps.db',array('active'),'');
 
 if($framework->users->isLoggedIn()){
     $thisUser['id']=$_COOKIE['checkliste_user_id'];
-    $framework->template->setTemplateArray('maps',$maps->getAllElements());
+    $framework->template->setTemplateArray('maps',$media->getAllElements());
     $currentUser= $framework->users->getUserByAttribute('id',$thisUser['id']);
     if($currentUser['status']==3){
         $framework->users->logOut();
@@ -101,6 +98,10 @@ switch($site){
     #- Alle Nutzer abmelden
     #-------------------------------------------------------
     case 'force_logout':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         foreach($framework->users->getAllUsers() as $user){
             $user['status']=3;
             $user['status_since']=date('d.m.y - H:i');
@@ -113,6 +114,10 @@ switch($site){
     #- Log
     #-------------------------------------------------------
     case 'log':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         if(!isset($_POST['filter'])) $framework->template->setTemplateArray('log',array_reverse($log->getAllElements()));
             elseif($_POST['filter']=='') $framework->template->setTemplateArray('log',array_reverse($log->getAllElements()));
         else{
@@ -159,18 +164,22 @@ switch($site){
     #- Karte/Hallenplan
     #-------------------------------------------------------
     case 'map':
-        if(!isset($_GET['map'])) $framework->template->setTemplateArray('map',$maps->getElementByAttribute('active','true'));
-        else $framework->template->setTemplateVariables(array('map',$_GET['map']));
-        $framework->template->setTemplateFile('map/index');
+        if(!isset($_GET['map'])) $framework->template->setTemplateArray('map',$media->getElementByAttribute('active','true'));
+        else $framework->template->setTemplateVariables(array('maps',$_GET['map']));
+        $framework->template->setTemplateFile('media/index');
         break;
     #-------------------------------------------------------
     #- Kartenverwaltung
     #-------------------------------------------------------
     case 'map_admin':
-        $framework->template->setTemplateVariables(array('mapsave',$maps->getAllElements()));
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
+        $framework->template->setTemplateVariables(array('mapsave',$media->getAllElements()));
         if(!empty($_GET['action'])){
             if($_GET['action']=='activatemap'){
-                $map=$maps->getElementByAttribute('id',$_GET['map']);
+                $map=$media->getElementByAttribute('id',$_GET['map']);
                 if($map['active']=='false'){
                     $log->add('Karte aktiviert',$thisUser['id'],'Bild '.$_GET['map']);
                     $map['active']='true';
@@ -179,15 +188,15 @@ switch($site){
                     $log->add('Karte deaktiviert',$thisUser['id'],'Bild '.$_GET['map']);
                     $map['active']='false';
                 }
-                $maps->editElement($map);
+                $media->editElement($map);
                 header('Location:'.$page.'?site=map_admin');
             }elseif($_GET['action']=='uploadfile'){
                 if($_GET['confirm']==true){
-                    $uploaddir = 'projects/checkliste/contents/images/maps/';
+                    $uploaddir = 'projects/checkliste/contents/images/media/';
                     $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
                     if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
                         try{
-                            $maps->createElement(array('id'=>$_FILES['userfile']['name'],'active'=>'false'));
+                            $media->createElement(array('id'=>$_FILES['userfile']['name'],'active'=>'false'));
                         }catch(ElementDupeException $e){
                         }
                         $log->add('Karte hochgeladen',$thisUser['id'],'Bild '.$_FILES['userfile']['name']);
@@ -198,22 +207,22 @@ switch($site){
                     header('Location:'.$page.'?site=map_admin');
                 }
                 else{
-                    $framework->template->setTemplateFile('map/upload');
+                    $framework->template->setTemplateFile('media/upload');
 
                 }
             }elseif($_GET['action']=='deletefile'){
                 $_SESSION['success']='Datei gelöscht';
-                $maps->deleteElement($_GET['map']);
+                $media->deleteElement($_GET['map']);
                 $log->add('Karte gelöscht',$thisUser['id'],'Bild '.$_GET['map']);
-                unlink('projects/checkliste/contents/images/maps/'.$_GET['map']);
+                unlink('projects/checkliste/contents/images/media/'.$_GET['map']);
                 header('Location:'.$page.'?site=map_admin');
             }
         }
         else{
             $mapDirectory=new filemanager();
-            $framework->template->setTemplateVariables(array('mapsave',$maps->getAllElements()));
-            $framework->template->setTemplateArray('allmaps',$mapDirectory->DirectoryContents('projects/checkliste/contents/images/maps'));
-            $framework->template->setTemplateFile('map/admin');
+            $framework->template->setTemplateVariables(array('mapsave',$media->getAllElements()));
+            $framework->template->setTemplateArray('allmaps',$mapDirectory->DirectoryContents('projects/checkliste/contents/images/media'));
+            $framework->template->setTemplateFile('media/admin');
         }
         break;
     #-------------------------------------------------------
@@ -638,6 +647,10 @@ switch($site){
     #- Um Rückruf bitten
     #-------------------------------------------------------
     case 'useradmin_callback':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         $user=$framework->users->getElementByAttribute('id',$_GET['id']);
         $user['callback']=$thisUser['id'];
         $framework->users->editUser($user);
@@ -649,6 +662,10 @@ switch($site){
     #- Benutzer erstellen
     #-------------------------------------------------------
     case 'useradmin_create':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         if($_POST){
             $newUser=array(
                 'id'=> $_POST['id'],
@@ -700,6 +717,10 @@ switch($site){
     #- Benutzer löschen
     #-------------------------------------------------------
     case 'useradmin_delete':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         try{
             $framework->users->deleteUser($_GET['id']);
         }catch(mysqli_sql_exception $e){
@@ -714,6 +735,10 @@ switch($site){
     #- Benutzer bearbeiten
     #-------------------------------------------------------
     case 'useradmin_edit':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         if($_POST){
             try{
                 $framework->users->editUser(array(
@@ -744,6 +769,10 @@ switch($site){
     #- Benutzerübersicht
     #-------------------------------------------------------
     case 'useradmin_summary':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         $framework->users->sort('id');
         $framework->template->setTemplateVariables(array('fromsite','useradmin_summary'));
         $framework->template->setTemplateFile('users/summary');
@@ -753,6 +782,10 @@ switch($site){
     #- Benutzergruppe erstellen
     #-------------------------------------------------------
     case 'useradmin_usergroups_create':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         if($_POST){
             $usergroups->createElement(array('name'=>$_POST['name'],'admin'=>$_POST['admin']));
             $_SESSION['success']='Die Benutzergruppe wurde erfolgreich angelegt';
@@ -765,6 +798,10 @@ switch($site){
     #- Benutzergruppe löschen
     #-------------------------------------------------------
     case 'useradmin_usergroups_delete':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         $usergroups->deleteElement($_GET['id']);
         $_SESSION['success']='Die Benutzergruppe wurde gelöscht';
         $log->add('Benutzergruppe gelöscht',$thisUser['id'],$_POST['name']);
@@ -774,6 +811,10 @@ switch($site){
     #- Benutzergruppe bearbeiten
     #-------------------------------------------------------
     case 'useradmin_usergroups_edit':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         if($_POST){
             $newgroup=$usergroups->getElementByAttribute('id',$_POST['id']);
             $newgroup['name']=$_POST['name'];
@@ -794,6 +835,10 @@ switch($site){
     #- Benutzergruppen-Übersicht
     #-------------------------------------------------------
     case 'useradmin_usergroups_summary':
+        if(!$_SESSION['admin']){
+            header('Location:'.$page.'?site=statistics');
+            exit;
+        }
         $framework->template->setTemplateArray('usergroups',$usergroups->getAllElements());
         $framework->template->setTemplateFile('usergroups/summary');
         break;
@@ -812,18 +857,6 @@ switch($site){
         $framework->template->setTemplateVariables(array('fromsite','users'));
         $framework->template->setTemplateVariables(array('online_only',true));
         $framework->template->setTemplateFile('users/summary');
-        break;
-    case 'tasks_test':
-        $framework->template->setTemplateFile('tasks/test');
-
-        $task=$tasks->getElementByAttribute('id','38');
-        $task['place']='dort';
-        $tasks->editElement($task);
-
-
-        #$framework->template->setTemplateArray('overview',$tasks->getElementsByAttribute('headline','test'));
-        $framework->template->setTemplateVariables(array('finishstatus',$task_summary_value));
-
         break;
     case 'import':
         $document= new document();

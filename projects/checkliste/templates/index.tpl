@@ -44,12 +44,19 @@
     {block name=content}
     {/block}
 </div>
+<h3>&nbsp;</h3>
+<div class="navbar-default navbar-bottom">
+    <div class="container">
+                    <a class="navbar-brand" href="javascript:history.back()">&lt;&nbsp;&nbsp;Zurück</a>
+    </div>
+</div>
 {block name=scripts_bottom}
     {$jquery}
     {$bootstrap_js}
     {$bootstrap_datatables_js}
     {$swipe_js}
     <script src="projects/checkliste/templates/_resources/js/linkfix.js" type="text/javascript"></script>
+    <script src="projects/checkliste/templates/_resources/js/swipeevents.js" type="text/javascript"></script>
 {/block}
 </body>
 </html>

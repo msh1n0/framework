@@ -1,6 +1,6 @@
 {extends "projects/checkliste/templates/index.tpl"}
 {block name=content}
-        <h3>Kartenverwaltung</h3>
+        <h3>Datei-Verwaltung</h3>
 
         <table class="table table-responsive">
             <tr>
