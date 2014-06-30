@@ -4,6 +4,7 @@ include 'components/collection.inc';
 include 'components/configuration.inc';
 include 'components/db_adapter.inc';
 include 'components/db_querybuilder.inc';
+include 'components/db_object.inc';
 include 'components/document.inc';
 include 'components/exceptions.inc';
 include 'components/ext/mobile-detect/mobile_detect.php';

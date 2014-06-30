@@ -2,8 +2,8 @@
 include 'users.inc';
 include 'log.inc';
 
-/**
- * Class elements
+/** Die Collection stellt sinngemäß eine Datenbank-Tabelle dar und vereinfacht den Zugriff auf die Daten
+ * Class Collection
  */
 class collection{
     /**
