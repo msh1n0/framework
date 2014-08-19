@@ -39,6 +39,42 @@ class db_querybuilder {
         $this->table=$table;
     }
 
+    /** Generieren der FROM-Klausel, kann auch mehrere Tabellen umfassen
+     * @param $table
+     */
+    public function from($table){
+        if(is_array($table)){
+            $count=0;
+            $this->command.=' FROM ';
+            foreach($table as $element){
+                if($count>0) $this->command.=',';
+                $this->command.='`'.$element.'`';
+                $count++;
+            }
+        }
+        else $this->command.=' FROM `'.$table.'`';
+    }
+
+    /** Generieren des SELECT-Befehls ohne vorheriges Anmelden der Tabelle
+     * @param mixed $columns Spalten, nahc denen gesucht werden soll
+     */
+    public function select_only($columns){
+        if($columns=='*') $getcolumns='*';
+        else{
+            $getcolumns='';
+            if(!is_array($columns)){
+                $columns=explode(',',$columns);
+            }
+            $count=0;
+            foreach($columns as $column){
+                if($count>0) $getcolumns.=',';
+                $getcolumns.='`'.$column.'`';
+                $count++;
+            }
+        }
+        $this->command='SELECT '.$getcolumns;
+    }
+
     /** Generieren des SELECT-Befehls
      * @param mixed $columns Angabe der Spalten, entweder *, eine Array der Spalten, oder die Spaltenliste Kommasepariert
      */
@@ -49,14 +85,17 @@ class db_querybuilder {
             if(!is_array($columns)){
                 $columns=explode(',',$columns);
             }
+            $count=0;
             foreach($columns as $column){
-                $getcolumns='\''.$column.'\'';
+                if($count>0) $getcolumns.=',';
+                $getcolumns.='\''.$column.'\'';
+                $count++;
             }
         }
         $this->command='SELECT '.$getcolumns.' FROM `'.$this->table.'`';
     }
 
-    /** Generieren der WHERE-Klausel, diese Angaben müssen im Datensatz vorhanden sein
+    /** Generieren der WHERE-Klausel, diese Angaben müssen im Datensatz vorhanden sein, Syntax für DATEN
      * @param string $filter Such-Attribut
      * @param string $value Wert, den das Such-Attribut haben soll
      */
@@ -65,7 +104,18 @@ class db_querybuilder {
         $this->command.=' '.$filter.'=\''.$value.'\'';
     }
 
-    /** Generieren der WHERE-Klausel, diese Angaben dürfen im Datensatz nicht vorhanden sein
+    /** Vereinfachte Funktion für das Join
+     * @param string $thisTable Tabelle A
+     * @param string $thisColumn Spalte von Tabelle A
+     * @param string $thatTable Tabelle B
+     * @param string $thatColumn Spalte von Tabelle B
+     */
+    public function whereConnectionTo($thisTable,$thisColumn,$thatTable,$thatColumn){
+        $this->whereOrAnd();
+        $this->command.=" `$thisTable`.`$thisColumn`=`$thatTable`.`$thatColumn`";
+    }
+
+    /** Generieren der WHERE-Klausel, diese Angaben dürfen im Datensatz nicht vorhanden sein, Syntax für DATEN
      * @param string $filter Such-Attribut
      * @param string $value Wert, den das Such-Attribut NICHT haben darf
      */
@@ -74,6 +124,16 @@ class db_querybuilder {
         $this->command.=' '.$filter.'!=\''.$value.'\'';
     }
 
+
+    /** Sortierfunktion, kann direkt angehängt werden
+     * @param string $column Spalte, die die Sortierung bestimmt
+     * @param bool $ascending Standardmäßig TRUE, bei False wird absteigend sortiert
+     */
+    public function orderBy($column,$ascending){
+        if($ascending===true) $sort='ASC';
+        else $sort='DESC';
+        $this->command.=' ORDER BY `'.$this->table.'`.`'.$column.'` '.$sort;
+    }
     /** Eingrenzen des Ergebnisses
      * @param int $limit Anzahl der Einträge, die ausgegeben werden sollen
      */

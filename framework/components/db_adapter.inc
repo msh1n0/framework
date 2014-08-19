@@ -67,6 +67,20 @@ class db_adapter {
         $this->queryBuilder->setTable($table);
     }
 
+    /** Erstellt einen Join
+     * @param array $columns Spalten, die in der Zieltabelle vorhanden sein sollen
+     * @param array $tables Tabellen, die in der Zieltabelle vorhanden sein sollen
+     * @param array $connectors Anweisung, wwelche Tabellen mit welche zusammenhängen sollen
+     * @return array
+     */
+    public function mergeLoad($columns,$tables,$connectors){
+        $this->queryBuilder->select_only($columns);
+        $this->queryBuilder->from($tables);
+        foreach($connectors as $element){
+            $this->queryBuilder->whereConnectionTo($element[0], $element[1], $element[2], $element[3]);
+        }
+        return $this->query($this->queryBuilder->generate());
+    }
 
     /** Aufrufen eines SQL-Syntaxes
      * @param string $sql SQL-Befehl in String-Form
@@ -77,7 +91,6 @@ class db_adapter {
         $this->connect();
 
         if($this->debug)echo $sql;
-
         $db_erg = mysqli_query( $this->sqlLink, $sql );
         $output=array();
         if (!$db_erg) throw new mysqli_sql_exception('Ungültige Abfrage: ' . mysqli_error($this->sqlLink));
@@ -91,6 +104,7 @@ class db_adapter {
         }
         $this->disconnect();
         return $output;
+
     }
 
     /** Befehl zum Löschen eines Datensatzes
@@ -104,10 +118,10 @@ class db_adapter {
     }
 
     /** Bearbeiten eines Datensatzer, die Identifizierung erfolgt über die ID
-     * @param array $editAttributes Attribute, die durchlaufen werdne sollen
+     * @param array $editAttributes Attribute, die durchlaufen werden sollen
      * @param array $editValues Werte des Datensatzers in gleicher Reihenfolge wie die Attribute
      * @param array $filters Attribute, mit denen die Bearbeitung eingeschränkt werden soll
-     * @param array $filtervalues Werte, mit denen die Bearbeitung eingeschränkt werdne soll, in gleicher Reihenfolge wie die Attribute
+     * @param array $filtervalues Werte, mit denen die Bearbeitung eingeschränkt werden soll, in gleicher Reihenfolge wie die Attribute
      */
     public function edit($editAttributes=array(),$editValues=array(),$filters=array(),$filtervalues=array()){
         $this->queryBuilder->update($editAttributes,$editValues);
@@ -139,9 +153,11 @@ class db_adapter {
      * @param null $excludes Attribute, die das Suchergebnis einschränken
      * @param null $excludeValues Werte zu den Attributen, die NICHT zutreffen sollen
      * @param null $limit Einschränkung de Ergebnismenge
+     * @param null $orderBy Feld, nachdem sortiert werden soll
+     * @param null $orderByASC Aufwärts sortieren? Standardmäßig TRUE
      * @return array Ergebnisse als Array
      */
-    public function get($columns='*',$includes = NULL,$includeValues = NULL,$excludes = NULL,$excludeValues = NULL,$limit=NULL){
+    public function get($columns='*',$includes = NULL,$includeValues = NULL,$excludes = NULL,$excludeValues = NULL,$limit=NULL,$orderBy = NULL,$orderByASC=NULL){
         $this->queryBuilder->select($columns);
         if(!empty($includes)){
             $count=0;
@@ -157,12 +173,15 @@ class db_adapter {
                 $count++;
             }
         }
+        if(!empty($orderBy)){
+            if($orderByASC!=true && $orderByASC!=false)$orderByASC=true;
+            $this->queryBuilder->orderBy($orderBy,$orderByASC);
+        }
         if(!empty($limit)){
             $this->queryBuilder->limit($limit);
         }
         return $this->query($this->queryBuilder->generate());
     }
-
     /** Attribute, die das Speichern der Datensätze betrifft. Muss einmal zu Beginn deklariert werden
      * @param array $attributes Attribute in Array-Form oder auch Komma-separiert
      */
@@ -182,4 +201,4 @@ class db_adapter {
     private function disconnect(){
         mysqli_close($this->sqlLink);
     }
-} 
+}
